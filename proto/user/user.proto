@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "github.com/esc-chula/intania-vote/libs/grpc-go/user";
+
+service UserService {
+    rpc GetUserByOidcId(GetUserByOidcIdRequest) returns (GetUserByOidcIdResponse) {};
+}
+
+message GetUserByOidcIdRequest {
+    string oidcId = 1;
+}
+message GetUserByOidcIdResponse {
+    string id = 1;
+    string oidcId = 2;
+    string studentId = 3;
+}
