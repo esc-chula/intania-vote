@@ -14,7 +14,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="th" className={cn(notoSansThai.variable)}>
-      <body>{children}</body>
+      <body className="flex min-h-dvh flex-col">{children}</body>
     </html>
   );
 }

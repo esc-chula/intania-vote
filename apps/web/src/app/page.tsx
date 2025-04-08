@@ -1,17 +1,11 @@
-import Header from "~/components/common/header";
-import Navigation from "~/components/common/navigation";
+import Link from "next/link";
 
-import { Button } from "@intania-vote/shadcn";
-
-export default function Home() {
+const Page: React.FC = () => {
   return (
     <>
-      <Header />
-      <div className="flex h-screen w-full flex-col items-center justify-center">
-        ทดสอบ
-        <Button>Click me</Button>
-      </div>
-      <Navigation />
+      <Link href="/vote/test">Test Election</Link>
     </>
   );
-}
+};
+
+export default Page;
