@@ -3,6 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "pnpm nx run-many -t serve",
+    "dev:web": "pnpm nx serve web",
+    "dev:api": "pnpm nx serve api",
     "ui:add": "pnpm dlx shadcn@latest add",
     "ui:post": "bash ./scripts/post-ui-add.sh libs/shadcn"
   },
