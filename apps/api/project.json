@@ -5,16 +5,25 @@
   "projectType": "application",
   "tags": [],
   "targets": {
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "options": {
+        "file": "apps/api/Dockerfile",
+        "platforms": ["linux/amd64", "linux/arm64"],
+        "tags": ["ghcr.io/esc-chula/intania-vote-api:latest"],
+        "context": "apps/api"
+      }
+    },
     "build": {
       "executor": "@nx-go/nx-go:build",
       "options": {
-        "main": "./cmd/..."
+        "main": "./apps/api/cmd/..."
       }
     },
     "serve": {
       "executor": "@nx-go/nx-go:serve",
       "options": {
-        "main": "./cmd/..."
+        "main": "./apps/api/cmd/..."
       }
     },
     "test": {

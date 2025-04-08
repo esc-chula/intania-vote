@@ -4,6 +4,101 @@
   "sourceRoot": "apps/web",
   "projectType": "application",
   "tags": [],
-  "// targets": "to see all targets run: nx show project web --web",
-  "targets": {}
+  "targets": {
+    "serve": {
+      "executor": "@nrwl/next:server",
+      "options": {
+        "buildTarget": "web:build",
+        "dev": true,
+        "port": 3000
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/my-app/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/web"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "apps/web"
+        },
+        "production": {
+          "generateLockfile": true
+        }
+      },
+      "dependsOn": ["^build", "build-custom-server"]
+    },
+    "build-custom-server": {
+      "executor": "@nx/esbuild:esbuild",
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/web",
+        "main": "apps/web/server/main.ts",
+        "tsConfig": "apps/web/tsconfig.server.json",
+        "clean": false,
+        "assets": [],
+        "platform": "node",
+        "outputFileName": "server/main.js",
+        "format": ["cjs"],
+        "bundle": true,
+        "thirdParty": false,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {
+          "sourcemap": true
+        },
+        "production": {
+          "sourcemap": false,
+          "assets": [".npmrc"]
+        }
+      }
+    },
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "web:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "web:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "web:build-custom-server:production"
+        }
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsc -p tsconfig.json --noEmit"],
+        "cwd": "apps/web",
+        "forwardAllArgs": false
+      }
+    },
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "options": {
+        "file": "apps/web/Dockerfile",
+        "platforms": ["linux/amd64", "linux/arm64"],
+        "tags": ["ghcr.io/esc-chula/intania-vote-web:latest"],
+        "context": "apps/web"
+      }
+    }
+  }
 }
