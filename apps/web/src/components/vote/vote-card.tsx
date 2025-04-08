@@ -1,6 +1,9 @@
+import Markdown from "react-markdown";
+
 import Image from "next/image";
 
 import { Info } from "lucide-react";
+import rehypeRaw from "rehype-raw";
 
 import { Button, cn } from "@intania-vote/shadcn";
 import {
@@ -21,6 +24,7 @@ interface VoteCardProps {
   number?: string;
   name: string;
   description: string;
+  info?: string;
   image: string;
 }
 
@@ -31,6 +35,7 @@ const VoteCard: React.FC<VoteCardProps> = ({
   number,
   name,
   description,
+  info,
   image,
 }) => {
   return (
@@ -83,7 +88,7 @@ const VoteCard: React.FC<VoteCardProps> = ({
           </div>
         </DrawerTrigger>
         <DrawerContent>
-          <div className="mx-auto flex h-[90vh] w-full flex-col justify-between">
+          <div className="mx-auto flex h-[90vh] w-full flex-col justify-between overflow-y-auto">
             <div className="px-4 pt-4">
               <DrawerHeader className="flex flex-col items-center gap-4">
                 <div className="relative aspect-square w-28 select-none overflow-hidden rounded-full">
@@ -95,14 +100,58 @@ const VoteCard: React.FC<VoteCardProps> = ({
                 </div>
               </DrawerHeader>
               <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
-                fasdfjklasdf asdf asdf fasdfjklasdf asdf asdf fasdfjklasdf asdf
-                asdf
-                <br />
-                asdfasdf
-                <br />
-                asdfasdf
-                <br />
-                asdfasdf
+                <Markdown
+                  rehypePlugins={[rehypeRaw]}
+                  components={{
+                    h1: ({ node, ...props }) => (
+                      <h1 className="text-2xl font-bold" {...props} />
+                    ),
+                    h2: ({ node, ...props }) => (
+                      <h2 className="text-xl font-semibold" {...props} />
+                    ),
+                    h3: ({ node, ...props }) => (
+                      <h3 className="text-lg font-semibold" {...props} />
+                    ),
+                    p: ({ node, ...props }) => (
+                      <p className="text-sm text-neutral-700" {...props} />
+                    ),
+                    ul: ({ node, ...props }) => (
+                      <ul className="list-disc pl-5" {...props} />
+                    ),
+                    li: ({ node, ...props }) => (
+                      <li className="text-sm text-neutral-700" {...props} />
+                    ),
+                    a: ({ node, ...props }) => (
+                      <a className="text-blue-500" {...props} />
+                    ),
+                    strong: ({ node, ...props }) => (
+                      <strong className="font-semibold" {...props} />
+                    ),
+                    em: ({ node, ...props }) => (
+                      <em className="italic" {...props} />
+                    ),
+                    blockquote: ({ node, ...props }) => (
+                      <blockquote
+                        className="border-l-4 border-neutral-300 pl-4 italic text-neutral-600"
+                        {...props}
+                      />
+                    ),
+                    code: ({ node, ...props }) => (
+                      <code
+                        className="rounded-md bg-neutral-100 px-1 py-0.5 font-mono text-sm text-neutral-700"
+                        {...props}
+                      />
+                    ),
+                    pre: ({ node, ...props }) => (
+                      <pre
+                        className="rounded-md bg-neutral-100 p-4 font-mono text-sm text-neutral-700"
+                        {...props}
+                      />
+                    ),
+                  }}
+                >
+                  {info}
+                </Markdown>
               </div>
             </div>
             <DrawerFooter>

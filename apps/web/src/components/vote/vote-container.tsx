@@ -66,6 +66,22 @@ const VoteContainer: React.FC<VoteContainerProps> = ({
               number={choice.number}
               name={choice.name}
               description={choice.description}
+              info={`
+## Test
+
+- bullet test
+- another bullet test
+
+<br />
+
+### Heading 3
+
+> what do you mean?
+
+<br />
+
+lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
+                `}
               image={choice.image}
             />
           ))}
