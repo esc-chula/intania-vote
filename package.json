@@ -2,12 +2,15 @@
   "name": "@intania-vote/source",
   "version": "0.0.0",
   "scripts": {
+    "dev": "pnpm nx run-many -t serve",
     "ui:add": "pnpm dlx shadcn@latest add",
     "ui:post": "bash ./scripts/post-ui-add.sh libs/shadcn"
   },
   "private": true,
   "devDependencies": {
     "@nx-go/nx-go": "^3.3.1",
+    "@nx-tools/nx-container": "^6.2.0",
+    "@nx/cypress": "^20.7.1",
     "@nx/devkit": "19.5.3",
     "@nx/eslint": "19.5.3",
     "@nx/eslint-plugin": "19.5.3",
@@ -108,6 +111,7 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "@swc/core",
+      "core-js-pure",
       "nx",
       "protobufjs"
     ]
