@@ -26,7 +26,7 @@ func InitializeApp() (App, error) {
 		DO $$ 
 		BEGIN
 			IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'owner') THEN
-				CREATE TYPE owner AS ENUM ('STUDENT', 'ESC', 'ISESC');
+				CREATE TYPE owner AS ENUM ('USER', 'ESC', 'ISESC');
 			END IF;
 		END $$;
 	`).Error; err != nil {

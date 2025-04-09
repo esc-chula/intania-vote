@@ -21,7 +21,7 @@ import {
 import { Choice } from "../choice/choice";
 
 export enum Owner {
-  STUDENT = 0,
+  USER = 0,
   ESC = 1,
   ISESC = 2,
   UNRECOGNIZED = -1,
@@ -30,8 +30,8 @@ export enum Owner {
 export function ownerFromJSON(object: any): Owner {
   switch (object) {
     case 0:
-    case "STUDENT":
-      return Owner.STUDENT;
+    case "USER":
+      return Owner.USER;
     case 1:
     case "ESC":
       return Owner.ESC;
@@ -47,8 +47,8 @@ export function ownerFromJSON(object: any): Owner {
 
 export function ownerToJSON(object: Owner): string {
   switch (object) {
-    case Owner.STUDENT:
-      return "STUDENT";
+    case Owner.USER:
+      return "USER";
     case Owner.ESC:
       return "ESC";
     case Owner.ISESC:
@@ -69,11 +69,12 @@ export interface CreateVoteResponse {
 }
 
 export interface GetVoteByIdRequest {
-  id: string;
+  id: number;
 }
 
 export interface GetVoteByIdResponse {
   vote: Vote | undefined;
+  choices: Choice[];
 }
 
 export interface GetVoteBySlugRequest {
@@ -82,14 +83,15 @@ export interface GetVoteBySlugRequest {
 
 export interface GetVoteBySlugResponse {
   vote: Vote | undefined;
+  choices: Choice[];
 }
 
-export interface GetUserEligibleVotesRequest {
+export interface GetVotesByUserEligibilityRequest {
   oidcId: string;
 }
 
-export interface GetUserEligibleVotesResponse {
-  votes: Vote[];
+export interface GetVotesByUserEligibilityResponse {
+  votes: Votes[];
 }
 
 export interface Vote {
@@ -106,6 +108,11 @@ export interface Vote {
   isAllowMultiple: boolean;
   startAt: string;
   endAt: string;
+}
+
+export interface Votes {
+  vote: Vote | undefined;
+  choices: Choice[];
 }
 
 function createBaseCreateVoteRequest(): CreateVoteRequest {
@@ -244,13 +251,13 @@ export const CreateVoteResponse: MessageFns<CreateVoteResponse> = {
 };
 
 function createBaseGetVoteByIdRequest(): GetVoteByIdRequest {
-  return { id: "" };
+  return { id: 0 };
 }
 
 export const GetVoteByIdRequest: MessageFns<GetVoteByIdRequest> = {
   encode(message: GetVoteByIdRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.id !== "") {
-      writer.uint32(10).string(message.id);
+    if (message.id !== 0) {
+      writer.uint32(8).uint32(message.id);
     }
     return writer;
   },
@@ -263,11 +270,11 @@ export const GetVoteByIdRequest: MessageFns<GetVoteByIdRequest> = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1: {
-          if (tag !== 10) {
+          if (tag !== 8) {
             break;
           }
 
-          message.id = reader.string();
+          message.id = reader.uint32();
           continue;
         }
       }
@@ -280,13 +287,13 @@ export const GetVoteByIdRequest: MessageFns<GetVoteByIdRequest> = {
   },
 
   fromJSON(object: any): GetVoteByIdRequest {
-    return { id: isSet(object.id) ? globalThis.String(object.id) : "" };
+    return { id: isSet(object.id) ? globalThis.Number(object.id) : 0 };
   },
 
   toJSON(message: GetVoteByIdRequest): unknown {
     const obj: any = {};
-    if (message.id !== "") {
-      obj.id = message.id;
+    if (message.id !== 0) {
+      obj.id = Math.round(message.id);
     }
     return obj;
   },
@@ -296,19 +303,22 @@ export const GetVoteByIdRequest: MessageFns<GetVoteByIdRequest> = {
   },
   fromPartial<I extends Exact<DeepPartial<GetVoteByIdRequest>, I>>(object: I): GetVoteByIdRequest {
     const message = createBaseGetVoteByIdRequest();
-    message.id = object.id ?? "";
+    message.id = object.id ?? 0;
     return message;
   },
 };
 
 function createBaseGetVoteByIdResponse(): GetVoteByIdResponse {
-  return { vote: undefined };
+  return { vote: undefined, choices: [] };
 }
 
 export const GetVoteByIdResponse: MessageFns<GetVoteByIdResponse> = {
   encode(message: GetVoteByIdResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.vote !== undefined) {
       Vote.encode(message.vote, writer.uint32(10).fork()).join();
+    }
+    for (const v of message.choices) {
+      Choice.encode(v!, writer.uint32(18).fork()).join();
     }
     return writer;
   },
@@ -328,6 +338,14 @@ export const GetVoteByIdResponse: MessageFns<GetVoteByIdResponse> = {
           message.vote = Vote.decode(reader, reader.uint32());
           continue;
         }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.choices.push(Choice.decode(reader, reader.uint32()));
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -338,13 +356,19 @@ export const GetVoteByIdResponse: MessageFns<GetVoteByIdResponse> = {
   },
 
   fromJSON(object: any): GetVoteByIdResponse {
-    return { vote: isSet(object.vote) ? Vote.fromJSON(object.vote) : undefined };
+    return {
+      vote: isSet(object.vote) ? Vote.fromJSON(object.vote) : undefined,
+      choices: globalThis.Array.isArray(object?.choices) ? object.choices.map((e: any) => Choice.fromJSON(e)) : [],
+    };
   },
 
   toJSON(message: GetVoteByIdResponse): unknown {
     const obj: any = {};
     if (message.vote !== undefined) {
       obj.vote = Vote.toJSON(message.vote);
+    }
+    if (message.choices?.length) {
+      obj.choices = message.choices.map((e) => Choice.toJSON(e));
     }
     return obj;
   },
@@ -355,6 +379,7 @@ export const GetVoteByIdResponse: MessageFns<GetVoteByIdResponse> = {
   fromPartial<I extends Exact<DeepPartial<GetVoteByIdResponse>, I>>(object: I): GetVoteByIdResponse {
     const message = createBaseGetVoteByIdResponse();
     message.vote = (object.vote !== undefined && object.vote !== null) ? Vote.fromPartial(object.vote) : undefined;
+    message.choices = object.choices?.map((e) => Choice.fromPartial(e)) || [];
     return message;
   },
 };
@@ -418,13 +443,16 @@ export const GetVoteBySlugRequest: MessageFns<GetVoteBySlugRequest> = {
 };
 
 function createBaseGetVoteBySlugResponse(): GetVoteBySlugResponse {
-  return { vote: undefined };
+  return { vote: undefined, choices: [] };
 }
 
 export const GetVoteBySlugResponse: MessageFns<GetVoteBySlugResponse> = {
   encode(message: GetVoteBySlugResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.vote !== undefined) {
       Vote.encode(message.vote, writer.uint32(10).fork()).join();
+    }
+    for (const v of message.choices) {
+      Choice.encode(v!, writer.uint32(18).fork()).join();
     }
     return writer;
   },
@@ -444,6 +472,14 @@ export const GetVoteBySlugResponse: MessageFns<GetVoteBySlugResponse> = {
           message.vote = Vote.decode(reader, reader.uint32());
           continue;
         }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.choices.push(Choice.decode(reader, reader.uint32()));
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -454,13 +490,19 @@ export const GetVoteBySlugResponse: MessageFns<GetVoteBySlugResponse> = {
   },
 
   fromJSON(object: any): GetVoteBySlugResponse {
-    return { vote: isSet(object.vote) ? Vote.fromJSON(object.vote) : undefined };
+    return {
+      vote: isSet(object.vote) ? Vote.fromJSON(object.vote) : undefined,
+      choices: globalThis.Array.isArray(object?.choices) ? object.choices.map((e: any) => Choice.fromJSON(e)) : [],
+    };
   },
 
   toJSON(message: GetVoteBySlugResponse): unknown {
     const obj: any = {};
     if (message.vote !== undefined) {
       obj.vote = Vote.toJSON(message.vote);
+    }
+    if (message.choices?.length) {
+      obj.choices = message.choices.map((e) => Choice.toJSON(e));
     }
     return obj;
   },
@@ -471,26 +513,27 @@ export const GetVoteBySlugResponse: MessageFns<GetVoteBySlugResponse> = {
   fromPartial<I extends Exact<DeepPartial<GetVoteBySlugResponse>, I>>(object: I): GetVoteBySlugResponse {
     const message = createBaseGetVoteBySlugResponse();
     message.vote = (object.vote !== undefined && object.vote !== null) ? Vote.fromPartial(object.vote) : undefined;
+    message.choices = object.choices?.map((e) => Choice.fromPartial(e)) || [];
     return message;
   },
 };
 
-function createBaseGetUserEligibleVotesRequest(): GetUserEligibleVotesRequest {
+function createBaseGetVotesByUserEligibilityRequest(): GetVotesByUserEligibilityRequest {
   return { oidcId: "" };
 }
 
-export const GetUserEligibleVotesRequest: MessageFns<GetUserEligibleVotesRequest> = {
-  encode(message: GetUserEligibleVotesRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const GetVotesByUserEligibilityRequest: MessageFns<GetVotesByUserEligibilityRequest> = {
+  encode(message: GetVotesByUserEligibilityRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.oidcId !== "") {
       writer.uint32(10).string(message.oidcId);
     }
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): GetUserEligibleVotesRequest {
+  decode(input: BinaryReader | Uint8Array, length?: number): GetVotesByUserEligibilityRequest {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseGetUserEligibleVotesRequest();
+    const message = createBaseGetVotesByUserEligibilityRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -511,11 +554,11 @@ export const GetUserEligibleVotesRequest: MessageFns<GetUserEligibleVotesRequest
     return message;
   },
 
-  fromJSON(object: any): GetUserEligibleVotesRequest {
+  fromJSON(object: any): GetVotesByUserEligibilityRequest {
     return { oidcId: isSet(object.oidcId) ? globalThis.String(object.oidcId) : "" };
   },
 
-  toJSON(message: GetUserEligibleVotesRequest): unknown {
+  toJSON(message: GetVotesByUserEligibilityRequest): unknown {
     const obj: any = {};
     if (message.oidcId !== "") {
       obj.oidcId = message.oidcId;
@@ -523,32 +566,36 @@ export const GetUserEligibleVotesRequest: MessageFns<GetUserEligibleVotesRequest
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<GetUserEligibleVotesRequest>, I>>(base?: I): GetUserEligibleVotesRequest {
-    return GetUserEligibleVotesRequest.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<GetVotesByUserEligibilityRequest>, I>>(
+    base?: I,
+  ): GetVotesByUserEligibilityRequest {
+    return GetVotesByUserEligibilityRequest.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<GetUserEligibleVotesRequest>, I>>(object: I): GetUserEligibleVotesRequest {
-    const message = createBaseGetUserEligibleVotesRequest();
+  fromPartial<I extends Exact<DeepPartial<GetVotesByUserEligibilityRequest>, I>>(
+    object: I,
+  ): GetVotesByUserEligibilityRequest {
+    const message = createBaseGetVotesByUserEligibilityRequest();
     message.oidcId = object.oidcId ?? "";
     return message;
   },
 };
 
-function createBaseGetUserEligibleVotesResponse(): GetUserEligibleVotesResponse {
+function createBaseGetVotesByUserEligibilityResponse(): GetVotesByUserEligibilityResponse {
   return { votes: [] };
 }
 
-export const GetUserEligibleVotesResponse: MessageFns<GetUserEligibleVotesResponse> = {
-  encode(message: GetUserEligibleVotesResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const GetVotesByUserEligibilityResponse: MessageFns<GetVotesByUserEligibilityResponse> = {
+  encode(message: GetVotesByUserEligibilityResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     for (const v of message.votes) {
-      Vote.encode(v!, writer.uint32(10).fork()).join();
+      Votes.encode(v!, writer.uint32(10).fork()).join();
     }
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): GetUserEligibleVotesResponse {
+  decode(input: BinaryReader | Uint8Array, length?: number): GetVotesByUserEligibilityResponse {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseGetUserEligibleVotesResponse();
+    const message = createBaseGetVotesByUserEligibilityResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -557,7 +604,7 @@ export const GetUserEligibleVotesResponse: MessageFns<GetUserEligibleVotesRespon
             break;
           }
 
-          message.votes.push(Vote.decode(reader, reader.uint32()));
+          message.votes.push(Votes.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -569,24 +616,28 @@ export const GetUserEligibleVotesResponse: MessageFns<GetUserEligibleVotesRespon
     return message;
   },
 
-  fromJSON(object: any): GetUserEligibleVotesResponse {
-    return { votes: globalThis.Array.isArray(object?.votes) ? object.votes.map((e: any) => Vote.fromJSON(e)) : [] };
+  fromJSON(object: any): GetVotesByUserEligibilityResponse {
+    return { votes: globalThis.Array.isArray(object?.votes) ? object.votes.map((e: any) => Votes.fromJSON(e)) : [] };
   },
 
-  toJSON(message: GetUserEligibleVotesResponse): unknown {
+  toJSON(message: GetVotesByUserEligibilityResponse): unknown {
     const obj: any = {};
     if (message.votes?.length) {
-      obj.votes = message.votes.map((e) => Vote.toJSON(e));
+      obj.votes = message.votes.map((e) => Votes.toJSON(e));
     }
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<GetUserEligibleVotesResponse>, I>>(base?: I): GetUserEligibleVotesResponse {
-    return GetUserEligibleVotesResponse.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<GetVotesByUserEligibilityResponse>, I>>(
+    base?: I,
+  ): GetVotesByUserEligibilityResponse {
+    return GetVotesByUserEligibilityResponse.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<GetUserEligibleVotesResponse>, I>>(object: I): GetUserEligibleVotesResponse {
-    const message = createBaseGetUserEligibleVotesResponse();
-    message.votes = object.votes?.map((e) => Vote.fromPartial(e)) || [];
+  fromPartial<I extends Exact<DeepPartial<GetVotesByUserEligibilityResponse>, I>>(
+    object: I,
+  ): GetVotesByUserEligibilityResponse {
+    const message = createBaseGetVotesByUserEligibilityResponse();
+    message.votes = object.votes?.map((e) => Votes.fromPartial(e)) || [];
     return message;
   },
 };
@@ -857,6 +908,82 @@ export const Vote: MessageFns<Vote> = {
   },
 };
 
+function createBaseVotes(): Votes {
+  return { vote: undefined, choices: [] };
+}
+
+export const Votes: MessageFns<Votes> = {
+  encode(message: Votes, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.vote !== undefined) {
+      Vote.encode(message.vote, writer.uint32(10).fork()).join();
+    }
+    for (const v of message.choices) {
+      Choice.encode(v!, writer.uint32(18).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): Votes {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseVotes();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.vote = Vote.decode(reader, reader.uint32());
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.choices.push(Choice.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Votes {
+    return {
+      vote: isSet(object.vote) ? Vote.fromJSON(object.vote) : undefined,
+      choices: globalThis.Array.isArray(object?.choices) ? object.choices.map((e: any) => Choice.fromJSON(e)) : [],
+    };
+  },
+
+  toJSON(message: Votes): unknown {
+    const obj: any = {};
+    if (message.vote !== undefined) {
+      obj.vote = Vote.toJSON(message.vote);
+    }
+    if (message.choices?.length) {
+      obj.choices = message.choices.map((e) => Choice.toJSON(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<Votes>, I>>(base?: I): Votes {
+    return Votes.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<Votes>, I>>(object: I): Votes {
+    const message = createBaseVotes();
+    message.vote = (object.vote !== undefined && object.vote !== null) ? Vote.fromPartial(object.vote) : undefined;
+    message.choices = object.choices?.map((e) => Choice.fromPartial(e)) || [];
+    return message;
+  },
+};
+
 export type VoteServiceService = typeof VoteServiceService;
 export const VoteServiceService = {
   createVote: {
@@ -886,16 +1013,16 @@ export const VoteServiceService = {
     responseSerialize: (value: GetVoteBySlugResponse) => Buffer.from(GetVoteBySlugResponse.encode(value).finish()),
     responseDeserialize: (value: Buffer) => GetVoteBySlugResponse.decode(value),
   },
-  getUserEligibleVotes: {
-    path: "/vote.VoteService/GetUserEligibleVotes",
+  getVotesByUserEligibility: {
+    path: "/vote.VoteService/GetVotesByUserEligibility",
     requestStream: false,
     responseStream: false,
-    requestSerialize: (value: GetUserEligibleVotesRequest) =>
-      Buffer.from(GetUserEligibleVotesRequest.encode(value).finish()),
-    requestDeserialize: (value: Buffer) => GetUserEligibleVotesRequest.decode(value),
-    responseSerialize: (value: GetUserEligibleVotesResponse) =>
-      Buffer.from(GetUserEligibleVotesResponse.encode(value).finish()),
-    responseDeserialize: (value: Buffer) => GetUserEligibleVotesResponse.decode(value),
+    requestSerialize: (value: GetVotesByUserEligibilityRequest) =>
+      Buffer.from(GetVotesByUserEligibilityRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer) => GetVotesByUserEligibilityRequest.decode(value),
+    responseSerialize: (value: GetVotesByUserEligibilityResponse) =>
+      Buffer.from(GetVotesByUserEligibilityResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer) => GetVotesByUserEligibilityResponse.decode(value),
   },
 } as const;
 
@@ -903,7 +1030,7 @@ export interface VoteServiceServer extends UntypedServiceImplementation {
   createVote: handleUnaryCall<CreateVoteRequest, CreateVoteResponse>;
   getVoteById: handleUnaryCall<GetVoteByIdRequest, GetVoteByIdResponse>;
   getVoteBySlug: handleUnaryCall<GetVoteBySlugRequest, GetVoteBySlugResponse>;
-  getUserEligibleVotes: handleUnaryCall<GetUserEligibleVotesRequest, GetUserEligibleVotesResponse>;
+  getVotesByUserEligibility: handleUnaryCall<GetVotesByUserEligibilityRequest, GetVotesByUserEligibilityResponse>;
 }
 
 export interface VoteServiceClient extends Client {
@@ -952,20 +1079,20 @@ export interface VoteServiceClient extends Client {
     options: Partial<CallOptions>,
     callback: (error: ServiceError | null, response: GetVoteBySlugResponse) => void,
   ): ClientUnaryCall;
-  getUserEligibleVotes(
-    request: GetUserEligibleVotesRequest,
-    callback: (error: ServiceError | null, response: GetUserEligibleVotesResponse) => void,
+  getVotesByUserEligibility(
+    request: GetVotesByUserEligibilityRequest,
+    callback: (error: ServiceError | null, response: GetVotesByUserEligibilityResponse) => void,
   ): ClientUnaryCall;
-  getUserEligibleVotes(
-    request: GetUserEligibleVotesRequest,
+  getVotesByUserEligibility(
+    request: GetVotesByUserEligibilityRequest,
     metadata: Metadata,
-    callback: (error: ServiceError | null, response: GetUserEligibleVotesResponse) => void,
+    callback: (error: ServiceError | null, response: GetVotesByUserEligibilityResponse) => void,
   ): ClientUnaryCall;
-  getUserEligibleVotes(
-    request: GetUserEligibleVotesRequest,
+  getVotesByUserEligibility(
+    request: GetVotesByUserEligibilityRequest,
     metadata: Metadata,
     options: Partial<CallOptions>,
-    callback: (error: ServiceError | null, response: GetUserEligibleVotesResponse) => void,
+    callback: (error: ServiceError | null, response: GetVotesByUserEligibilityResponse) => void,
   ): ClientUnaryCall;
 }
 

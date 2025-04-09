@@ -25,7 +25,7 @@ interface VoteCardProps {
   name: string;
   description: string;
   info?: string;
-  image: string;
+  image?: string;
 }
 
 const VoteCard: React.FC<VoteCardProps> = ({
@@ -47,9 +47,12 @@ const VoteCard: React.FC<VoteCardProps> = ({
           : "border-2 border-neutral-300 bg-neutral-50",
       )}
     >
-      <div className="relative aspect-square w-28 select-none overflow-hidden rounded-full">
-        <Image src={image} alt={name} fill className="object-cover" />
-      </div>
+      {image ? (
+        <div className="relative aspect-square w-28 select-none overflow-hidden rounded-full">
+          <Image src={image} alt={name} fill className="object-cover" />
+        </div>
+      ) : null}
+
       <div
         className={cn(
           "text-center",
@@ -91,9 +94,16 @@ const VoteCard: React.FC<VoteCardProps> = ({
           <div className="mx-auto flex h-[90vh] w-full flex-col justify-between overflow-y-auto">
             <div className="px-4 pt-4">
               <DrawerHeader className="flex flex-col items-center gap-4">
-                <div className="relative aspect-square w-28 select-none overflow-hidden rounded-full">
-                  <Image src={image} alt={name} fill className="object-cover" />
-                </div>
+                {image ? (
+                  <div className="relative aspect-square w-28 select-none overflow-hidden rounded-full">
+                    <Image
+                      src={image}
+                      alt={name}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                ) : null}
                 <div className="flex flex-col items-center gap-1 text-center">
                   <DrawerTitle>{name}</DrawerTitle>
                   <DrawerDescription>{description}</DrawerDescription>

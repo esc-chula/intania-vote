@@ -10,7 +10,7 @@ service VoteService {
     rpc CreateVote(CreateVoteRequest) returns (CreateVoteResponse) {};
     rpc GetVoteById(GetVoteByIdRequest) returns (GetVoteByIdResponse) {};
     rpc GetVoteBySlug(GetVoteBySlugRequest) returns (GetVoteBySlugResponse) {};
-    rpc GetUserEligibleVotes(GetUserEligibleVotesRequest) returns (GetUserEligibleVotesResponse) {};
+    rpc GetVotesByUserEligibility(GetVotesByUserEligibilityRequest) returns (GetVotesByUserEligibilityResponse) {};
 }
 
 message CreateVoteRequest {
@@ -22,11 +22,12 @@ message CreateVoteRequest {
 message CreateVoteResponse {}
 
 message GetVoteByIdRequest {
-    string id = 1;
+    uint32 id = 1;
 }
 
 message GetVoteByIdResponse {
     Vote vote = 1;
+    repeated choice.Choice choices = 2;
 }
 
 message GetVoteBySlugRequest {
@@ -35,18 +36,19 @@ message GetVoteBySlugRequest {
 
 message GetVoteBySlugResponse {
     Vote vote = 1;
+    repeated choice.Choice choices = 2;
 }
 
-message GetUserEligibleVotesRequest {
+message GetVotesByUserEligibilityRequest {
     string oidcId = 1;
 }
 
-message GetUserEligibleVotesResponse {
-    repeated Vote votes = 1;
+message GetVotesByUserEligibilityResponse {
+    repeated Votes votes = 1;
 }
 
 enum Owner {
-    STUDENT = 0;
+    USER = 0;
     ESC = 1;
     ISESC = 2;
 }
@@ -65,4 +67,9 @@ message Vote {
     bool isAllowMultiple = 11;
     string startAt = 12;
     string endAt = 13;
+}
+
+message Votes {
+    Vote vote = 1;
+    repeated choice.Choice choices = 2;
 }

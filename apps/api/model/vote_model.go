@@ -9,9 +9,9 @@ import (
 type Owner string
 
 const (
-	Student Owner = "STUDENT"
-	ESC     Owner = "ESC"
-	ISESC   Owner = "ISESC"
+	OwnerUser  Owner = "USER"
+	OwnerESC   Owner = "ESC"
+	OwnerISESC Owner = "ISESC"
 )
 
 func (s *Owner) Scan(value interface{}) error {
@@ -21,7 +21,7 @@ func (s *Owner) Scan(value interface{}) error {
 	}
 
 	switch Owner(strVal) {
-	case Student, ESC, ISESC:
+	case OwnerUser, OwnerESC, OwnerISESC:
 		*s = Owner(strVal)
 		return nil
 	default:
@@ -31,7 +31,7 @@ func (s *Owner) Scan(value interface{}) error {
 
 func (s Owner) Value() (driver.Value, error) {
 	switch s {
-	case Student, ESC, ISESC:
+	case OwnerUser, OwnerESC, OwnerISESC:
 		return string(s), nil
 	default:
 		return nil, fmt.Errorf("invalid value for Owner: %s", s)

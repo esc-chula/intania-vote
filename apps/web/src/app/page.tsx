@@ -3,10 +3,8 @@
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 
-import { grpc } from "~/server/grpc";
 import { createVote } from "~/server/vote";
 
-import { Owner } from "@intania-vote/grpc-ts";
 import { Button } from "@intania-vote/shadcn";
 
 const Page: React.FC = () => {
@@ -28,7 +26,29 @@ const Page: React.FC = () => {
         <div>
           <Button
             onClick={() => {
-              createVote().catch((err) => {
+              createVote({
+                name: "Test Vote",
+                description: "Test Description",
+                slug: "test",
+                image: "/mock.jpg",
+                owner: "USER",
+                eligibleStudentId: "*",
+                eligibleDepartment: "*",
+                eligibleYear: "*",
+                isPrivate: false,
+                isRealTime: false,
+                isAllowMultiple: false,
+                startAt: new Date(),
+                endAt: new Date(new Date().getTime() + 1000 * 60 * 60),
+                choices: [
+                  {
+                    number: "1",
+                    name: "Choice 1",
+                    description: "Choice 1 Description",
+                    information: "Choice 1 Information",
+                  },
+                ],
+              }).catch((err) => {
                 console.error(err);
               });
             }}

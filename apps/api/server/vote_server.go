@@ -6,6 +6,7 @@ import (
 
 	"github.com/esc-chula/intania-vote/apps/api/model"
 	"github.com/esc-chula/intania-vote/apps/api/service"
+	grpcChoice "github.com/esc-chula/intania-vote/libs/grpc-go/choice"
 	grpcVote "github.com/esc-chula/intania-vote/libs/grpc-go/vote"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -89,4 +90,98 @@ func (s voteServerImpl) CreateVote(ctx context.Context, req *grpcVote.CreateVote
 	}
 
 	return &grpcVote.CreateVoteResponse{}, nil
+}
+
+func (s voteServerImpl) GetVoteById(ctx context.Context, req *grpcVote.GetVoteByIdRequest) (*grpcVote.GetVoteByIdResponse, error) {
+	id := req.GetId()
+	if id == 0 {
+		return nil, status.Error(codes.FailedPrecondition, "missing id")
+	}
+
+	vote, err := s.svc.GetVoteById(ctx, uint(id))
+	if err != nil {
+		return nil, status.Error(codes.Internal, "failed to get vote")
+	}
+	if vote == nil {
+		return nil, status.Error(codes.NotFound, "vote not found")
+	}
+
+	choices := make([]*grpcChoice.Choice, len(vote.Choices))
+	for i, choice := range vote.Choices {
+		choices[i] = &grpcChoice.Choice{
+			Number:      choice.Number,
+			Name:        choice.Name,
+			Description: choice.Description,
+			Information: choice.Information,
+			Image:       choice.Image,
+		}
+	}
+
+	return &grpcVote.GetVoteByIdResponse{
+		Vote: &grpcVote.Vote{
+			Name:               vote.Name,
+			Description:        vote.Description,
+			Image:              vote.Image,
+			Slug:               vote.Slug,
+			Owner:              grpcVote.Owner(grpcVote.Owner_value[string(vote.Owner)]),
+			EligibleStudentId:  vote.EligibleStudentId,
+			EligibleDepartment: vote.EligibleDepartment,
+			EligibleYear:       vote.EligibleYear,
+			IsPrivate:          vote.IsPrivate,
+			IsRealTime:         vote.IsRealTime,
+			IsAllowMultiple:    vote.IsAllowMultiple,
+			StartAt:            vote.StartAt.Format(time.RFC3339),
+			EndAt:              vote.EndAt.Format(time.RFC3339),
+		},
+		Choices: choices,
+	}, nil
+}
+
+func (s voteServerImpl) GetVoteBySlug(ctx context.Context, req *grpcVote.GetVoteBySlugRequest) (*grpcVote.GetVoteBySlugResponse, error) {
+	slug := req.GetSlug()
+	if slug == "" {
+		return nil, status.Error(codes.FailedPrecondition, "missing slug")
+	}
+
+	vote, err := s.svc.GetVoteBySlug(ctx, slug)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "failed to get vote")
+	}
+	if vote == nil {
+		return nil, status.Error(codes.NotFound, "vote not found")
+	}
+
+	choices := make([]*grpcChoice.Choice, len(vote.Choices))
+	for i, choice := range vote.Choices {
+		choices[i] = &grpcChoice.Choice{
+			Number:      choice.Number,
+			Name:        choice.Name,
+			Description: choice.Description,
+			Information: choice.Information,
+			Image:       choice.Image,
+		}
+	}
+
+	return &grpcVote.GetVoteBySlugResponse{
+		Vote: &grpcVote.Vote{
+			Name:               vote.Name,
+			Description:        vote.Description,
+			Image:              vote.Image,
+			Slug:               vote.Slug,
+			Owner:              grpcVote.Owner(grpcVote.Owner_value[string(vote.Owner)]),
+			EligibleStudentId:  vote.EligibleStudentId,
+			EligibleDepartment: vote.EligibleDepartment,
+			EligibleYear:       vote.EligibleYear,
+			IsPrivate:          vote.IsPrivate,
+			IsRealTime:         vote.IsRealTime,
+			IsAllowMultiple:    vote.IsAllowMultiple,
+			StartAt:            vote.StartAt.Format(time.RFC3339),
+			EndAt:              vote.EndAt.Format(time.RFC3339),
+		},
+		Choices: choices,
+	}, nil
+}
+
+func (s voteServerImpl) GetUserEligibleVotes(ctx context.Context, req *grpcVote.GetVotesByUserEligibilityRequest) (*grpcVote.GetVotesByUserEligibilityResponse, error) {
+	return nil, nil
 }
