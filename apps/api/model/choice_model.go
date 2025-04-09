@@ -9,8 +9,8 @@ type Choice struct {
 	Number      *string `gorm:"size:10;not null"`
 	Name        string  `gorm:"size:50;not null"`
 	Description string  `gorm:"size:50"`
-	Information string  `gorm:"size:700"`
-	Image       string  `gorm:"size:100"`
+	Information *string `gorm:"size:700"`
+	Image       *string `gorm:"size:100"`
 }
 
 func (Choice) TableName() string {

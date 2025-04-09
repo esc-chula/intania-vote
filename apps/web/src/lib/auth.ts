@@ -48,6 +48,7 @@ const authOptions: AuthOptions = {
       return true;
     },
     async session({ session, token }) {
+      session.user.oidcId = token.sub as string;
       session.user.studentId = token.studentId as string;
       return session;
     },

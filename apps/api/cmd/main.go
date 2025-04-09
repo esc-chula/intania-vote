@@ -8,6 +8,7 @@ import (
 	"github.com/esc-chula/intania-vote/apps/api/config"
 	"github.com/esc-chula/intania-vote/apps/api/server"
 	user "github.com/esc-chula/intania-vote/libs/grpc-go/user"
+	vote "github.com/esc-chula/intania-vote/libs/grpc-go/vote"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -15,13 +16,15 @@ import (
 
 type App struct {
 	userServer user.UserServiceServer
+	voteServer vote.VoteServiceServer
 
 	cfg *config.Config
 }
 
-func NewApp(userServer user.UserServiceServer, cfg *config.Config) App {
+func NewApp(userServer user.UserServiceServer, voteServer vote.VoteServiceServer, cfg *config.Config) App {
 	return App{
 		userServer: userServer,
+		voteServer: voteServer,
 		cfg:        cfg,
 	}
 }
@@ -30,6 +33,7 @@ func (a *App) Start() {
 	s := grpc.NewServer()
 
 	server.RegisterUserServiceServer(s, a.userServer)
+	server.RegisterVoteServiceServer(s, a.voteServer)
 	server.RegisterHealthCheckServer(s)
 
 	reflection.Register(s)

@@ -2,9 +2,12 @@ import { type ServiceError, credentials } from "@grpc/grpc-js";
 import {
   type CreateUserRequest,
   type CreateUserResponse,
+  type CreateVoteRequest,
+  type CreateVoteResponse,
   type GetUserByOidcIdRequest,
   type GetUserByOidcIdResponse,
   UserServiceClient,
+  VoteServiceClient,
 } from "@intania-vote/grpc-ts";
 
 const GRPC_ADDRESS = process.env.GRPC_ADDRESS || "localhost:4000";
@@ -41,9 +44,23 @@ function GetUserByOidcId(
   });
 }
 
+const voteClient = new VoteServiceClient(
+  GRPC_ADDRESS,
+  credentials.createInsecure(),
+);
+
+function CreateVote(req: CreateVoteRequest): Promise<CreateVoteResponse> {
+  return new Promise((resolve, reject) => {
+    voteClient.createVote(req, r(resolve, reject));
+  });
+}
+
 export const grpc = {
   user: {
     CreateUser,
     GetUserByOidcId,
+  },
+  vote: {
+    CreateVote,
   },
 };

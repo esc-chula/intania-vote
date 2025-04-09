@@ -24,5 +24,3 @@ message GetUserByOidcIdResponse {
     string oidcId = 2;
     string studentId = 3;
 }
-
-message Empty {}
