@@ -5,7 +5,13 @@ package user;
 option go_package = "github.com/esc-chula/intania-vote/libs/grpc-go/user";
 
 service UserService {
+    rpc CreateUser(CreateUserRequest) returns (Empty) {};
     rpc GetUserByOidcId(GetUserByOidcIdRequest) returns (GetUserByOidcIdResponse) {};
+}
+
+message CreateUserRequest {
+    string oidcId = 1;
+    string studentId = 2;
 }
 
 message GetUserByOidcIdRequest {
@@ -16,3 +22,5 @@ message GetUserByOidcIdResponse {
     string oidcId = 2;
     string studentId = 3;
 }
+
+message Empty {}
