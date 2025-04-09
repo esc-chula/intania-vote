@@ -73,6 +73,42 @@ func (x *CreateUserRequest) GetStudentId() string {
 	return ""
 }
 
+type CreateUserResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateUserResponse) Reset() {
+	*x = CreateUserResponse{}
+	mi := &file_user_user_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateUserResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateUserResponse) ProtoMessage() {}
+
+func (x *CreateUserResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_user_user_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateUserResponse.ProtoReflect.Descriptor instead.
+func (*CreateUserResponse) Descriptor() ([]byte, []int) {
+	return file_user_user_proto_rawDescGZIP(), []int{1}
+}
+
 type GetUserByOidcIdRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	OidcId        string                 `protobuf:"bytes,1,opt,name=oidcId,proto3" json:"oidcId,omitempty"`
@@ -82,7 +118,7 @@ type GetUserByOidcIdRequest struct {
 
 func (x *GetUserByOidcIdRequest) Reset() {
 	*x = GetUserByOidcIdRequest{}
-	mi := &file_user_user_proto_msgTypes[1]
+	mi := &file_user_user_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -94,7 +130,7 @@ func (x *GetUserByOidcIdRequest) String() string {
 func (*GetUserByOidcIdRequest) ProtoMessage() {}
 
 func (x *GetUserByOidcIdRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_user_proto_msgTypes[1]
+	mi := &file_user_user_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -107,7 +143,7 @@ func (x *GetUserByOidcIdRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserByOidcIdRequest.ProtoReflect.Descriptor instead.
 func (*GetUserByOidcIdRequest) Descriptor() ([]byte, []int) {
-	return file_user_user_proto_rawDescGZIP(), []int{1}
+	return file_user_user_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *GetUserByOidcIdRequest) GetOidcId() string {
@@ -128,7 +164,7 @@ type GetUserByOidcIdResponse struct {
 
 func (x *GetUserByOidcIdResponse) Reset() {
 	*x = GetUserByOidcIdResponse{}
-	mi := &file_user_user_proto_msgTypes[2]
+	mi := &file_user_user_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -140,7 +176,7 @@ func (x *GetUserByOidcIdResponse) String() string {
 func (*GetUserByOidcIdResponse) ProtoMessage() {}
 
 func (x *GetUserByOidcIdResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_user_user_proto_msgTypes[2]
+	mi := &file_user_user_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -153,7 +189,7 @@ func (x *GetUserByOidcIdResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserByOidcIdResponse.ProtoReflect.Descriptor instead.
 func (*GetUserByOidcIdResponse) Descriptor() ([]byte, []int) {
-	return file_user_user_proto_rawDescGZIP(), []int{2}
+	return file_user_user_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *GetUserByOidcIdResponse) GetId() string {
@@ -185,7 +221,7 @@ type Empty struct {
 
 func (x *Empty) Reset() {
 	*x = Empty{}
-	mi := &file_user_user_proto_msgTypes[3]
+	mi := &file_user_user_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -197,7 +233,7 @@ func (x *Empty) String() string {
 func (*Empty) ProtoMessage() {}
 
 func (x *Empty) ProtoReflect() protoreflect.Message {
-	mi := &file_user_user_proto_msgTypes[3]
+	mi := &file_user_user_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -210,7 +246,7 @@ func (x *Empty) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Empty.ProtoReflect.Descriptor instead.
 func (*Empty) Descriptor() ([]byte, []int) {
-	return file_user_user_proto_rawDescGZIP(), []int{3}
+	return file_user_user_proto_rawDescGZIP(), []int{4}
 }
 
 var File_user_user_proto protoreflect.FileDescriptor
@@ -220,17 +256,18 @@ const file_user_user_proto_rawDesc = "" +
 	"\x0fuser/user.proto\x12\x04user\"I\n" +
 	"\x11CreateUserRequest\x12\x16\n" +
 	"\x06oidcId\x18\x01 \x01(\tR\x06oidcId\x12\x1c\n" +
-	"\tstudentId\x18\x02 \x01(\tR\tstudentId\"0\n" +
+	"\tstudentId\x18\x02 \x01(\tR\tstudentId\"\x14\n" +
+	"\x12CreateUserResponse\"0\n" +
 	"\x16GetUserByOidcIdRequest\x12\x16\n" +
 	"\x06oidcId\x18\x01 \x01(\tR\x06oidcId\"_\n" +
 	"\x17GetUserByOidcIdResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06oidcId\x18\x02 \x01(\tR\x06oidcId\x12\x1c\n" +
 	"\tstudentId\x18\x03 \x01(\tR\tstudentId\"\a\n" +
-	"\x05Empty2\x95\x01\n" +
-	"\vUserService\x124\n" +
+	"\x05Empty2\xa2\x01\n" +
+	"\vUserService\x12A\n" +
 	"\n" +
-	"CreateUser\x12\x17.user.CreateUserRequest\x1a\v.user.Empty\"\x00\x12P\n" +
+	"CreateUser\x12\x17.user.CreateUserRequest\x1a\x18.user.CreateUserResponse\"\x00\x12P\n" +
 	"\x0fGetUserByOidcId\x12\x1c.user.GetUserByOidcIdRequest\x1a\x1d.user.GetUserByOidcIdResponse\"\x00B5Z3github.com/esc-chula/intania-vote/libs/grpc-go/userb\x06proto3"
 
 var (
@@ -245,18 +282,19 @@ func file_user_user_proto_rawDescGZIP() []byte {
 	return file_user_user_proto_rawDescData
 }
 
-var file_user_user_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_user_user_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_user_user_proto_goTypes = []any{
 	(*CreateUserRequest)(nil),       // 0: user.CreateUserRequest
-	(*GetUserByOidcIdRequest)(nil),  // 1: user.GetUserByOidcIdRequest
-	(*GetUserByOidcIdResponse)(nil), // 2: user.GetUserByOidcIdResponse
-	(*Empty)(nil),                   // 3: user.Empty
+	(*CreateUserResponse)(nil),      // 1: user.CreateUserResponse
+	(*GetUserByOidcIdRequest)(nil),  // 2: user.GetUserByOidcIdRequest
+	(*GetUserByOidcIdResponse)(nil), // 3: user.GetUserByOidcIdResponse
+	(*Empty)(nil),                   // 4: user.Empty
 }
 var file_user_user_proto_depIdxs = []int32{
 	0, // 0: user.UserService.CreateUser:input_type -> user.CreateUserRequest
-	1, // 1: user.UserService.GetUserByOidcId:input_type -> user.GetUserByOidcIdRequest
-	3, // 2: user.UserService.CreateUser:output_type -> user.Empty
-	2, // 3: user.UserService.GetUserByOidcId:output_type -> user.GetUserByOidcIdResponse
+	2, // 1: user.UserService.GetUserByOidcId:input_type -> user.GetUserByOidcIdRequest
+	1, // 2: user.UserService.CreateUser:output_type -> user.CreateUserResponse
+	3, // 3: user.UserService.GetUserByOidcId:output_type -> user.GetUserByOidcIdResponse
 	2, // [2:4] is the sub-list for method output_type
 	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
@@ -275,7 +313,7 @@ func file_user_user_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_user_user_proto_rawDesc), len(file_user_user_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

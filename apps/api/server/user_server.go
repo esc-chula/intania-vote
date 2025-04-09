@@ -6,7 +6,6 @@ import (
 
 	"github.com/esc-chula/intania-vote/apps/api/service"
 	user "github.com/esc-chula/intania-vote/libs/grpc-go/user"
-	"github.com/google/uuid"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -28,7 +27,7 @@ func RegisterUserServiceServer(s grpc.ServiceRegistrar, server user.UserServiceS
 	user.RegisterUserServiceServer(s, server)
 }
 
-func (s userServerImpl) CreateUser(ctx context.Context, req *user.CreateUserRequest) (*user.Empty, error) {
+func (s userServerImpl) CreateUser(ctx context.Context, req *user.CreateUserRequest) (*user.CreateUserResponse, error) {
 	oidcId := req.GetOidcId()
 	if oidcId == "" {
 		return nil, status.Error(codes.FailedPrecondition, "missing oidcId")
@@ -38,25 +37,27 @@ func (s userServerImpl) CreateUser(ctx context.Context, req *user.CreateUserRequ
 		return nil, status.Error(codes.FailedPrecondition, "missing studentId")
 	}
 
-	existedUser, err := s.svc.GetUserByOidcId(ctx, oidcId)
+	existedUser, err := s.svc.GetUserByOidcIdOrStudentId(ctx, oidcId, studentId)
 	if err != nil {
 		if err != gorm.ErrRecordNotFound {
 			return nil, status.Error(codes.Internal, "failed to get user by oidcId")
 		}
-	} else if existedUser != nil {
-		return nil, status.Error(codes.AlreadyExists, "user already exists")
 	}
 
-	oidcIdUUID, err := uuid.Parse(oidcId)
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "invalid oidcId")
+	if existedUser != nil {
+		if existedUser.OidcId.String() != oidcId {
+			if err := s.svc.UpdateUserById(ctx, existedUser.Id, oidcId, studentId); err != nil {
+				return nil, status.Error(codes.Internal, "failed to update user")
+			}
+		}
+		return &user.CreateUserResponse{}, nil
 	}
 
-	if err := s.svc.CreateUser(ctx, oidcIdUUID, studentId); err != nil {
+	if err := s.svc.CreateUser(ctx, oidcId, studentId); err != nil {
 		return nil, status.Error(codes.Internal, "failed to create user")
 	}
 
-	return &user.Empty{}, nil
+	return &user.CreateUserResponse{}, nil
 }
 
 func (s userServerImpl) GetUserByOidcId(ctx context.Context, req *user.GetUserByOidcIdRequest) (*user.GetUserByOidcIdResponse, error) {
@@ -65,7 +66,7 @@ func (s userServerImpl) GetUserByOidcId(ctx context.Context, req *user.GetUserBy
 		return nil, status.Error(codes.FailedPrecondition, "missing oidcId")
 	}
 
-	foundedUser, err := s.svc.GetUserByOidcId(ctx, oidcId)
+	foundedUser, err := s.svc.GetUserByOidcIdOrStudentId(ctx, oidcId, "")
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to get user by oidcId")
 	}

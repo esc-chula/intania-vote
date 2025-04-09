@@ -14,6 +14,7 @@ var (
 	ErrUnauthorized       AppError = errors.New("unauthorized")
 	ErrInvalidAccountType AppError = errors.New("invalid account type")
 	ErrResourceNotFound   AppError = errors.New("resource not found")
+	ErrInvalidField       AppError = errors.New("invalid field")
 )
 
 var ErrGrpcInternal = status.Error(codes.Internal, "internal server error")

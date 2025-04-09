@@ -1,4 +1,4 @@
-import { getSession } from "~/auth";
+import { getSession } from "~/lib/auth";
 import { notoSansThai } from "~/lib/fonts";
 import AuthProviders from "~/providers/auth";
 import "~/styles/global.css";

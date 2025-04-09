@@ -1,6 +1,8 @@
 import { AuthOptions, getServerSession } from "next-auth";
 import type { Profile } from "next-auth";
 
+import { login } from "~/server/user";
+
 // Profile and JWT Payload fields is depend on the scope that you request
 interface IntaniaProfile extends Profile {
   student_id: string; // In this case, we requested student_id scope
@@ -22,7 +24,6 @@ const authOptions: AuthOptions = {
       clientSecret: process.env.INTANIA_CLIENT_SECRET,
 
       profile(profile) {
-        console.log("profile", profile);
         return {
           id: profile.sub,
           studentId: profile.student_id,
@@ -31,6 +32,21 @@ const authOptions: AuthOptions = {
     },
   ],
   callbacks: {
+    async signIn({ profile }) {
+      if (!profile || !profile.sub || !profile.student_id) {
+        console.error("Invalid profile data:", profile);
+        return false;
+      }
+
+      await login({
+        oidcId: profile.sub,
+        studentId: profile.student_id,
+      }).catch((error) => {
+        console.error("Error in login action:", error);
+      });
+
+      return true;
+    },
     async session({ session, token }) {
       session.user.studentId = token.studentId as string;
       return session;

@@ -26,6 +26,9 @@ export interface CreateUserRequest {
   studentId: string;
 }
 
+export interface CreateUserResponse {
+}
+
 export interface GetUserByOidcIdRequest {
   oidcId: string;
 }
@@ -111,6 +114,49 @@ export const CreateUserRequest: MessageFns<CreateUserRequest> = {
     const message = createBaseCreateUserRequest();
     message.oidcId = object.oidcId ?? "";
     message.studentId = object.studentId ?? "";
+    return message;
+  },
+};
+
+function createBaseCreateUserResponse(): CreateUserResponse {
+  return {};
+}
+
+export const CreateUserResponse: MessageFns<CreateUserResponse> = {
+  encode(_: CreateUserResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): CreateUserResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseCreateUserResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(_: any): CreateUserResponse {
+    return {};
+  },
+
+  toJSON(_: CreateUserResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<CreateUserResponse>, I>>(base?: I): CreateUserResponse {
+    return CreateUserResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<CreateUserResponse>, I>>(_: I): CreateUserResponse {
+    const message = createBaseCreateUserResponse();
     return message;
   },
 };
@@ -316,8 +362,8 @@ export const UserServiceService = {
     responseStream: false,
     requestSerialize: (value: CreateUserRequest) => Buffer.from(CreateUserRequest.encode(value).finish()),
     requestDeserialize: (value: Buffer) => CreateUserRequest.decode(value),
-    responseSerialize: (value: Empty) => Buffer.from(Empty.encode(value).finish()),
-    responseDeserialize: (value: Buffer) => Empty.decode(value),
+    responseSerialize: (value: CreateUserResponse) => Buffer.from(CreateUserResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer) => CreateUserResponse.decode(value),
   },
   getUserByOidcId: {
     path: "/user.UserService/GetUserByOidcId",
@@ -331,25 +377,25 @@ export const UserServiceService = {
 } as const;
 
 export interface UserServiceServer extends UntypedServiceImplementation {
-  createUser: handleUnaryCall<CreateUserRequest, Empty>;
+  createUser: handleUnaryCall<CreateUserRequest, CreateUserResponse>;
   getUserByOidcId: handleUnaryCall<GetUserByOidcIdRequest, GetUserByOidcIdResponse>;
 }
 
 export interface UserServiceClient extends Client {
   createUser(
     request: CreateUserRequest,
-    callback: (error: ServiceError | null, response: Empty) => void,
+    callback: (error: ServiceError | null, response: CreateUserResponse) => void,
   ): ClientUnaryCall;
   createUser(
     request: CreateUserRequest,
     metadata: Metadata,
-    callback: (error: ServiceError | null, response: Empty) => void,
+    callback: (error: ServiceError | null, response: CreateUserResponse) => void,
   ): ClientUnaryCall;
   createUser(
     request: CreateUserRequest,
     metadata: Metadata,
     options: Partial<CallOptions>,
-    callback: (error: ServiceError | null, response: Empty) => void,
+    callback: (error: ServiceError | null, response: CreateUserResponse) => void,
   ): ClientUnaryCall;
   getUserByOidcId(
     request: GetUserByOidcIdRequest,
