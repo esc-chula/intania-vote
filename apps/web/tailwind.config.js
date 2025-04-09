@@ -1,5 +1,6 @@
 const { createGlobPatternsForDependencies } = require("@nx/react/tailwind");
 const { join } = require("path");
+const { fontFamily } = require("tailwindcss/defaultTheme");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -21,39 +22,76 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["var(--font-noto-sans-thai)", ...fontFamily.sans],
+        mono: ["var(--font-mono)", ...fontFamily.mono],
+      },
       colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        // ESC
+        carmine: {
+          50: "color-mix(in srgb, var(--esc-carmine-50) calc(<alpha-value> * 100%), transparent)",
+          100: "color-mix(in srgb, var(--esc-carmine-100) calc(<alpha-value> * 100%), transparent)",
+          200: "color-mix(in srgb, var(--esc-carmine-200) calc(<alpha-value> * 100%), transparent)",
+          300: "color-mix(in srgb, var(--esc-carmine-300) calc(<alpha-value> * 100%), transparent)",
+          400: "color-mix(in srgb, var(--esc-carmine-400) calc(<alpha-value> * 100%), transparent)",
+          500: "color-mix(in srgb, var(--esc-carmine-500) calc(<alpha-value> * 100%), transparent)",
+          600: "color-mix(in srgb, var(--esc-carmine-600) calc(<alpha-value> * 100%), transparent)",
+          700: "color-mix(in srgb, var(--esc-carmine-700) calc(<alpha-value> * 100%), transparent)",
+          800: "color-mix(in srgb, var(--esc-carmine-800) calc(<alpha-value> * 100%), transparent)",
+          900: "color-mix(in srgb, var(--esc-carmine-900) calc(<alpha-value> * 100%), transparent)",
+        },
+
+        // Shadcn
+        border:
+          "color-mix(in srgb, var(--border) calc(<alpha-value> * 100%), transparent)",
+        input:
+          "color-mix(in srgb, var(--input) calc(<alpha-value> * 100%), transparent)",
+        ring: "color-mix(in srgb, var(--ring) calc(<alpha-value> * 100%), transparent)",
+        background:
+          "color-mix(in srgb, var(--background) calc(<alpha-value> * 100%), transparent)",
+        foreground:
+          "color-mix(in srgb, var(--foreground) calc(<alpha-value> * 100%), transparent)",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT:
+            "color-mix(in srgb, var(--primary) calc(<alpha-value> * 100%), transparent)",
+          foreground:
+            "color-mix(in srgb, var(--primary-foreground) calc(<alpha-value> * 100%), transparent)",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT:
+            "color-mix(in srgb, var(--secondary) calc(<alpha-value> * 100%), transparent)",
+          foreground:
+            "color-mix(in srgb, var(--secondary-foreground) calc(<alpha-value> * 100%), transparent)",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT:
+            "color-mix(in srgb, var(--destructive) calc(<alpha-value> * 100%), transparent)",
+          foreground:
+            "color-mix(in srgb, var(--destructive-foreground) calc(<alpha-value> * 100%), transparent)",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT:
+            "color-mix(in srgb, var(--muted) calc(<alpha-value> * 100%), transparent)",
+          foreground:
+            "color-mix(in srgb, var(--muted-foreground) calc(<alpha-value> * 100%), transparent)",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT:
+            "color-mix(in srgb, var(--accent) calc(<alpha-value> * 100%), transparent)",
+          foreground:
+            "color-mix(in srgb, var(--accent-foreground) calc(<alpha-value> * 100%), transparent)",
         },
         popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
+          DEFAULT:
+            "color-mix(in srgb, var(--popover) calc(<alpha-value> * 100%), transparent)",
+          foreground:
+            "color-mix(in srgb, var(--popover-foreground) calc(<alpha-value> * 100%), transparent)",
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          DEFAULT:
+            "color-mix(in srgb, var(--card) calc(<alpha-value> * 100%), transparent)",
+          foreground:
+            "color-mix(in srgb, var(--card-foreground) calc(<alpha-value> * 100%), transparent)",
         },
       },
       borderRadius: {

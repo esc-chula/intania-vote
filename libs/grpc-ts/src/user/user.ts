@@ -21,6 +21,14 @@ import {
 
 export const protobufPackage = "user";
 
+export interface CreateUserRequest {
+  oidcId: string;
+  studentId: string;
+}
+
+export interface CreateUserResponse {
+}
+
 export interface GetUserByOidcIdRequest {
   oidcId: string;
 }
@@ -30,6 +38,128 @@ export interface GetUserByOidcIdResponse {
   oidcId: string;
   studentId: string;
 }
+
+export interface Empty {
+}
+
+function createBaseCreateUserRequest(): CreateUserRequest {
+  return { oidcId: "", studentId: "" };
+}
+
+export const CreateUserRequest: MessageFns<CreateUserRequest> = {
+  encode(message: CreateUserRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.oidcId !== "") {
+      writer.uint32(10).string(message.oidcId);
+    }
+    if (message.studentId !== "") {
+      writer.uint32(18).string(message.studentId);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): CreateUserRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseCreateUserRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.oidcId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.studentId = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): CreateUserRequest {
+    return {
+      oidcId: isSet(object.oidcId) ? globalThis.String(object.oidcId) : "",
+      studentId: isSet(object.studentId) ? globalThis.String(object.studentId) : "",
+    };
+  },
+
+  toJSON(message: CreateUserRequest): unknown {
+    const obj: any = {};
+    if (message.oidcId !== "") {
+      obj.oidcId = message.oidcId;
+    }
+    if (message.studentId !== "") {
+      obj.studentId = message.studentId;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<CreateUserRequest>, I>>(base?: I): CreateUserRequest {
+    return CreateUserRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<CreateUserRequest>, I>>(object: I): CreateUserRequest {
+    const message = createBaseCreateUserRequest();
+    message.oidcId = object.oidcId ?? "";
+    message.studentId = object.studentId ?? "";
+    return message;
+  },
+};
+
+function createBaseCreateUserResponse(): CreateUserResponse {
+  return {};
+}
+
+export const CreateUserResponse: MessageFns<CreateUserResponse> = {
+  encode(_: CreateUserResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): CreateUserResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseCreateUserResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(_: any): CreateUserResponse {
+    return {};
+  },
+
+  toJSON(_: CreateUserResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<CreateUserResponse>, I>>(base?: I): CreateUserResponse {
+    return CreateUserResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<CreateUserResponse>, I>>(_: I): CreateUserResponse {
+    const message = createBaseCreateUserResponse();
+    return message;
+  },
+};
 
 function createBaseGetUserByOidcIdRequest(): GetUserByOidcIdRequest {
   return { oidcId: "" };
@@ -181,8 +311,60 @@ export const GetUserByOidcIdResponse: MessageFns<GetUserByOidcIdResponse> = {
   },
 };
 
+function createBaseEmpty(): Empty {
+  return {};
+}
+
+export const Empty: MessageFns<Empty> = {
+  encode(_: Empty, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): Empty {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseEmpty();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(_: any): Empty {
+    return {};
+  },
+
+  toJSON(_: Empty): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<Empty>, I>>(base?: I): Empty {
+    return Empty.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<Empty>, I>>(_: I): Empty {
+    const message = createBaseEmpty();
+    return message;
+  },
+};
+
 export type UserServiceService = typeof UserServiceService;
 export const UserServiceService = {
+  createUser: {
+    path: "/user.UserService/CreateUser",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: CreateUserRequest) => Buffer.from(CreateUserRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer) => CreateUserRequest.decode(value),
+    responseSerialize: (value: CreateUserResponse) => Buffer.from(CreateUserResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer) => CreateUserResponse.decode(value),
+  },
   getUserByOidcId: {
     path: "/user.UserService/GetUserByOidcId",
     requestStream: false,
@@ -195,10 +377,26 @@ export const UserServiceService = {
 } as const;
 
 export interface UserServiceServer extends UntypedServiceImplementation {
+  createUser: handleUnaryCall<CreateUserRequest, CreateUserResponse>;
   getUserByOidcId: handleUnaryCall<GetUserByOidcIdRequest, GetUserByOidcIdResponse>;
 }
 
 export interface UserServiceClient extends Client {
+  createUser(
+    request: CreateUserRequest,
+    callback: (error: ServiceError | null, response: CreateUserResponse) => void,
+  ): ClientUnaryCall;
+  createUser(
+    request: CreateUserRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: CreateUserResponse) => void,
+  ): ClientUnaryCall;
+  createUser(
+    request: CreateUserRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: CreateUserResponse) => void,
+  ): ClientUnaryCall;
   getUserByOidcId(
     request: GetUserByOidcIdRequest,
     callback: (error: ServiceError | null, response: GetUserByOidcIdResponse) => void,

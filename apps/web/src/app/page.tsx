@@ -1,9 +1,23 @@
+"use client";
+
+import { signIn } from "next-auth/react";
+import Link from "next/link";
+
 import { Button } from "@intania-vote/shadcn";
 
-export default function Home() {
+const Page: React.FC = () => {
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center">
-      <Button>Click me</Button>
-    </div>
+    <>
+      <Button
+        onClick={() => {
+          signIn("intania");
+        }}
+      >
+        Login with Intania
+      </Button>
+      <Link href="/vote/test">Test Election</Link>
+    </>
   );
-}
+};
+
+export default Page;

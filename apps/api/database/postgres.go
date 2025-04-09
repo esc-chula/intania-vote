@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/esc-chula/intania-vote/apps/api/pkg/config"
+	"github.com/esc-chula/intania-vote/apps/api/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
