@@ -7,6 +7,7 @@ import (
 
 	"github.com/esc-chula/intania-vote/apps/api/config"
 	"github.com/esc-chula/intania-vote/apps/api/server"
+	ballot "github.com/esc-chula/intania-vote/libs/grpc-go/ballot"
 	user "github.com/esc-chula/intania-vote/libs/grpc-go/user"
 	vote "github.com/esc-chula/intania-vote/libs/grpc-go/vote"
 	"go.uber.org/zap"
@@ -15,17 +16,19 @@ import (
 )
 
 type App struct {
-	userServer user.UserServiceServer
-	voteServer vote.VoteServiceServer
+	userServer   user.UserServiceServer
+	voteServer   vote.VoteServiceServer
+	ballotServer ballot.BallotServiceServer
 
 	cfg *config.Config
 }
 
-func NewApp(userServer user.UserServiceServer, voteServer vote.VoteServiceServer, cfg *config.Config) App {
+func NewApp(userServer user.UserServiceServer, voteServer vote.VoteServiceServer, ballotServer ballot.BallotServiceServer, cfg *config.Config) App {
 	return App{
-		userServer: userServer,
-		voteServer: voteServer,
-		cfg:        cfg,
+		userServer:   userServer,
+		voteServer:   voteServer,
+		ballotServer: ballotServer,
+		cfg:          cfg,
 	}
 }
 
@@ -34,6 +37,7 @@ func (a *App) Start() {
 
 	server.RegisterUserServiceServer(s, a.userServer)
 	server.RegisterVoteServiceServer(s, a.voteServer)
+	server.RegisterBallotServiceServer(s, a.ballotServer)
 	server.RegisterHealthCheckServer(s)
 
 	reflection.Register(s)

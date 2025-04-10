@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package ballot;
+
+option go_package = "github.com/esc-chula/intania-vote/libs/grpc-go/ballot";
+
+service BallotService {
+    rpc CreateBallotProof(CreateBallotProofRequest) returns (CreateBallotProofResponse) {}
+    rpc CreateBallot(CreateBallotRequest) returns (CreateBallotResponse) {}
+    rpc VerifyBallot(VerifyBallotRequest) returns (VerifyBallotResponse) {}
+}
+
+message CreateBallotProofRequest {
+    string oidcId = 1;
+    uint32 choiceId = 2;
+}
+
+message CreateBallotProofResponse {
+    Proof proof = 1;
+}
+
+message CreateBallotRequest {
+    string oidcId = 1;
+    string voteSlug = 2;
+    Proof proof = 3;
+}
+
+message CreateBallotResponse {
+    string ballotKey = 1; // voteId:receipt:encryptedChoiceId
+}
+
+message VerifyBallotRequest {
+    string oidcId = 1;
+    string ballotKey = 2;
+}
+
+message VerifyBallotResponse {
+    bool isValid = 1;
+    uint32 choiceId = 2;
+    string timestamp = 3;
+}
+
+message Proof {
+    string commitment = 1;
+    string blindingFactor = 2;
+    string challenge = 3;
+    string response = 4;
+    string nullifier = 5;
+    string receipt = 6;
+}

@@ -8,12 +8,12 @@ type Ballot struct {
 	VoteId uint `gorm:"not null"`
 	Vote   Vote `gorm:"foreignKey:VoteId"`
 
-	Challenge      string `gorm:"not null"`
-	Commitment     string `gorm:"not null"`
-	BlindingFactor string `gorm:"not null"`
-	Response       string `gorm:"not null"`
-	Encrypted      string `gorm:"not null"`
-	Nullifier      string `gorm:"uniqueIndex;not null"`
+	Challenge       string `gorm:"not null"`
+	Commitment      string `gorm:"not null"`
+	BlindingFactor  string `gorm:"not null"`
+	Response        string `gorm:"not null"`
+	EncryptedBallot string `gorm:"not null"`
+	Nullifier       string `gorm:"uniqueIndex;not null"`
 }
 
 func (Ballot) TableName() string {

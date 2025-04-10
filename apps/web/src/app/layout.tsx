@@ -3,7 +3,7 @@ import { notoSansThai } from "~/lib/fonts";
 import AuthProviders from "~/providers/auth";
 import "~/styles/global.css";
 
-import { cn } from "@intania-vote/shadcn";
+import { cn, Toaster } from "@intania-vote/shadcn";
 
 export const metadata = {
   title: "Intania Vote",
@@ -15,7 +15,10 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="th" className={cn(notoSansThai.variable)}>
       <body className="flex min-h-dvh flex-col">
-        <AuthProviders session={session}>{children}</AuthProviders>
+        <AuthProviders session={session}>
+          {children}
+          <Toaster />
+        </AuthProviders>
       </body>
     </html>
   );

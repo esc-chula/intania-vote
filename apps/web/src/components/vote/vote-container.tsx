@@ -2,13 +2,16 @@
 
 import { useState } from "react";
 
+import { useRouter } from "next/navigation";
+
+import { LoaderCircle } from "lucide-react";
 import TabBarWrapper from "~/components/common/tab-bar-wrapper";
 import VoteBallotCard from "~/components/vote/vote-ballot-card";
+import { createBallot, createBallotProof } from "~/server/ballot";
 
-import { Button } from "@intania-vote/shadcn";
+import { Button, useToast } from "@intania-vote/shadcn";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -21,6 +24,7 @@ import {
 interface VoteContainerProps {
   name: string;
   description: string;
+  slug: string;
   choices: {
     number?: string;
     name: string;
@@ -33,14 +37,85 @@ interface VoteContainerProps {
 const VoteContainer: React.FC<VoteContainerProps> = ({
   name,
   description,
+  slug,
   choices,
 }) => {
+  const router = useRouter();
+  const { toast } = useToast();
+
   const [selectedChoice, setSelectedChoice] = useState<number>(0);
 
   const selectedChoiceData = choices[selectedChoice - 1];
   const selectedChoiceDisplay = selectedChoiceData?.number
     ? `เบอร์ ${selectedChoiceData?.number}`
     : selectedChoiceData?.name;
+
+  const [isOpenConfirmationAlert, setIsOpenConfirmationAlert] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleVote = async () => {
+    setLoading(true);
+
+    const resCreateBallotProof = await createBallotProof({
+      choiceId: selectedChoice,
+    });
+
+    if (
+      resCreateBallotProof?.data?.failure ||
+      !resCreateBallotProof?.data?.proof
+    ) {
+      toast({
+        title: "เกิดข้อผิดพลาด",
+        description: "ไม่สามารถสร้างบัตรเลือกตั้งได้",
+        variant: "destructive",
+      });
+      setLoading(false);
+
+      console.error(
+        "Error creating ballot proof",
+        resCreateBallotProof?.data?.failure || "Unknown error",
+      );
+      return;
+    }
+
+    const proofData = resCreateBallotProof.data.proof;
+
+    if (!proofData.proof) {
+      toast({
+        title: "เกิดข้อผิดพลาด",
+        description: "ไม่สามารถสร้างบัตรเลือกตั้งได้",
+        variant: "destructive",
+      });
+      setLoading(false);
+
+      console.error("Proof is undefined", proofData);
+      return;
+    }
+
+    const resCreateBallot = await createBallot({
+      voteSlug: slug,
+      proof: proofData.proof,
+    });
+
+    if (resCreateBallot?.data?.failure || !resCreateBallot?.data?.ballot) {
+      toast({
+        title: "เกิดข้อผิดพลาด",
+        description: "ไม่สามารถสร้างบัตรเลือกตั้งได้",
+        variant: "destructive",
+      });
+      setLoading(false);
+
+      console.error(
+        "Error creating ballot",
+        resCreateBallot?.data?.failure || "Unknown error",
+      );
+      return;
+    }
+
+    const ballotKey = resCreateBallot.data.ballot.ballotKey;
+
+    router.push(`/vote/${slug}/success?ballot_key=${ballotKey}`);
+  };
 
   return (
     <>
@@ -75,7 +150,10 @@ const VoteContainer: React.FC<VoteContainerProps> = ({
       </div>
       <TabBarWrapper>
         <div className="flex h-full w-full flex-col items-center justify-center px-2 py-2">
-          <AlertDialog>
+          <AlertDialog
+            open={isOpenConfirmationAlert}
+            onOpenChange={setIsOpenConfirmationAlert}
+          >
             <AlertDialogTrigger asChild>
               <Button
                 variant={selectedChoice ? "default" : "secondary"}
@@ -105,7 +183,13 @@ const VoteContainer: React.FC<VoteContainerProps> = ({
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>ยกเลิก</AlertDialogCancel>
-                <AlertDialogAction>ยืนยัน</AlertDialogAction>
+                <Button onClick={handleVote} disabled={loading}>
+                  {loading ? (
+                    <LoaderCircle className="animate-spin" />
+                  ) : (
+                    "ยืนยัน"
+                  )}
+                </Button>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

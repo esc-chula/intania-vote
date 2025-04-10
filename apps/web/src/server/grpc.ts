@@ -1,5 +1,6 @@
 import { type ServiceError, credentials } from "@grpc/grpc-js";
 import {
+  BallotServiceClient,
   type CreateUserRequest,
   type CreateUserResponse,
   type CreateVoteRequest,
@@ -14,8 +15,12 @@ import {
   type GetVotesByUserEligibilityResponse,
   type GetVotesRequest,
   type GetVotesResponse,
+  type CreateBallotProofRequest,
+  type CreateBallotProofResponse,
   UserServiceClient,
   VoteServiceClient,
+  CreateBallotRequest,
+  CreateBallotResponse,
 } from "@intania-vote/grpc-ts";
 
 const GRPC_ADDRESS = process.env.GRPC_ADDRESS || "localhost:4000";
@@ -91,6 +96,25 @@ function GetVotesByUserEligibility(
   });
 }
 
+const ballotClient = new BallotServiceClient(
+  GRPC_ADDRESS,
+  credentials.createInsecure(),
+);
+
+function CreateBallotProof(
+  req: CreateBallotProofRequest,
+): Promise<CreateBallotProofResponse> {
+  return new Promise((resolve, reject) => {
+    ballotClient.createBallotProof(req, r(resolve, reject));
+  });
+}
+
+function CreateBallot(req: CreateBallotRequest): Promise<CreateBallotResponse> {
+  return new Promise((resolve, reject) => {
+    ballotClient.createBallot(req, r(resolve, reject));
+  });
+}
+
 export const grpc = {
   user: {
     CreateUser,
@@ -102,5 +126,9 @@ export const grpc = {
     GetVoteBySlug,
     GetVotes,
     GetVotesByUserEligibility,
+  },
+  ballot: {
+    CreateBallotProof,
+    CreateBallot,
   },
 };
