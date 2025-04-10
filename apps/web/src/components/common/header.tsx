@@ -1,6 +1,17 @@
-const Header: React.FC = () => {
+import { cn } from "@intania-vote/shadcn";
+
+interface HeaderProps {
+  className?: string;
+}
+
+const Header: React.FC<HeaderProps> = ({ className }) => {
   return (
-    <header className="fixed left-0 right-0 top-0 flex items-center justify-between border-b border-neutral-200 bg-neutral-50 p-4">
+    <header
+      className={cn(
+        "fixed left-0 right-0 top-0 z-50 flex items-center justify-between border-b border-neutral-200 bg-neutral-50 px-4 py-6",
+        className,
+      )}
+    >
       <span className="text-2xl font-bold text-neutral-800 sm:text-3xl">
         Intania{" "}
         <span className="decoration-primary underline decoration-[2.5px]">

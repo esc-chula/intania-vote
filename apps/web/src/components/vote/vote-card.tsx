@@ -1,178 +1,202 @@
-import Markdown from "react-markdown";
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 
 import Image from "next/image";
+import Link from "next/link";
 
-import { Info } from "lucide-react";
-import rehypeRaw from "rehype-raw";
+import { User, Vote } from "lucide-react";
+import moment from "moment";
 
-import { Button, cn } from "@intania-vote/shadcn";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@intania-vote/shadcn";
+import { cn, Skeleton } from "@intania-vote/shadcn";
 
 interface VoteCardProps {
-  isActive: boolean;
-  onClick?: () => void;
-  onVote?: () => void;
-  number?: string;
   name: string;
-  description: string;
-  info?: string;
+  slug: string;
   image?: string;
+  owner: string;
+  startAt: Date;
+  endAt: Date;
+  choices: {
+    name: string;
+  }[];
 }
 
 const VoteCard: React.FC<VoteCardProps> = ({
-  isActive,
-  onClick,
-  onVote,
-  number,
   name,
-  description,
-  info,
-  image,
+  slug,
+  owner,
+  startAt,
+  endAt,
+  choices,
 }) => {
-  return (
-    <div
-      className={cn(
-        "relative flex flex-col items-center justify-center gap-4 overflow-hidden rounded-3xl duration-100",
-        isActive
-          ? "bg-primary border-8 border-black/15"
-          : "border-2 border-neutral-300 bg-neutral-50",
-      )}
-    >
-      {image ? (
-        <div className="relative aspect-square w-28 select-none overflow-hidden rounded-full">
-          <Image src={image} alt={name} fill className="object-cover" />
-        </div>
-      ) : null}
+  const topContainerRef = useRef<HTMLDivElement>(null);
+  const [initialTopContainerHeight, setInitialTopContainerHeight] = useState<
+    number | null
+  >(null);
 
-      <div
+  useEffect(() => {
+    if (topContainerRef.current) {
+      setInitialTopContainerHeight(topContainerRef.current.clientHeight - 32);
+    }
+  }, []);
+
+  const isVoteActive = () => {
+    const now = new Date();
+    return startAt <= now && endAt >= now;
+  };
+
+  const calculateTime = (startAt: Date, endAt: Date): string | null => {
+    const now = new Date();
+
+    if (now > startAt && now < endAt) {
+      const timeDiff = endAt.getTime() - now.getTime();
+      const hours = Math.floor(
+        (timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+      );
+      const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+      if (timeDiff > 0) {
+        if (timeDiff < 24 * 60 * 60 * 1000) {
+          return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+            2,
+            "0",
+          )}:${String(seconds).padStart(2, "0")}`;
+        } else {
+          const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+          return `เหลือเวลาอีก ${days} วัน`;
+        }
+      }
+    } else if (now < startAt) {
+      const timeDiff = startAt.getTime() - now.getTime();
+      const hours = Math.floor(
+        (timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+      );
+      const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+      if (timeDiff > 0) {
+        if (timeDiff < 24 * 60 * 60 * 1000) {
+          return `เริ่มในอีก ${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+        } else {
+          const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+          if (days === 1) {
+            return "เริ่มพรุ่งนี้";
+          } else if (days > 1) {
+            return `เริ่มในอีก ${days} วัน`;
+          }
+        }
+      }
+    } else if (now > endAt) {
+      return moment(endAt).format("DD/MM/YYYY");
+    }
+
+    return null;
+  };
+
+  const [time, setTime] = useState<string | null>(null);
+
+  useEffect(() => {
+    setTime(calculateTime(startAt, endAt));
+
+    const interval = setInterval(() => {
+      const calculatedTime = calculateTime(startAt, endAt);
+      setTime(calculatedTime);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const isDislaying = initialTopContainerHeight && time ? true : false;
+
+  const ownerImageSrc = (): string | null => {
+    switch (owner) {
+      case "User":
+        return null;
+      case "ESC":
+        return "/images/esc.jpg";
+      case "ISESC":
+        return "/images/isesc.jpg";
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <>
+      <Link
+        href={`/vote/${slug}`}
         className={cn(
-          "text-center",
-          isActive ? "text-white" : "text-neutral-900",
+          "flex w-fit overflow-hidden",
+          isDislaying ? "h-auto" : "h-0",
         )}
       >
-        <h2 className="text-xl font-bold">{name}</h2>
-        <p className="text-sm opacity-75">{description}</p>
-      </div>
+        <div className="max-w-md">
+          <div ref={topContainerRef} className="relative z-10">
+            <div
+              className="flex flex-col gap-4 p-5 text-white"
+              style={{ height: initialTopContainerHeight ?? "auto" }}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  {ownerImageSrc() ? (
+                    <div className="relative aspect-square w-4 overflow-hidden rounded-full">
+                      <Image
+                        src={ownerImageSrc() || ""}
+                        alt={owner}
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
+                  ) : (
+                    <div className="grid aspect-square w-5 place-content-center rounded-full bg-white text-neutral-800">
+                      <User size={12} />
+                    </div>
+                  )}
 
-      <div className="absolute inset-0 z-10 cursor-pointer" onClick={onClick} />
-      {/* {number ? (
-        <span className="absolute -bottom-24 left-0 select-none text-[12rem] font-bold text-black/10">
-          {number}
-        </span>
-      ) : null} */}
-      {number ? (
-        <span
-          className={cn(
-            "absolute bottom-4 left-4 select-none font-semibold",
-            isActive ? "text-white" : "text-neutral-500",
-          )}
-        >
-          เบอร์ {number}
-        </span>
-      ) : null}
-      <Drawer>
-        <DrawerTrigger asChild>
-          <div className="absolute bottom-1 right-1 z-20 cursor-pointer p-3">
-            <Info
-              className={cn(
-                "duration-100",
-                isActive ? "text-white" : "text-neutral-500",
-              )}
-            />
-          </div>
-        </DrawerTrigger>
-        <DrawerContent>
-          <div className="mx-auto flex h-[90vh] w-full flex-col justify-between overflow-y-auto">
-            <div className="px-4 pt-4">
-              <DrawerHeader className="flex flex-col items-center gap-4">
-                {image ? (
-                  <div className="relative aspect-square w-28 select-none overflow-hidden rounded-full">
-                    <Image
-                      src={image}
-                      alt={name}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                ) : null}
-                <div className="flex flex-col items-center gap-1 text-center">
-                  <DrawerTitle>{name}</DrawerTitle>
-                  <DrawerDescription>{description}</DrawerDescription>
+                  <span className="text-xs">
+                    {owner === "ESC" ? "กวศ." : owner}
+                  </span>
                 </div>
-              </DrawerHeader>
-              <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
-                <Markdown
-                  rehypePlugins={[rehypeRaw]}
-                  components={{
-                    h1: ({ node, ...props }) => (
-                      <h1 className="text-2xl font-bold" {...props} />
-                    ),
-                    h2: ({ node, ...props }) => (
-                      <h2 className="text-xl font-semibold" {...props} />
-                    ),
-                    h3: ({ node, ...props }) => (
-                      <h3 className="text-lg font-semibold" {...props} />
-                    ),
-                    p: ({ node, ...props }) => (
-                      <p className="text-sm text-neutral-700" {...props} />
-                    ),
-                    ul: ({ node, ...props }) => (
-                      <ul className="list-disc pl-5" {...props} />
-                    ),
-                    li: ({ node, ...props }) => (
-                      <li className="text-sm text-neutral-700" {...props} />
-                    ),
-                    a: ({ node, ...props }) => (
-                      <a className="text-blue-500" {...props} />
-                    ),
-                    strong: ({ node, ...props }) => (
-                      <strong className="font-semibold" {...props} />
-                    ),
-                    em: ({ node, ...props }) => (
-                      <em className="italic" {...props} />
-                    ),
-                    blockquote: ({ node, ...props }) => (
-                      <blockquote
-                        className="border-l-4 border-neutral-300 pl-4 italic text-neutral-600"
-                        {...props}
-                      />
-                    ),
-                    code: ({ node, ...props }) => (
-                      <code
-                        className="rounded-md bg-neutral-100 px-1 py-0.5 font-mono text-sm text-neutral-700"
-                        {...props}
-                      />
-                    ),
-                    pre: ({ node, ...props }) => (
-                      <pre
-                        className="rounded-md bg-neutral-100 p-4 font-mono text-sm text-neutral-700"
-                        {...props}
-                      />
-                    ),
-                  }}
-                >
-                  {info}
-                </Markdown>
+                {isVoteActive() ? (
+                  <div className="flex items-center gap-1.5 rounded-full bg-white py-1 pl-2.5 pr-3 text-xs font-bold text-neutral-700">
+                    <span className="aspect-square w-2 rounded-full bg-red-500" />
+                    <span>{time}</span>
+                  </div>
+                ) : (
+                  <div className="text-xs font-bold text-white">
+                    <span>{time}</span>
+                  </div>
+                )}
               </div>
+              <h2 className="text-3xl font-bold">{name}</h2>
             </div>
-            <DrawerFooter>
-              <DrawerClose asChild>
-                <Button onClick={onVote}>เลือก {name}</Button>
-              </DrawerClose>
-            </DrawerFooter>
+            <div className="bg-primary rounded-t-4xl rounded-br-4xl absolute inset-0 -z-10" />
           </div>
-        </DrawerContent>
-      </Drawer>
-    </div>
+          <div className="flex">
+            <div className="bg-primary rounded-b-4xl flex flex-grow -translate-y-px items-end gap-2 px-5 pb-5 pt-10 text-white">
+              {choices.map((choice, index) => (
+                <div
+                  key={index}
+                  className="flex h-12 w-full items-center justify-center rounded-full bg-black/15 px-2 text-center hover:bg-black/10"
+                >
+                  <span className="text-sm">{choice.name}</span>
+                </div>
+              ))}
+            </div>
+            <div className="relative flex rounded-3xl bg-white pl-2 pt-2 text-neutral-700">
+              <div className="z-20 flex flex-col items-center justify-center gap-1.5 rounded-2xl border-2 border-neutral-400 bg-white p-4 text-center">
+                <Vote />
+                <span className="text-xs">129</span>
+              </div>
+              <div className="bg-primary rounded-br-4xl rounded-tr-4xl rounded-bl-4xl absolute left-0 top-0 -z-10 aspect-square w-[4rem] -translate-x-px -translate-y-px" />
+            </div>
+          </div>
+        </div>
+      </Link>
+      {isDislaying ? null : <Skeleton className="rounded-4xl h-44 w-full" />}
+    </>
   );
 };
 

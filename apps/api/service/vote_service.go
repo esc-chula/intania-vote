@@ -14,6 +14,7 @@ type VoteService interface {
 	CreateVote(ctx context.Context, oidcId string, vote *model.Vote, choices []*model.Choice) (*model.Vote, error)
 	GetVoteById(ctx context.Context, id uint) (*model.Vote, error)
 	GetVoteBySlug(ctx context.Context, slug string) (*model.Vote, error)
+	GetVotes(ctx context.Context) ([]*model.Vote, error)
 	GetVotesByUserEligibility(ctx context.Context, oidcId string) ([]*model.Vote, error)
 }
 
@@ -71,6 +72,18 @@ func (s *voteServiceImpl) GetVoteBySlug(ctx context.Context, slug string) (*mode
 	}
 
 	return vote, nil
+}
+
+func (s *voteServiceImpl) GetVotes(ctx context.Context) ([]*model.Vote, error) {
+	votes, err := s.voteRepo.Get(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if len(votes) == 0 {
+		return nil, nil
+	}
+
+	return votes, nil
 }
 
 func (s *voteServiceImpl) GetVotesByUserEligibility(ctx context.Context, oidcId string) ([]*model.Vote, error) {

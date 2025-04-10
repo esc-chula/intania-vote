@@ -49,20 +49,6 @@ const Page: React.FC<PageProps> = async ({ params }) => {
           information: choice.information,
           image: choice.image,
         }))}
-        // choices={[
-        //   {
-        //     number: "1",
-        //     name: "Choice 1",
-        //     description: "Description 1",
-        //     image: "/mock.jpg",
-        //   },
-        //   {
-        //     number: "2",
-        //     name: "Choice 2",
-        //     description: "Description 2",
-        //     image: "/mock.jpg",
-        //   },
-        // ]}
       />
     </>
   );

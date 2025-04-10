@@ -12,6 +12,8 @@ import {
   type GetVoteBySlugResponse,
   type GetVotesByUserEligibilityRequest,
   type GetVotesByUserEligibilityResponse,
+  type GetVotesRequest,
+  type GetVotesResponse,
   UserServiceClient,
   VoteServiceClient,
 } from "@intania-vote/grpc-ts";
@@ -75,6 +77,12 @@ function GetVoteBySlug(
   });
 }
 
+function GetVotes(req: GetVotesRequest): Promise<GetVotesResponse> {
+  return new Promise((resolve, reject) => {
+    voteClient.getVotes(req, r(resolve, reject));
+  });
+}
+
 function GetVotesByUserEligibility(
   req: GetVotesByUserEligibilityRequest,
 ): Promise<GetVotesByUserEligibilityResponse> {
@@ -92,6 +100,7 @@ export const grpc = {
     CreateVote,
     GetVoteById,
     GetVoteBySlug,
+    GetVotes,
     GetVotesByUserEligibility,
   },
 };

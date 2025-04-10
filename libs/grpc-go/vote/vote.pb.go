@@ -359,6 +359,86 @@ func (x *GetVoteBySlugResponse) GetChoices() []*choice.Choice {
 	return nil
 }
 
+type GetVotesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetVotesRequest) Reset() {
+	*x = GetVotesRequest{}
+	mi := &file_proto_vote_vote_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetVotesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetVotesRequest) ProtoMessage() {}
+
+func (x *GetVotesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_vote_vote_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetVotesRequest.ProtoReflect.Descriptor instead.
+func (*GetVotesRequest) Descriptor() ([]byte, []int) {
+	return file_proto_vote_vote_proto_rawDescGZIP(), []int{6}
+}
+
+type GetVotesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Votes         []*Votes               `protobuf:"bytes,1,rep,name=votes,proto3" json:"votes,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetVotesResponse) Reset() {
+	*x = GetVotesResponse{}
+	mi := &file_proto_vote_vote_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetVotesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetVotesResponse) ProtoMessage() {}
+
+func (x *GetVotesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_vote_vote_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetVotesResponse.ProtoReflect.Descriptor instead.
+func (*GetVotesResponse) Descriptor() ([]byte, []int) {
+	return file_proto_vote_vote_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *GetVotesResponse) GetVotes() []*Votes {
+	if x != nil {
+		return x.Votes
+	}
+	return nil
+}
+
 type GetVotesByUserEligibilityRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	OidcId        string                 `protobuf:"bytes,1,opt,name=oidcId,proto3" json:"oidcId,omitempty"`
@@ -368,7 +448,7 @@ type GetVotesByUserEligibilityRequest struct {
 
 func (x *GetVotesByUserEligibilityRequest) Reset() {
 	*x = GetVotesByUserEligibilityRequest{}
-	mi := &file_proto_vote_vote_proto_msgTypes[6]
+	mi := &file_proto_vote_vote_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -380,7 +460,7 @@ func (x *GetVotesByUserEligibilityRequest) String() string {
 func (*GetVotesByUserEligibilityRequest) ProtoMessage() {}
 
 func (x *GetVotesByUserEligibilityRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_vote_vote_proto_msgTypes[6]
+	mi := &file_proto_vote_vote_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -393,7 +473,7 @@ func (x *GetVotesByUserEligibilityRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetVotesByUserEligibilityRequest.ProtoReflect.Descriptor instead.
 func (*GetVotesByUserEligibilityRequest) Descriptor() ([]byte, []int) {
-	return file_proto_vote_vote_proto_rawDescGZIP(), []int{6}
+	return file_proto_vote_vote_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *GetVotesByUserEligibilityRequest) GetOidcId() string {
@@ -412,7 +492,7 @@ type GetVotesByUserEligibilityResponse struct {
 
 func (x *GetVotesByUserEligibilityResponse) Reset() {
 	*x = GetVotesByUserEligibilityResponse{}
-	mi := &file_proto_vote_vote_proto_msgTypes[7]
+	mi := &file_proto_vote_vote_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -424,7 +504,7 @@ func (x *GetVotesByUserEligibilityResponse) String() string {
 func (*GetVotesByUserEligibilityResponse) ProtoMessage() {}
 
 func (x *GetVotesByUserEligibilityResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_vote_vote_proto_msgTypes[7]
+	mi := &file_proto_vote_vote_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -437,7 +517,7 @@ func (x *GetVotesByUserEligibilityResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use GetVotesByUserEligibilityResponse.ProtoReflect.Descriptor instead.
 func (*GetVotesByUserEligibilityResponse) Descriptor() ([]byte, []int) {
-	return file_proto_vote_vote_proto_rawDescGZIP(), []int{7}
+	return file_proto_vote_vote_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *GetVotesByUserEligibilityResponse) GetVotes() []*Votes {
@@ -468,7 +548,7 @@ type Vote struct {
 
 func (x *Vote) Reset() {
 	*x = Vote{}
-	mi := &file_proto_vote_vote_proto_msgTypes[8]
+	mi := &file_proto_vote_vote_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -480,7 +560,7 @@ func (x *Vote) String() string {
 func (*Vote) ProtoMessage() {}
 
 func (x *Vote) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_vote_vote_proto_msgTypes[8]
+	mi := &file_proto_vote_vote_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -493,7 +573,7 @@ func (x *Vote) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Vote.ProtoReflect.Descriptor instead.
 func (*Vote) Descriptor() ([]byte, []int) {
-	return file_proto_vote_vote_proto_rawDescGZIP(), []int{8}
+	return file_proto_vote_vote_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *Vote) GetName() string {
@@ -597,7 +677,7 @@ type Votes struct {
 
 func (x *Votes) Reset() {
 	*x = Votes{}
-	mi := &file_proto_vote_vote_proto_msgTypes[9]
+	mi := &file_proto_vote_vote_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -609,7 +689,7 @@ func (x *Votes) String() string {
 func (*Votes) ProtoMessage() {}
 
 func (x *Votes) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_vote_vote_proto_msgTypes[9]
+	mi := &file_proto_vote_vote_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -622,7 +702,7 @@ func (x *Votes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Votes.ProtoReflect.Descriptor instead.
 func (*Votes) Descriptor() ([]byte, []int) {
-	return file_proto_vote_vote_proto_rawDescGZIP(), []int{9}
+	return file_proto_vote_vote_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *Votes) GetVote() *Vote {
@@ -661,7 +741,10 @@ const file_proto_vote_vote_proto_rawDesc = "" +
 	"\x15GetVoteBySlugResponse\x12\x1e\n" +
 	"\x04vote\x18\x01 \x01(\v2\n" +
 	".vote.VoteR\x04vote\x12(\n" +
-	"\achoices\x18\x02 \x03(\v2\x0e.choice.ChoiceR\achoices\":\n" +
+	"\achoices\x18\x02 \x03(\v2\x0e.choice.ChoiceR\achoices\"\x11\n" +
+	"\x0fGetVotesRequest\"5\n" +
+	"\x10GetVotesResponse\x12!\n" +
+	"\x05votes\x18\x01 \x03(\v2\v.vote.VotesR\x05votes\":\n" +
 	" GetVotesByUserEligibilityRequest\x12\x16\n" +
 	"\x06oidcId\x18\x01 \x01(\tR\x06oidcId\"F\n" +
 	"!GetVotesByUserEligibilityResponse\x12!\n" +
@@ -691,12 +774,13 @@ const file_proto_vote_vote_proto_rawDesc = "" +
 	"\x05Owner\x12\b\n" +
 	"\x04USER\x10\x00\x12\a\n" +
 	"\x03ESC\x10\x01\x12\t\n" +
-	"\x05ISESC\x10\x022\xd2\x02\n" +
+	"\x05ISESC\x10\x022\x8f\x03\n" +
 	"\vVoteService\x12A\n" +
 	"\n" +
 	"CreateVote\x12\x17.vote.CreateVoteRequest\x1a\x18.vote.CreateVoteResponse\"\x00\x12D\n" +
 	"\vGetVoteById\x12\x18.vote.GetVoteByIdRequest\x1a\x19.vote.GetVoteByIdResponse\"\x00\x12J\n" +
-	"\rGetVoteBySlug\x12\x1a.vote.GetVoteBySlugRequest\x1a\x1b.vote.GetVoteBySlugResponse\"\x00\x12n\n" +
+	"\rGetVoteBySlug\x12\x1a.vote.GetVoteBySlugRequest\x1a\x1b.vote.GetVoteBySlugResponse\"\x00\x12;\n" +
+	"\bGetVotes\x12\x15.vote.GetVotesRequest\x1a\x16.vote.GetVotesResponse\"\x00\x12n\n" +
 	"\x19GetVotesByUserEligibility\x12&.vote.GetVotesByUserEligibilityRequest\x1a'.vote.GetVotesByUserEligibilityResponse\"\x00B5Z3github.com/esc-chula/intania-vote/libs/grpc-go/voteb\x06proto3"
 
 var (
@@ -712,7 +796,7 @@ func file_proto_vote_vote_proto_rawDescGZIP() []byte {
 }
 
 var file_proto_vote_vote_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_proto_vote_vote_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_proto_vote_vote_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_proto_vote_vote_proto_goTypes = []any{
 	(Owner)(0),                                // 0: vote.Owner
 	(*CreateVoteRequest)(nil),                 // 1: vote.CreateVoteRequest
@@ -721,36 +805,41 @@ var file_proto_vote_vote_proto_goTypes = []any{
 	(*GetVoteByIdResponse)(nil),               // 4: vote.GetVoteByIdResponse
 	(*GetVoteBySlugRequest)(nil),              // 5: vote.GetVoteBySlugRequest
 	(*GetVoteBySlugResponse)(nil),             // 6: vote.GetVoteBySlugResponse
-	(*GetVotesByUserEligibilityRequest)(nil),  // 7: vote.GetVotesByUserEligibilityRequest
-	(*GetVotesByUserEligibilityResponse)(nil), // 8: vote.GetVotesByUserEligibilityResponse
-	(*Vote)(nil),                              // 9: vote.Vote
-	(*Votes)(nil),                             // 10: vote.Votes
-	(*choice.Choice)(nil),                     // 11: choice.Choice
+	(*GetVotesRequest)(nil),                   // 7: vote.GetVotesRequest
+	(*GetVotesResponse)(nil),                  // 8: vote.GetVotesResponse
+	(*GetVotesByUserEligibilityRequest)(nil),  // 9: vote.GetVotesByUserEligibilityRequest
+	(*GetVotesByUserEligibilityResponse)(nil), // 10: vote.GetVotesByUserEligibilityResponse
+	(*Vote)(nil),                              // 11: vote.Vote
+	(*Votes)(nil),                             // 12: vote.Votes
+	(*choice.Choice)(nil),                     // 13: choice.Choice
 }
 var file_proto_vote_vote_proto_depIdxs = []int32{
-	9,  // 0: vote.CreateVoteRequest.vote:type_name -> vote.Vote
-	11, // 1: vote.CreateVoteRequest.choices:type_name -> choice.Choice
-	9,  // 2: vote.GetVoteByIdResponse.vote:type_name -> vote.Vote
-	11, // 3: vote.GetVoteByIdResponse.choices:type_name -> choice.Choice
-	9,  // 4: vote.GetVoteBySlugResponse.vote:type_name -> vote.Vote
-	11, // 5: vote.GetVoteBySlugResponse.choices:type_name -> choice.Choice
-	10, // 6: vote.GetVotesByUserEligibilityResponse.votes:type_name -> vote.Votes
-	0,  // 7: vote.Vote.owner:type_name -> vote.Owner
-	9,  // 8: vote.Votes.vote:type_name -> vote.Vote
-	11, // 9: vote.Votes.choices:type_name -> choice.Choice
-	1,  // 10: vote.VoteService.CreateVote:input_type -> vote.CreateVoteRequest
-	3,  // 11: vote.VoteService.GetVoteById:input_type -> vote.GetVoteByIdRequest
-	5,  // 12: vote.VoteService.GetVoteBySlug:input_type -> vote.GetVoteBySlugRequest
-	7,  // 13: vote.VoteService.GetVotesByUserEligibility:input_type -> vote.GetVotesByUserEligibilityRequest
-	2,  // 14: vote.VoteService.CreateVote:output_type -> vote.CreateVoteResponse
-	4,  // 15: vote.VoteService.GetVoteById:output_type -> vote.GetVoteByIdResponse
-	6,  // 16: vote.VoteService.GetVoteBySlug:output_type -> vote.GetVoteBySlugResponse
-	8,  // 17: vote.VoteService.GetVotesByUserEligibility:output_type -> vote.GetVotesByUserEligibilityResponse
-	14, // [14:18] is the sub-list for method output_type
-	10, // [10:14] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	11, // 0: vote.CreateVoteRequest.vote:type_name -> vote.Vote
+	13, // 1: vote.CreateVoteRequest.choices:type_name -> choice.Choice
+	11, // 2: vote.GetVoteByIdResponse.vote:type_name -> vote.Vote
+	13, // 3: vote.GetVoteByIdResponse.choices:type_name -> choice.Choice
+	11, // 4: vote.GetVoteBySlugResponse.vote:type_name -> vote.Vote
+	13, // 5: vote.GetVoteBySlugResponse.choices:type_name -> choice.Choice
+	12, // 6: vote.GetVotesResponse.votes:type_name -> vote.Votes
+	12, // 7: vote.GetVotesByUserEligibilityResponse.votes:type_name -> vote.Votes
+	0,  // 8: vote.Vote.owner:type_name -> vote.Owner
+	11, // 9: vote.Votes.vote:type_name -> vote.Vote
+	13, // 10: vote.Votes.choices:type_name -> choice.Choice
+	1,  // 11: vote.VoteService.CreateVote:input_type -> vote.CreateVoteRequest
+	3,  // 12: vote.VoteService.GetVoteById:input_type -> vote.GetVoteByIdRequest
+	5,  // 13: vote.VoteService.GetVoteBySlug:input_type -> vote.GetVoteBySlugRequest
+	7,  // 14: vote.VoteService.GetVotes:input_type -> vote.GetVotesRequest
+	9,  // 15: vote.VoteService.GetVotesByUserEligibility:input_type -> vote.GetVotesByUserEligibilityRequest
+	2,  // 16: vote.VoteService.CreateVote:output_type -> vote.CreateVoteResponse
+	4,  // 17: vote.VoteService.GetVoteById:output_type -> vote.GetVoteByIdResponse
+	6,  // 18: vote.VoteService.GetVoteBySlug:output_type -> vote.GetVoteBySlugResponse
+	8,  // 19: vote.VoteService.GetVotes:output_type -> vote.GetVotesResponse
+	10, // 20: vote.VoteService.GetVotesByUserEligibility:output_type -> vote.GetVotesByUserEligibilityResponse
+	16, // [16:21] is the sub-list for method output_type
+	11, // [11:16] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_proto_vote_vote_proto_init() }
@@ -758,14 +847,14 @@ func file_proto_vote_vote_proto_init() {
 	if File_proto_vote_vote_proto != nil {
 		return
 	}
-	file_proto_vote_vote_proto_msgTypes[8].OneofWrappers = []any{}
+	file_proto_vote_vote_proto_msgTypes[10].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_vote_vote_proto_rawDesc), len(file_proto_vote_vote_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   10,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

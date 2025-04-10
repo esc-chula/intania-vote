@@ -22,6 +22,7 @@ const (
 	VoteService_CreateVote_FullMethodName                = "/vote.VoteService/CreateVote"
 	VoteService_GetVoteById_FullMethodName               = "/vote.VoteService/GetVoteById"
 	VoteService_GetVoteBySlug_FullMethodName             = "/vote.VoteService/GetVoteBySlug"
+	VoteService_GetVotes_FullMethodName                  = "/vote.VoteService/GetVotes"
 	VoteService_GetVotesByUserEligibility_FullMethodName = "/vote.VoteService/GetVotesByUserEligibility"
 )
 
@@ -32,6 +33,7 @@ type VoteServiceClient interface {
 	CreateVote(ctx context.Context, in *CreateVoteRequest, opts ...grpc.CallOption) (*CreateVoteResponse, error)
 	GetVoteById(ctx context.Context, in *GetVoteByIdRequest, opts ...grpc.CallOption) (*GetVoteByIdResponse, error)
 	GetVoteBySlug(ctx context.Context, in *GetVoteBySlugRequest, opts ...grpc.CallOption) (*GetVoteBySlugResponse, error)
+	GetVotes(ctx context.Context, in *GetVotesRequest, opts ...grpc.CallOption) (*GetVotesResponse, error)
 	GetVotesByUserEligibility(ctx context.Context, in *GetVotesByUserEligibilityRequest, opts ...grpc.CallOption) (*GetVotesByUserEligibilityResponse, error)
 }
 
@@ -73,6 +75,16 @@ func (c *voteServiceClient) GetVoteBySlug(ctx context.Context, in *GetVoteBySlug
 	return out, nil
 }
 
+func (c *voteServiceClient) GetVotes(ctx context.Context, in *GetVotesRequest, opts ...grpc.CallOption) (*GetVotesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetVotesResponse)
+	err := c.cc.Invoke(ctx, VoteService_GetVotes_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *voteServiceClient) GetVotesByUserEligibility(ctx context.Context, in *GetVotesByUserEligibilityRequest, opts ...grpc.CallOption) (*GetVotesByUserEligibilityResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetVotesByUserEligibilityResponse)
@@ -90,6 +102,7 @@ type VoteServiceServer interface {
 	CreateVote(context.Context, *CreateVoteRequest) (*CreateVoteResponse, error)
 	GetVoteById(context.Context, *GetVoteByIdRequest) (*GetVoteByIdResponse, error)
 	GetVoteBySlug(context.Context, *GetVoteBySlugRequest) (*GetVoteBySlugResponse, error)
+	GetVotes(context.Context, *GetVotesRequest) (*GetVotesResponse, error)
 	GetVotesByUserEligibility(context.Context, *GetVotesByUserEligibilityRequest) (*GetVotesByUserEligibilityResponse, error)
 	mustEmbedUnimplementedVoteServiceServer()
 }
@@ -109,6 +122,9 @@ func (UnimplementedVoteServiceServer) GetVoteById(context.Context, *GetVoteByIdR
 }
 func (UnimplementedVoteServiceServer) GetVoteBySlug(context.Context, *GetVoteBySlugRequest) (*GetVoteBySlugResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetVoteBySlug not implemented")
+}
+func (UnimplementedVoteServiceServer) GetVotes(context.Context, *GetVotesRequest) (*GetVotesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetVotes not implemented")
 }
 func (UnimplementedVoteServiceServer) GetVotesByUserEligibility(context.Context, *GetVotesByUserEligibilityRequest) (*GetVotesByUserEligibilityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetVotesByUserEligibility not implemented")
@@ -188,6 +204,24 @@ func _VoteService_GetVoteBySlug_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _VoteService_GetVotes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetVotesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VoteServiceServer).GetVotes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: VoteService_GetVotes_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VoteServiceServer).GetVotes(ctx, req.(*GetVotesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _VoteService_GetVotesByUserEligibility_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetVotesByUserEligibilityRequest)
 	if err := dec(in); err != nil {
@@ -224,6 +258,10 @@ var VoteService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetVoteBySlug",
 			Handler:    _VoteService_GetVoteBySlug_Handler,
+		},
+		{
+			MethodName: "GetVotes",
+			Handler:    _VoteService_GetVotes_Handler,
 		},
 		{
 			MethodName: "GetVotesByUserEligibility",
