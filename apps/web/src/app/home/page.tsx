@@ -1,5 +1,6 @@
 import Header from "~/components/common/header";
 import Navigation from "~/components/common/navigation";
+import RootContainer from "~/components/root/root-container";
 import VoteCard from "~/components/vote/vote-card";
 import { getVotes } from "~/server/vote";
 
@@ -8,7 +9,7 @@ import { Button } from "@intania-vote/shadcn";
 const Page: React.FC = async () => {
   const res = await getVotes();
 
-  if (res?.data?.failure || !res?.data?.votes?.votes.length) {
+  if (res?.data?.failure || !res?.data?.votes?.votes) {
     return null;
   }
 
@@ -56,6 +57,7 @@ const Page: React.FC = async () => {
           );
         })}
       </div>
+      <RootContainer />
       <div className="flex h-screen w-full flex-col items-center justify-center">
         ทดสอบ
         <Button>Click me</Button>

@@ -44,6 +44,10 @@ func InitializeApp() (App, error) {
 	voteRepository := repository.NewVoteRepository(gormDB)
 	voteService := service.NewVoteService(voteRepository, userRepository, cfg)
 	voteServiceServer := server.NewVoteServer(voteService)
+	choiceRepository := repository.NewChoiceRepository(gormDB)
+	ballotRepository := repository.NewBallotRepository(gormDB)
+	ballotService := service.NewBallotService(ballotRepository, userRepository, voteRepository, choiceRepository, cfg)
+	ballotServiceServer := server.NewBallotServer(ballotService)
 
-	return NewApp(userServiceServer, voteServiceServer, cfg), nil
+	return NewApp(userServiceServer, voteServiceServer, ballotServiceServer, cfg), nil
 }

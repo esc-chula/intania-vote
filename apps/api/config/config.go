@@ -11,6 +11,8 @@ type Config struct {
 	Environment string `mapstructure:"ENVIRONMENT"`
 	Port        int    `mapstructure:"PORT"`
 	DatabaseUrl string `mapstructure:"DATABASE_URL"`
+	HmacKey     string `mapstructure:"HMAC_KEY"`
+	HmacSalt    string `mapstructure:"HMAC_SALT"`
 }
 
 func BindEnvs(iface interface{}, parts ...string) {

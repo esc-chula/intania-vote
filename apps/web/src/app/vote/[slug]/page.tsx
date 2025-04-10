@@ -42,6 +42,7 @@ const Page: React.FC<PageProps> = async ({ params }) => {
       <VoteContainer
         name={voteData.vote.name}
         description={voteData.vote.description}
+        slug={voteData.vote.slug}
         choices={voteData.choices.map((choice) => ({
           number: choice.number,
           name: choice.name,

@@ -13,6 +13,7 @@ require (
 )
 
 require (
+	github.com/btcsuite/btcutil v1.0.2
 	github.com/esc-chula/intania-vote/libs/grpc-go v0.0.0-00010101000000-000000000000
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/google/uuid v1.6.0

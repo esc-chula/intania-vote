@@ -55,7 +55,7 @@ const VoteBallotCard: React.FC<VoteBallotCardProps> = ({
 
       <div
         className={cn(
-          "text-center",
+          "pb-6 text-center",
           isActive ? "text-white" : "text-neutral-900",
         )}
       >
