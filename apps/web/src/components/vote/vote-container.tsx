@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import TabBarWrapper from "~/components/common/tab-bar-wrapper";
-import VoteCard from "~/components/vote/vote-card";
+import VoteBallotCard from "~/components/vote/vote-ballot-card";
 
 import { Button } from "@intania-vote/shadcn";
 import {
@@ -25,6 +25,7 @@ interface VoteContainerProps {
     number?: string;
     name: string;
     description: string;
+    information?: string;
     image?: string;
   }[];
 }
@@ -50,7 +51,7 @@ const VoteContainer: React.FC<VoteContainerProps> = ({
         </div>
         <div className="grid flex-grow grid-cols-1 grid-rows-2 gap-5 pb-5">
           {choices.map((choice, index) => (
-            <VoteCard
+            <VoteBallotCard
               key={index}
               isActive={selectedChoice === index + 1}
               onClick={() => {
@@ -66,22 +67,7 @@ const VoteContainer: React.FC<VoteContainerProps> = ({
               number={choice.number}
               name={choice.name}
               description={choice.description}
-              info={`
-## Test
-
-- bullet test
-- another bullet test
-
-<br />
-
-### Heading 3
-
-> what do you mean?
-
-<br />
-
-lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
-                `}
+              information={choice.information}
               image={choice.image}
             />
           ))}

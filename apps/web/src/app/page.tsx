@@ -1,7 +1,8 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import Header from "~/components/common/header";
 import RootContainer from "~/components/root/root-container";
+import VoteCard from "~/components/vote/vote-card";
 import { getSession } from "~/lib/auth";
 import { getVotesByUserEligibility } from "~/server/vote";
 
@@ -20,19 +21,53 @@ const Page: React.FC = async () => {
 
   const votesData = res.data.votes.votes;
 
+  // if (votesData.length === 1 && votesData[0].vote) {
+  //   return redirect(`/vote/${votesData[0].vote.slug}`);
+  // }
+
   return (
     <>
-      {votesData.map((data) => {
-        if (!data.vote || !data.choices) {
-          return null;
-        }
-        return (
-          <Link key={data.vote.slug} href={`/vote/${data.vote.slug}`}>
-            {data.vote.name}
-          </Link>
-        );
-      })}
-      <RootContainer />
+      <Header className="h-24" />
+      <div className="mt-24 grid gap-5 p-5 sm:grid-cols-2">
+        {votesData.map((data) => {
+          if (!data.vote || !data.choices) {
+            return null;
+          }
+
+          let owner = "Unknown";
+
+          switch (data.vote.owner.toString()) {
+            case "0":
+              owner = "User";
+              break;
+            case "1":
+              owner = "ESC";
+              break;
+            case "2":
+              owner = "ISESC";
+              break;
+            default:
+              owner = "Unknown";
+              break;
+          }
+
+          return (
+            <VoteCard
+              key={data.vote.slug}
+              name={data.vote.name}
+              slug={data.vote.slug}
+              image={data.vote.image}
+              owner={owner}
+              startAt={new Date(data.vote.startAt)}
+              endAt={new Date(data.vote.endAt)}
+              choices={data.choices.map((choice) => ({
+                name: choice.name,
+              }))}
+            />
+          );
+        })}
+        <RootContainer />
+      </div>
     </>
   );
 };
