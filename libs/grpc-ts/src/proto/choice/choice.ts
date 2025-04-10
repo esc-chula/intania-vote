@@ -8,7 +8,7 @@
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 
 export interface Choice {
-  number: string;
+  number: number;
   name: string;
   description: string;
   information?: string | undefined;
@@ -17,13 +17,13 @@ export interface Choice {
 }
 
 function createBaseChoice(): Choice {
-  return { number: "", name: "", description: "", information: undefined, image: undefined, ballotCounter: undefined };
+  return { number: 0, name: "", description: "", information: undefined, image: undefined, ballotCounter: undefined };
 }
 
 export const Choice: MessageFns<Choice> = {
   encode(message: Choice, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.number !== "") {
-      writer.uint32(10).string(message.number);
+    if (message.number !== 0) {
+      writer.uint32(8).uint32(message.number);
     }
     if (message.name !== "") {
       writer.uint32(18).string(message.name);
@@ -51,11 +51,11 @@ export const Choice: MessageFns<Choice> = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1: {
-          if (tag !== 10) {
+          if (tag !== 8) {
             break;
           }
 
-          message.number = reader.string();
+          message.number = reader.uint32();
           continue;
         }
         case 2: {
@@ -109,7 +109,7 @@ export const Choice: MessageFns<Choice> = {
 
   fromJSON(object: any): Choice {
     return {
-      number: isSet(object.number) ? globalThis.String(object.number) : "",
+      number: isSet(object.number) ? globalThis.Number(object.number) : 0,
       name: isSet(object.name) ? globalThis.String(object.name) : "",
       description: isSet(object.description) ? globalThis.String(object.description) : "",
       information: isSet(object.information) ? globalThis.String(object.information) : undefined,
@@ -120,8 +120,8 @@ export const Choice: MessageFns<Choice> = {
 
   toJSON(message: Choice): unknown {
     const obj: any = {};
-    if (message.number !== "") {
-      obj.number = message.number;
+    if (message.number !== 0) {
+      obj.number = Math.round(message.number);
     }
     if (message.name !== "") {
       obj.name = message.name;
@@ -146,7 +146,7 @@ export const Choice: MessageFns<Choice> = {
   },
   fromPartial<I extends Exact<DeepPartial<Choice>, I>>(object: I): Choice {
     const message = createBaseChoice();
-    message.number = object.number ?? "";
+    message.number = object.number ?? 0;
     message.name = object.name ?? "";
     message.description = object.description ?? "";
     message.information = object.information ?? undefined;

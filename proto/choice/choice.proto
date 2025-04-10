@@ -5,7 +5,7 @@ package choice;
 option go_package = "github.com/esc-chula/intania-vote/libs/grpc-go/choice";
 
 message Choice {
-    string number = 1;
+    uint32 number = 1;
     string name = 2;
     string description = 3;
     optional string information = 4;

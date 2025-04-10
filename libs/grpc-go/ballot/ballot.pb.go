@@ -7,7 +7,6 @@
 package ballot
 
 import (
-	choice "github.com/esc-chula/intania-vote/libs/grpc-go/choice"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -26,7 +25,7 @@ type CreateBallotProofRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	OidcId        string                 `protobuf:"bytes,1,opt,name=oidcId,proto3" json:"oidcId,omitempty"`
 	VoteSlug      string                 `protobuf:"bytes,2,opt,name=voteSlug,proto3" json:"voteSlug,omitempty"`
-	ChoiceNumber  string                 `protobuf:"bytes,3,opt,name=choiceNumber,proto3" json:"choiceNumber,omitempty"`
+	ChoiceNumber  int32                  `protobuf:"varint,3,opt,name=choiceNumber,proto3" json:"choiceNumber,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -75,11 +74,11 @@ func (x *CreateBallotProofRequest) GetVoteSlug() string {
 	return ""
 }
 
-func (x *CreateBallotProofRequest) GetChoiceNumber() string {
+func (x *CreateBallotProofRequest) GetChoiceNumber() int32 {
 	if x != nil {
 		return x.ChoiceNumber
 	}
-	return ""
+	return 0
 }
 
 type CreateBallotProofResponse struct {
@@ -285,7 +284,7 @@ func (x *VerifyBallotRequest) GetBallotKey() string {
 type VerifyBallotResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	IsValid       bool                   `protobuf:"varint,1,opt,name=isValid,proto3" json:"isValid,omitempty"`
-	Choice        *choice.Choice         `protobuf:"bytes,2,opt,name=choice,proto3,oneof" json:"choice,omitempty"`
+	ChoiceNumber  string                 `protobuf:"bytes,2,opt,name=choiceNumber,proto3" json:"choiceNumber,omitempty"`
 	Timestamp     string                 `protobuf:"bytes,3,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -328,11 +327,11 @@ func (x *VerifyBallotResponse) GetIsValid() bool {
 	return false
 }
 
-func (x *VerifyBallotResponse) GetChoice() *choice.Choice {
+func (x *VerifyBallotResponse) GetChoiceNumber() string {
 	if x != nil {
-		return x.Choice
+		return x.ChoiceNumber
 	}
-	return nil
+	return ""
 }
 
 func (x *VerifyBallotResponse) GetTimestamp() string {
@@ -430,11 +429,11 @@ var File_proto_ballot_ballot_proto protoreflect.FileDescriptor
 
 const file_proto_ballot_ballot_proto_rawDesc = "" +
 	"\n" +
-	"\x19proto/ballot/ballot.proto\x12\x06ballot\x1a\x19proto/choice/choice.proto\"r\n" +
+	"\x19proto/ballot/ballot.proto\x12\x06ballot\"r\n" +
 	"\x18CreateBallotProofRequest\x12\x16\n" +
 	"\x06oidcId\x18\x01 \x01(\tR\x06oidcId\x12\x1a\n" +
 	"\bvoteSlug\x18\x02 \x01(\tR\bvoteSlug\x12\"\n" +
-	"\fchoiceNumber\x18\x03 \x01(\tR\fchoiceNumber\"@\n" +
+	"\fchoiceNumber\x18\x03 \x01(\x05R\fchoiceNumber\"@\n" +
 	"\x19CreateBallotProofResponse\x12#\n" +
 	"\x05proof\x18\x01 \x01(\v2\r.ballot.ProofR\x05proof\"n\n" +
 	"\x13CreateBallotRequest\x12\x16\n" +
@@ -445,12 +444,11 @@ const file_proto_ballot_ballot_proto_rawDesc = "" +
 	"\tballotKey\x18\x01 \x01(\tR\tballotKey\"K\n" +
 	"\x13VerifyBallotRequest\x12\x16\n" +
 	"\x06oidcId\x18\x01 \x01(\tR\x06oidcId\x12\x1c\n" +
-	"\tballotKey\x18\x02 \x01(\tR\tballotKey\"\x86\x01\n" +
+	"\tballotKey\x18\x02 \x01(\tR\tballotKey\"r\n" +
 	"\x14VerifyBallotResponse\x12\x18\n" +
-	"\aisValid\x18\x01 \x01(\bR\aisValid\x12+\n" +
-	"\x06choice\x18\x02 \x01(\v2\x0e.choice.ChoiceH\x00R\x06choice\x88\x01\x01\x12\x1c\n" +
-	"\ttimestamp\x18\x03 \x01(\tR\ttimestampB\t\n" +
-	"\a_choice\"\xc1\x01\n" +
+	"\aisValid\x18\x01 \x01(\bR\aisValid\x12\"\n" +
+	"\fchoiceNumber\x18\x02 \x01(\tR\fchoiceNumber\x12\x1c\n" +
+	"\ttimestamp\x18\x03 \x01(\tR\ttimestamp\"\xc1\x01\n" +
 	"\x05Proof\x12\x1e\n" +
 	"\n" +
 	"commitment\x18\x01 \x01(\tR\n" +
@@ -486,23 +484,21 @@ var file_proto_ballot_ballot_proto_goTypes = []any{
 	(*VerifyBallotRequest)(nil),       // 4: ballot.VerifyBallotRequest
 	(*VerifyBallotResponse)(nil),      // 5: ballot.VerifyBallotResponse
 	(*Proof)(nil),                     // 6: ballot.Proof
-	(*choice.Choice)(nil),             // 7: choice.Choice
 }
 var file_proto_ballot_ballot_proto_depIdxs = []int32{
 	6, // 0: ballot.CreateBallotProofResponse.proof:type_name -> ballot.Proof
 	6, // 1: ballot.CreateBallotRequest.proof:type_name -> ballot.Proof
-	7, // 2: ballot.VerifyBallotResponse.choice:type_name -> choice.Choice
-	0, // 3: ballot.BallotService.CreateBallotProof:input_type -> ballot.CreateBallotProofRequest
-	2, // 4: ballot.BallotService.CreateBallot:input_type -> ballot.CreateBallotRequest
-	4, // 5: ballot.BallotService.VerifyBallot:input_type -> ballot.VerifyBallotRequest
-	1, // 6: ballot.BallotService.CreateBallotProof:output_type -> ballot.CreateBallotProofResponse
-	3, // 7: ballot.BallotService.CreateBallot:output_type -> ballot.CreateBallotResponse
-	5, // 8: ballot.BallotService.VerifyBallot:output_type -> ballot.VerifyBallotResponse
-	6, // [6:9] is the sub-list for method output_type
-	3, // [3:6] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	0, // 2: ballot.BallotService.CreateBallotProof:input_type -> ballot.CreateBallotProofRequest
+	2, // 3: ballot.BallotService.CreateBallot:input_type -> ballot.CreateBallotRequest
+	4, // 4: ballot.BallotService.VerifyBallot:input_type -> ballot.VerifyBallotRequest
+	1, // 5: ballot.BallotService.CreateBallotProof:output_type -> ballot.CreateBallotProofResponse
+	3, // 6: ballot.BallotService.CreateBallot:output_type -> ballot.CreateBallotResponse
+	5, // 7: ballot.BallotService.VerifyBallot:output_type -> ballot.VerifyBallotResponse
+	5, // [5:8] is the sub-list for method output_type
+	2, // [2:5] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_proto_ballot_ballot_proto_init() }
@@ -510,7 +506,6 @@ func file_proto_ballot_ballot_proto_init() {
 	if File_proto_ballot_ballot_proto != nil {
 		return
 	}
-	file_proto_ballot_ballot_proto_msgTypes[5].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

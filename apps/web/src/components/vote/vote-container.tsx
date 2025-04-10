@@ -93,8 +93,6 @@ const VoteContainer: React.FC<VoteContainerProps> = ({
       return;
     }
 
-    console.log("proof", proofData.proof);
-
     const resCreateBallot = await createBallot({
       voteSlug: slug,
       proof: proofData.proof,
@@ -151,35 +149,60 @@ const VoteContainer: React.FC<VoteContainerProps> = ({
           ))}
         </div>
       </div>
-      <TabBarWrapper>
-        <div className="flex h-full w-full flex-col items-center justify-center px-2 py-2">
+      <TabBarWrapper
+        className={selectedChoice <= 0 && choices.length === 1 ? "h-32" : ""}
+      >
+        <div className="flex h-full w-full flex-col items-center justify-center gap-3 px-2 py-2">
           <AlertDialog
             open={isOpenConfirmationAlert}
             onOpenChange={setIsOpenConfirmationAlert}
           >
             <AlertDialogTrigger asChild>
+              {selectedChoice <= 0 && choices.length === 1 ? (
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="h-full w-full font-semibold"
+                  onClick={() => {
+                    setSelectedChoice(-1);
+                  }}
+                >
+                  ไม่รับรอง
+                </Button>
+              ) : null}
+            </AlertDialogTrigger>
+            <AlertDialogTrigger asChild>
               <Button
-                variant={selectedChoice ? "default" : "secondary"}
+                variant={selectedChoice > 0 ? "default" : "secondary"}
                 size="lg"
                 className="h-full w-full font-semibold"
+                onClick={() => {
+                  if (selectedChoice <= 0) {
+                    setSelectedChoice(0);
+                  }
+                }}
               >
-                {selectedChoice
-                  ? `เลือก ${selectedChoiceDisplay}`
-                  : "ไม่ออกเสียง"}
+                {selectedChoice <= 0
+                  ? "งดออกเสียง"
+                  : `เลือก ${selectedChoiceDisplay}`}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>
                   ยืนยัน
-                  {selectedChoice
-                    ? `เลือก ${selectedChoiceDisplay}`
-                    : "ไม่ออกเสียง"}
+                  {selectedChoice === 0
+                    ? "งดออกเสียง"
+                    : selectedChoice === -1
+                      ? "ไม่รับรอง"
+                      : `เลือก ${selectedChoiceDisplay}`}
                 </AlertDialogTitle>
                 <AlertDialogDescription>
-                  {selectedChoice
-                    ? `คุณได้เลือก ${selectedChoiceData?.name} ${selectedChoiceData?.description}`
-                    : "คุณต้องการไม่ออกเสียงใช่หรือไม่?"}
+                  {selectedChoice === 0
+                    ? "คุณต้องการงดออกเสียงใช่หรือไม่?"
+                    : selectedChoice === -1
+                      ? "คุณต้องการไม่รับรองใช่หรือไม?"
+                      : `คุณต้องการเลือก ${selectedChoiceData?.name} (${selectedChoiceData?.description})`}
                   <br />
                   หากยืนยันการเลือกแล้ว จะไม่สามารถเปลี่ยนแปลงได้
                 </AlertDialogDescription>

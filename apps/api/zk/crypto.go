@@ -90,7 +90,7 @@ func DecryptBlindingFactor(encrypted string, secret string) (*big.Int, error) {
 }
 
 // Helper function to encrypt with server key
-func EncryptWithServerKey(choiceId uint, cfg *config.Config) string {
+func EncryptWithServerKey(choiceId int, cfg *config.Config) string {
 	data := []byte(fmt.Sprintf("%d", choiceId))
 
 	h := hmac.New(sha256.New, []byte(cfg.HmacKey))
@@ -127,7 +127,7 @@ func EncryptWithServerKey(choiceId uint, cfg *config.Config) string {
 }
 
 // Helper function to decrypt with server key
-func DecryptWithServerKey(encrypted string, cfg *config.Config) (uint, error) {
+func DecryptWithServerKey(encrypted string, cfg *config.Config) (int, error) {
 	h := hmac.New(sha256.New, []byte(cfg.HmacKey))
 	h.Write([]byte(cfg.HmacSalt))
 	key := h.Sum(nil)
@@ -158,7 +158,7 @@ func DecryptWithServerKey(encrypted string, cfg *config.Config) (uint, error) {
 			stream.XORKeyStream(plaintext, ciphertext)
 
 			// Parse
-			var choiceId uint
+			var choiceId int
 			if _, err := fmt.Sscanf(string(plaintext), "%d", &choiceId); err == nil {
 				return choiceId, nil
 			}
@@ -167,7 +167,7 @@ func DecryptWithServerKey(encrypted string, cfg *config.Config) (uint, error) {
 
 	// Fallback to XOR
 	plaintext := XorEncrypt(ciphertext, key)
-	var choiceId uint
+	var choiceId int
 	if _, err := fmt.Sscanf(string(plaintext), "%d", &choiceId); err != nil {
 		return 0, err
 	}
@@ -176,7 +176,8 @@ func DecryptWithServerKey(encrypted string, cfg *config.Config) (uint, error) {
 }
 
 // Helper function to encrypt candidate ID
-func EncryptChoiceId(choiceId uint, key []byte) string {
+func EncryptChoiceId(choiceId int, key []byte) string {
+
 	// Convert candidate ID to bytes
 	candidateBytes := []byte(fmt.Sprintf("%d", choiceId))
 
@@ -201,10 +202,15 @@ func EncryptChoiceId(choiceId uint, key []byte) string {
 	// Combine IV and ciphertext
 	result := append(iv, ciphertext...)
 
+	// log.Println("--- Encrypting with server key ---")
+	// log.Println("choiceId:", choiceId)
+	// log.Println("key:", string(key))
+	// log.Println("encrypted:", base64.StdEncoding.EncodeToString(result))
+
 	return base64.StdEncoding.EncodeToString(result)
 }
 
-func DecryptChoiceId(encryptedId string, key []byte) (uint, error) {
+func DecryptChoiceId(encryptedId string, key []byte) (int, error) {
 	// Decode base64
 	ciphertext, err := base64.StdEncoding.DecodeString(encryptedId)
 	if err != nil {
@@ -225,13 +231,13 @@ func DecryptChoiceId(encryptedId string, key []byte) (uint, error) {
 			stream := cipher.NewCFBDecrypter(block, iv)
 			stream.XORKeyStream(plaintext, ciphertext)
 
-			// Convert to uint
-			var choiceId uint
+			// Convert to int
+			var choiceId int
 			if _, err := fmt.Sscanf(string(plaintext), "%d", &choiceId); err == nil {
 				return choiceId, nil
 			}
 
-			// If parsing as uint failed, but we got valid plaintext
+			// If parsing as int failed, but we got valid plaintext
 			if len(plaintext) > 0 {
 				return 0, fmt.Errorf("decrypted content is not a valid choice ID: %s", string(plaintext))
 			}
@@ -241,12 +247,17 @@ func DecryptChoiceId(encryptedId string, key []byte) (uint, error) {
 	// Fallback to XOR decryption
 	plaintext := XorEncrypt(ciphertext, key)
 
-	// Try to parse as uint
-	var choiceId uint
+	// Try to parse as int
+	var choiceId int
 	if _, err := fmt.Sscanf(string(plaintext), "%d", &choiceId); err != nil {
-		// If it's not a valid uint, return a meaningful error
+		// If it's not a valid int, return a meaningful error
 		return 0, fmt.Errorf("decrypted content is not a valid choice ID: %s", string(plaintext))
 	}
+
+	// log.Println("--- Decrypting with server key ---")
+	// log.Println("encryptedId:", encryptedId)
+	// log.Println("key:", string(key))
+	// log.Println("choiceId:", choiceId)
 
 	return choiceId, nil
 }

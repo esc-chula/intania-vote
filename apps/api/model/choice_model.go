@@ -6,7 +6,7 @@ type Choice struct {
 	VoteId uint `gorm:"not null"`
 	Vote   Vote `gorm:"foreignKey:VoteId"`
 
-	Number        string  `gorm:"size:10;not null"`
+	Number        uint32  `gorm:"size:10;not null"`
 	Name          string  `gorm:"size:50;not null"`
 	Description   string  `gorm:"size:50"`
 	Information   *string `gorm:"size:700"`

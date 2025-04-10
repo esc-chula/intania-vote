@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -20,7 +21,7 @@ import (
 type BallotService interface {
 	CreateBallotProof(ctx context.Context, oidcId string, voteSlug string, choiceNumber string) (*zk.Proof, error)
 	CreateBallot(ctx context.Context, oidcId string, voteSlug string, proof zk.Proof) (*model.Ballot, *string, error)
-	VerifyBallot(ctx context.Context, oidcId string, ballotKey string) (*model.Choice, *time.Time, error)
+	VerifyBallot(ctx context.Context, oidcId string, ballotKey string) (*int, *time.Time, error)
 	// TallyByVoteSlug(ctx context.Context, voteSlug string) ([]*model.Tally, error)
 }
 
@@ -52,28 +53,34 @@ func (s *ballotServiceImpl) CreateBallotProof(ctx context.Context, oidcId string
 		return nil, err
 	}
 
-	if choiceNumber == "0" {
-
+	switch choiceNumber {
+	case "0":
 		proofData, err := zk.GenerateProof(0, secret)
 		if err != nil {
 			return nil, err
 		}
 
 		return proofData, nil
-	} else {
+	case "-1":
+		proofData, err := zk.GenerateProof(-1, secret)
+		if err != nil {
+			return nil, err
+		}
+
+		return proofData, nil
+	default:
 		choice, err := s.choiceRepo.GetByVoteIdAndNumber(ctx, vote.Id, choiceNumber)
 		if err != nil {
 			return nil, err
 		}
 
-		proofData, err := zk.GenerateProof(choice.Id, secret)
+		proofData, err := zk.GenerateProof(int(choice.Id), secret)
 		if err != nil {
 			return nil, err
 		}
 
 		return proofData, nil
 	}
-
 }
 
 func (s *ballotServiceImpl) CreateBallot(ctx context.Context, oidcId string, voteSlug string, proof zk.Proof) (*model.Ballot, *string, error) {
@@ -108,19 +115,26 @@ func (s *ballotServiceImpl) CreateBallot(ctx context.Context, oidcId string, vot
 		"nullifier":      proof.Nullifier,
 	}
 
+	// try 0 and -1 first
+	// if not found, try the choices
 	isHasValidProof := false
-	var choiceId uint
-	isValid := zk.VerifyProof(proofMap, 0, secret)
-	if isValid {
+	var choiceId int
+
+	isNoVoteValid := zk.VerifyProof(proofMap, 0, secret)
+	isVoteNotValid := zk.VerifyProof(proofMap, -1, secret)
+	if isNoVoteValid {
 		isHasValidProof = true
 		choiceId = 0
+	} else if isVoteNotValid {
+		isHasValidProof = true
+		choiceId = -1
 	} else {
 		for _, c := range vote.Choices {
-			isValid := zk.VerifyProof(proofMap, c.Id, secret)
+			isValid := zk.VerifyProof(proofMap, int(c.Id), secret)
 
 			if isValid {
 				isHasValidProof = true
-				choiceId = c.Id
+				choiceId = int(c.Id)
 				break
 			}
 		}
@@ -157,8 +171,8 @@ func (s *ballotServiceImpl) CreateBallot(ctx context.Context, oidcId string, vot
 		return nil, nil, err
 	}
 
-	if choiceId != 0 {
-		err = s.choiceRepo.IncrementVoteCountById(ctx, choiceId)
+	if choiceId > 0 {
+		err = s.choiceRepo.IncrementVoteCountById(ctx, uint(choiceId))
 		if err != nil {
 			return nil, nil, err
 		}
@@ -169,7 +183,7 @@ func (s *ballotServiceImpl) CreateBallot(ctx context.Context, oidcId string, vot
 	return ballot, &base58Receipt, nil
 }
 
-func (s *ballotServiceImpl) VerifyBallot(ctx context.Context, oidcId string, ballotKey string) (*model.Choice, *time.Time, error) {
+func (s *ballotServiceImpl) VerifyBallot(ctx context.Context, oidcId string, ballotKey string) (*int, *time.Time, error) {
 	user, err := s.userRepo.GetByOidcId(ctx, oidcId)
 	if err != nil {
 		return nil, nil, err
@@ -193,6 +207,7 @@ func (s *ballotServiceImpl) VerifyBallot(ctx context.Context, oidcId string, bal
 
 	voteIdUint, err := strconv.ParseUint(voteId, 10, 32)
 	if err != nil {
+		log.Println(1)
 		return nil, nil, err
 	}
 	if voteIdUint == 0 {
@@ -201,6 +216,7 @@ func (s *ballotServiceImpl) VerifyBallot(ctx context.Context, oidcId string, bal
 
 	ballots, err := s.ballotRepo.GetBallotsByUserId(ctx, user.Id)
 	if err != nil {
+		log.Println(2)
 		return nil, nil, err
 	}
 
@@ -221,18 +237,20 @@ func (s *ballotServiceImpl) VerifyBallot(ctx context.Context, oidcId string, bal
 		expectedReceipt := base64.StdEncoding.EncodeToString(receiptHash[:])
 
 		if expectedReceipt == receipt {
-			var choice *model.Choice
+			var choice int
 
-			if choiceId == 0 {
-				choice = nil
+			if choiceId <= 0 {
+				choice = choiceId
 			} else {
-				choice, err = s.choiceRepo.GetById(ctx, uint(choiceId))
+				choiceData, err := s.choiceRepo.GetById(ctx, uint(choiceId))
 				if err != nil {
+					log.Println(4)
 					return nil, nil, err
 				}
+				choice = int(choiceData.Number)
 			}
 
-			return choice, &ballot.CreatedAt, nil
+			return &choice, &ballot.CreatedAt, nil
 		}
 	}
 

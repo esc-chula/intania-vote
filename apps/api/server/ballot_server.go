@@ -2,11 +2,11 @@ package server
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/esc-chula/intania-vote/apps/api/service"
 	"github.com/esc-chula/intania-vote/apps/api/zk"
 	grpcBallot "github.com/esc-chula/intania-vote/libs/grpc-go/ballot"
-	grpcChoice "github.com/esc-chula/intania-vote/libs/grpc-go/choice"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -37,11 +37,8 @@ func (s ballotServerImpl) CreateBallotProof(ctx context.Context, req *grpcBallot
 		return nil, status.Error(codes.FailedPrecondition, "missing voteSlug")
 	}
 	choiceNumber := req.GetChoiceNumber()
-	if choiceNumber == "" {
-		return nil, status.Error(codes.FailedPrecondition, "missing choiceNumber")
-	}
 
-	proofData, err := s.svc.CreateBallotProof(ctx, oidcId, voteSlug, choiceNumber)
+	proofData, err := s.svc.CreateBallotProof(ctx, oidcId, voteSlug, fmt.Sprintf("%d", choiceNumber))
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create proof: %v", err)
 	}
@@ -103,23 +100,9 @@ func (s ballotServerImpl) VerifyBallot(ctx context.Context, req *grpcBallot.Veri
 		return nil, status.Errorf(codes.Internal, "failed to verify ballot: %v", err)
 	}
 
-	if choice == nil {
-		return &grpcBallot.VerifyBallotResponse{
-			IsValid:   true,
-			Choice:    nil,
-			Timestamp: timestamp.String(),
-		}, nil
-	}
-
 	return &grpcBallot.VerifyBallotResponse{
-		IsValid: true,
-		Choice: &grpcChoice.Choice{
-			Number:      choice.Number,
-			Name:        choice.Name,
-			Description: choice.Description,
-			Information: choice.Information,
-			Image:       choice.Image,
-		},
-		Timestamp: timestamp.String(),
+		IsValid:      true,
+		ChoiceNumber: fmt.Sprintf("%d", *choice),
+		Timestamp:    timestamp.String(),
 	}, nil
 }

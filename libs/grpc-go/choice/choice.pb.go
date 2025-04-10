@@ -23,7 +23,7 @@ const (
 
 type Choice struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Number        string                 `protobuf:"bytes,1,opt,name=number,proto3" json:"number,omitempty"`
+	Number        uint32                 `protobuf:"varint,1,opt,name=number,proto3" json:"number,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	Information   *string                `protobuf:"bytes,4,opt,name=information,proto3,oneof" json:"information,omitempty"`
@@ -63,11 +63,11 @@ func (*Choice) Descriptor() ([]byte, []int) {
 	return file_proto_choice_choice_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Choice) GetNumber() string {
+func (x *Choice) GetNumber() uint32 {
 	if x != nil {
 		return x.Number
 	}
-	return ""
+	return 0
 }
 
 func (x *Choice) GetName() string {
@@ -111,7 +111,7 @@ const file_proto_choice_choice_proto_rawDesc = "" +
 	"\n" +
 	"\x19proto/choice/choice.proto\x12\x06choice\"\xef\x01\n" +
 	"\x06Choice\x12\x16\n" +
-	"\x06number\x18\x01 \x01(\tR\x06number\x12\x12\n" +
+	"\x06number\x18\x01 \x01(\rR\x06number\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12%\n" +
 	"\vinformation\x18\x04 \x01(\tH\x00R\vinformation\x88\x01\x01\x12\x19\n" +

@@ -18,9 +18,9 @@ type Proof struct {
 	Receipt        string `json:"receipt"`
 }
 
-func GenerateProof(choiceId uint, secret string) (*Proof, error) {
+func GenerateProof(choiceId int, secret string) (*Proof, error) {
 	// Convert choiceId to big.Int
-	m := new(big.Int).SetUint64(uint64(choiceId))
+	m := new(big.Int).SetInt64(int64(choiceId))
 
 	// Generate random blinding factor
 	r, err := GenerateRandomBigInt(PrimeModulus)
@@ -80,7 +80,7 @@ func GenerateProof(choiceId uint, secret string) (*Proof, error) {
 	return proofResponse, nil
 }
 
-func VerifyProof(proofData map[string]string, choiceId uint, secret string) bool {
+func VerifyProof(proofData map[string]string, choiceId int, secret string) bool {
 	// Basic validation - check that all required fields exist
 	requiredFields := []string{"commitment", "challenge", "response", "nullifier", "blindingFactor"}
 	for _, field := range requiredFields {
@@ -114,7 +114,7 @@ func VerifyProof(proofData map[string]string, choiceId uint, secret string) bool
 	}
 
 	// Convert choiceId to big.Int
-	m := new(big.Int).SetUint64(uint64(choiceId))
+	m := new(big.Int).SetInt64(int64(choiceId))
 
 	// Verify the commitment: Check if commitment = g^m * h^r
 	expectedCommitment := CreatePedersenCommitment(m, blindingFactor)
