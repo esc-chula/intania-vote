@@ -23,6 +23,7 @@ type BallotService interface {
 	CreateBallot(ctx context.Context, oidcId string, voteSlug string, proof zk.Proof) (*model.Ballot, *string, error)
 	VerifyBallot(ctx context.Context, oidcId string, ballotKey string) (*int, *time.Time, error)
 	// TallyByVoteSlug(ctx context.Context, voteSlug string) ([]*model.Tally, error)
+	GetBallotsByOidcId(ctx context.Context, oidcId string) ([]*model.Ballot, error)
 }
 
 type ballotServiceImpl struct {
@@ -255,4 +256,18 @@ func (s *ballotServiceImpl) VerifyBallot(ctx context.Context, oidcId string, bal
 	}
 
 	return nil, nil, errors.New("ballot not found")
+}
+
+func (s *ballotServiceImpl) GetBallotsByOidcId(ctx context.Context, oidcId string) ([]*model.Ballot, error) {
+	user, err := s.userRepo.GetByOidcId(ctx, oidcId)
+	if err != nil {
+		return nil, err
+	}
+
+	ballots, err := s.ballotRepo.GetBallotsByUserId(ctx, user.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return ballots, nil
 }

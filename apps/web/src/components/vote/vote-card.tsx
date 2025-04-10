@@ -198,14 +198,18 @@ const VoteCard: React.FC<VoteCardProps> = ({
                   ดูผล
                 </div>
               ) : (
-                choices.map((choice, index) => (
-                  <div
-                    key={index}
-                    className="flex h-12 w-full items-center justify-center rounded-full bg-black/15 px-2 text-center hover:bg-black/10"
-                  >
-                    <span className="text-sm">{choice.name}</span>
-                  </div>
-                ))
+                <div className="text-primary flex h-12 w-full items-center justify-center rounded-full bg-white font-semibold hover:bg-white/90">
+                  โหวตเลย
+                </div>
+
+                // choices.map((choice, index) => (
+                //   <div
+                //     key={index}
+                //     className="flex h-12 w-full items-center justify-center rounded-full bg-black/15 px-2 text-center hover:bg-black/10"
+                //   >
+                //     <span className="text-sm">{choice.name}</span>
+                //   </div>
+                // ))
               )}
               {}
             </div>

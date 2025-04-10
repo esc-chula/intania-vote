@@ -116,6 +116,7 @@ const VoteContainer: React.FC<VoteContainerProps> = ({
     const ballotKey = resCreateBallot.data.ballot.ballotKey;
 
     router.push(`/vote/${slug}/success?ballot_key=${ballotKey}`);
+    router.refresh();
   };
 
   return (

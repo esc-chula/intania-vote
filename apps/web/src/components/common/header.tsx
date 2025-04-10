@@ -1,10 +1,11 @@
 import { cn } from "@intania-vote/shadcn";
 
 interface HeaderProps {
+  children?: React.ReactNode;
   className?: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ className }) => {
+const Header: React.FC<HeaderProps> = ({ children, className }) => {
   return (
     <header
       className={cn(
@@ -18,6 +19,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
           Vote
         </span>
       </span>
+      {children}
     </header>
   );
 };

@@ -15,12 +15,14 @@ import (
 
 type voteServerImpl struct {
 	grpcVote.UnimplementedVoteServiceServer
-	svc service.VoteService
+	svc       service.VoteService
+	ballotSvc service.BallotService
 }
 
-func NewVoteServer(s service.VoteService) grpcVote.VoteServiceServer {
+func NewVoteServer(s service.VoteService, ballotS service.BallotService) grpcVote.VoteServiceServer {
 	return voteServerImpl{
-		svc: s,
+		svc:       s,
+		ballotSvc: ballotS,
 	}
 }
 
@@ -253,8 +255,24 @@ func (s voteServerImpl) GetVotesByUserEligibility(ctx context.Context, req *grpc
 		return &grpcVote.GetVotesByUserEligibilityResponse{}, nil
 	}
 
-	voteList := make([]*grpcVote.Votes, len(votes))
-	for i, vote := range votes {
+	userBallots, err := s.ballotSvc.GetBallotsByOidcId(ctx, oidcId)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "failed to get ballots")
+	}
+
+	voteList := []*grpcVote.Votes{}
+	for _, vote := range votes {
+		var isVoted bool
+		for _, ballot := range userBallots {
+			if ballot.VoteId == vote.Id {
+				isVoted = true
+				break
+			}
+		}
+		if isVoted {
+			continue
+		}
+
 		choices := make([]*grpcChoice.Choice, len(vote.Choices))
 		for j, choice := range vote.Choices {
 			choices[j] = &grpcChoice.Choice{
@@ -266,7 +284,8 @@ func (s voteServerImpl) GetVotesByUserEligibility(ctx context.Context, req *grpc
 			}
 		}
 
-		voteList[i] = &grpcVote.Votes{
+		// append vote to list
+		voteList = append(voteList, &grpcVote.Votes{
 			Vote: &grpcVote.Vote{
 				Name:               vote.Name,
 				Description:        vote.Description,
@@ -283,7 +302,7 @@ func (s voteServerImpl) GetVotesByUserEligibility(ctx context.Context, req *grpc
 				EndAt:              vote.EndAt.Format(time.RFC3339),
 			},
 			Choices: choices,
-		}
+		})
 	}
 
 	return &grpcVote.GetVotesByUserEligibilityResponse{
