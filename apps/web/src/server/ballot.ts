@@ -70,3 +70,31 @@ export const createBallot = actionClient
       };
     }
   });
+
+export const verifyBallot = actionClient
+  .schema(
+    z.object({
+      ballotKey: z.string(),
+    }),
+  )
+  .action(async ({ parsedInput: { ballotKey } }) => {
+    try {
+      const session = await getSession();
+      const oidcId = session?.user?.oidcId;
+      if (!oidcId) {
+        return { failure: "User is not authenticated" };
+      }
+
+      const verifiedBallot = await grpc.ballot.VerifyBallot({
+        ballotKey,
+        oidcId,
+      });
+
+      return { success: "Successfully verified ballot", verifiedBallot };
+    } catch (error) {
+      console.error("Error in verify ballot action:", error);
+      return {
+        failure: "An error occurred during verify ballot",
+      };
+    }
+  });

@@ -19,8 +19,10 @@ import {
   type CreateBallotProofResponse,
   UserServiceClient,
   VoteServiceClient,
-  CreateBallotRequest,
-  CreateBallotResponse,
+  type CreateBallotRequest,
+  type CreateBallotResponse,
+  type VerifyBallotRequest,
+  type VerifyBallotResponse,
 } from "@intania-vote/grpc-ts";
 
 const GRPC_ADDRESS = process.env.GRPC_ADDRESS || "localhost:4000";
@@ -115,6 +117,12 @@ function CreateBallot(req: CreateBallotRequest): Promise<CreateBallotResponse> {
   });
 }
 
+function VerifyBallot(req: VerifyBallotRequest): Promise<VerifyBallotResponse> {
+  return new Promise((resolve, reject) => {
+    ballotClient.verifyBallot(req, r(resolve, reject));
+  });
+}
+
 export const grpc = {
   user: {
     CreateUser,
@@ -130,5 +138,6 @@ export const grpc = {
   ballot: {
     CreateBallotProof,
     CreateBallot,
+    VerifyBallot,
   },
 };

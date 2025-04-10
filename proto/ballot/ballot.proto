@@ -4,6 +4,8 @@ package ballot;
 
 option go_package = "github.com/esc-chula/intania-vote/libs/grpc-go/ballot";
 
+import "proto/choice/choice.proto";
+
 service BallotService {
     rpc CreateBallotProof(CreateBallotProofRequest) returns (CreateBallotProofResponse) {}
     rpc CreateBallot(CreateBallotRequest) returns (CreateBallotResponse) {}
@@ -36,7 +38,7 @@ message VerifyBallotRequest {
 
 message VerifyBallotResponse {
     bool isValid = 1;
-    uint32 choiceId = 2;
+    optional choice.Choice choice = 2;
     string timestamp = 3;
 }
 

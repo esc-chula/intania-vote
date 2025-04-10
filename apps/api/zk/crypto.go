@@ -199,6 +199,45 @@ func EncryptChoiceId(choiceId uint, key []byte) string {
 	return base64.StdEncoding.EncodeToString(result)
 }
 
+func DecryptCandidateID(encryptedID string, key []byte) (uint, error) {
+	// Decode base64
+	ciphertext, err := base64.StdEncoding.DecodeString(encryptedID)
+	if err != nil {
+		return 0, err
+	}
+
+	// Try AES decryption first
+	if len(ciphertext) > aes.BlockSize {
+		// Extract IV
+		iv := ciphertext[:aes.BlockSize]
+		ciphertext = ciphertext[aes.BlockSize:]
+
+		// Create cipher with key
+		block, err := aes.NewCipher(key)
+		if err == nil {
+			// Decrypt
+			plaintext := make([]byte, len(ciphertext))
+			stream := cipher.NewCFBDecrypter(block, iv)
+			stream.XORKeyStream(plaintext, ciphertext)
+
+			// Convert to uint
+			var candidateID uint
+			if _, err := fmt.Sscanf(string(plaintext), "%d", &candidateID); err == nil {
+				return candidateID, nil
+			}
+		}
+	}
+
+	// Fallback to XOR decryption
+	plaintext := XorEncrypt(ciphertext, key)
+	var candidateID uint
+	if _, err := fmt.Sscanf(string(plaintext), "%d", &candidateID); err != nil {
+		return 0, err
+	}
+
+	return candidateID, nil
+}
+
 // Simple XOR encryption as fallback
 func XorEncrypt(data, key []byte) []byte {
 	encrypted := make([]byte, len(data))
