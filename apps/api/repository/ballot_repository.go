@@ -10,6 +10,7 @@ import (
 type BallotRepository interface {
 	Create(ctx context.Context, ballot *model.Ballot) (*model.Ballot, error)
 	GetBallotsByUserId(ctx context.Context, userId uint) ([]*model.Ballot, error)
+	GetBallotsByVoteId(ctx context.Context, voteId uint) ([]*model.Ballot, error)
 	IsUserCreated(ctx context.Context, userId uint, voteId uint) (bool, error)
 }
 
@@ -35,6 +36,15 @@ func (ballotRepo *ballotRepositoryImpl) Create(ctx context.Context, ballot *mode
 func (ballotRepo *ballotRepositoryImpl) GetBallotsByUserId(ctx context.Context, userId uint) ([]*model.Ballot, error) {
 	var ballots []*model.Ballot
 	if err := ballotRepo.db.WithContext(ctx).Where("user_id = ?", userId).Find(&ballots).Error; err != nil {
+		return nil, err
+	}
+
+	return ballots, nil
+}
+
+func (ballotRepo *ballotRepositoryImpl) GetBallotsByVoteId(ctx context.Context, voteId uint) ([]*model.Ballot, error) {
+	var ballots []*model.Ballot
+	if err := ballotRepo.db.WithContext(ctx).Where("vote_id = ?", voteId).Find(&ballots).Error; err != nil {
 		return nil, err
 	}
 

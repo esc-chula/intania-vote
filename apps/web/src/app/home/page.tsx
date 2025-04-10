@@ -1,6 +1,5 @@
 import Header from "~/components/common/header";
 import Navigation from "~/components/common/navigation";
-import RootContainer from "~/components/root/root-container";
 import VoteCard from "~/components/vote/vote-card";
 import { getVotes } from "~/server/vote";
 
@@ -54,7 +53,6 @@ const Page: React.FC = async () => {
             />
           );
         })}
-        <RootContainer />
       </div>
       <Navigation />
     </>

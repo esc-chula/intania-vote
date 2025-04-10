@@ -10,6 +10,7 @@ import (
 type ChoiceRepository interface {
 	GetById(ctx context.Context, id uint) (*model.Choice, error)
 	GetByVoteIdAndNumber(ctx context.Context, voteId uint, number string) (*model.Choice, error)
+	IncrementVoteCountById(ctx context.Context, id uint) error
 }
 
 type choiceRepositoryImpl struct {
@@ -40,4 +41,8 @@ func (r *choiceRepositoryImpl) GetByVoteIdAndNumber(ctx context.Context, voteId 
 		return nil, err
 	}
 	return &choice, nil
+}
+
+func (r *choiceRepositoryImpl) IncrementVoteCountById(ctx context.Context, id uint) error {
+	return r.db.WithContext(ctx).Model(&model.Choice{}).Where("id = ?", id).UpdateColumn("ballot_counter", gorm.Expr("ballot_counter + 1")).Error
 }

@@ -103,6 +103,14 @@ func (s ballotServerImpl) VerifyBallot(ctx context.Context, req *grpcBallot.Veri
 		return nil, status.Errorf(codes.Internal, "failed to verify ballot: %v", err)
 	}
 
+	if choice == nil {
+		return &grpcBallot.VerifyBallotResponse{
+			IsValid:   true,
+			Choice:    nil,
+			Timestamp: timestamp.String(),
+		}, nil
+	}
+
 	return &grpcBallot.VerifyBallotResponse{
 		IsValid: true,
 		Choice: &grpcChoice.Choice{

@@ -6,7 +6,6 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -22,6 +21,7 @@ type BallotService interface {
 	CreateBallotProof(ctx context.Context, oidcId string, voteSlug string, choiceNumber string) (*zk.Proof, error)
 	CreateBallot(ctx context.Context, oidcId string, voteSlug string, proof zk.Proof) (*model.Ballot, *string, error)
 	VerifyBallot(ctx context.Context, oidcId string, ballotKey string) (*model.Choice, *time.Time, error)
+	// TallyByVoteSlug(ctx context.Context, voteSlug string) ([]*model.Tally, error)
 }
 
 type ballotServiceImpl struct {
@@ -52,17 +52,27 @@ func (s *ballotServiceImpl) CreateBallotProof(ctx context.Context, oidcId string
 		return nil, err
 	}
 
-	choice, err := s.choiceRepo.GetByVoteIdAndNumber(ctx, vote.Id, choiceNumber)
-	if err != nil {
-		return nil, err
+	if choiceNumber == "0" {
+		proofData, err := zk.GenerateProof(0, secret)
+		if err != nil {
+			return nil, err
+		}
+
+		return proofData, nil
+	} else {
+		choice, err := s.choiceRepo.GetByVoteIdAndNumber(ctx, vote.Id, choiceNumber)
+		if err != nil {
+			return nil, err
+		}
+
+		proofData, err := zk.GenerateProof(choice.Id, secret)
+		if err != nil {
+			return nil, err
+		}
+
+		return proofData, nil
 	}
 
-	proofData, err := zk.GenerateProof(choice.Id, secret)
-	if err != nil {
-		return nil, err
-	}
-
-	return proofData, nil
 }
 
 func (s *ballotServiceImpl) CreateBallot(ctx context.Context, oidcId string, voteSlug string, proof zk.Proof) (*model.Ballot, *string, error) {
@@ -99,14 +109,19 @@ func (s *ballotServiceImpl) CreateBallot(ctx context.Context, oidcId string, vot
 
 	isHasValidProof := false
 	var choiceId uint
-	for _, c := range vote.Choices {
-		log.Println("choiceId", c.Id)
-		isValid := zk.VerifyProof(proofMap, c.Id, secret)
+	isValid := zk.VerifyProof(proofMap, 0, secret)
+	if isValid {
+		isHasValidProof = true
+		choiceId = 0
+	} else {
+		for _, c := range vote.Choices {
+			isValid := zk.VerifyProof(proofMap, c.Id, secret)
 
-		if isValid {
-			isHasValidProof = true
-			choiceId = c.Id
-			break
+			if isValid {
+				isHasValidProof = true
+				choiceId = c.Id
+				break
+			}
 		}
 	}
 	if !isHasValidProof {
@@ -139,6 +154,13 @@ func (s *ballotServiceImpl) CreateBallot(ctx context.Context, oidcId string, vot
 	})
 	if err != nil {
 		return nil, nil, err
+	}
+
+	if choiceId != 0 {
+		err = s.choiceRepo.IncrementVoteCountById(ctx, choiceId)
+		if err != nil {
+			return nil, nil, err
+		}
 	}
 
 	base58Receipt := base58.Encode([]byte(fmt.Sprintf("%d:%s:%s", vote.Id, receipt, encryptedChoiceId)))
@@ -184,7 +206,7 @@ func (s *ballotServiceImpl) VerifyBallot(ctx context.Context, oidcId string, bal
 	for _, ballot := range ballots {
 		encryptionKey := zk.GenerateVoteEncryptionKey(user.OidcId.String(), ballot.Nullifier)
 
-		choiceId, err := zk.DecryptCandidateID(encryptedChoiceId, encryptionKey)
+		choiceId, err := zk.DecryptChoiceId(encryptedChoiceId, encryptionKey)
 		if err != nil {
 			return nil, nil, err
 		}

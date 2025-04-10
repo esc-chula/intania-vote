@@ -38,6 +38,7 @@
     "@typescript-eslint/parser": "^7.17.0",
     "autoprefixer": "10.4.13",
     "babel-jest": "^29.7.0",
+    "esbuild": "^0.25.2",
     "eslint": "~8.57.0",
     "eslint-config-next": "14.2.3",
     "eslint-config-prettier": "^9.1.0",
@@ -120,6 +121,7 @@
     "onlyBuiltDependencies": [
       "@swc/core",
       "core-js-pure",
+      "esbuild",
       "nx",
       "protobufjs"
     ]
