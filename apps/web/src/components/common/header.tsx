@@ -8,7 +8,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
   return (
     <header
       className={cn(
-        "fixed left-0 right-0 top-0 flex items-center justify-between border-b border-neutral-200 bg-neutral-50 px-4 py-8",
+        "fixed left-0 right-0 top-0 z-50 flex items-center justify-between border-b border-neutral-200 bg-neutral-50 px-4 py-6",
         className,
       )}
     >

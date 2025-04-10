@@ -10,6 +10,7 @@ service VoteService {
     rpc CreateVote(CreateVoteRequest) returns (CreateVoteResponse) {};
     rpc GetVoteById(GetVoteByIdRequest) returns (GetVoteByIdResponse) {};
     rpc GetVoteBySlug(GetVoteBySlugRequest) returns (GetVoteBySlugResponse) {};
+    rpc GetVotes(GetVotesRequest) returns (GetVotesResponse) {};
     rpc GetVotesByUserEligibility(GetVotesByUserEligibilityRequest) returns (GetVotesByUserEligibilityResponse) {};
 }
 
@@ -37,6 +38,12 @@ message GetVoteBySlugRequest {
 message GetVoteBySlugResponse {
     Vote vote = 1;
     repeated choice.Choice choices = 2;
+}
+
+message GetVotesRequest {}
+
+message GetVotesResponse {
+    repeated Votes votes = 1;
 }
 
 message GetVotesByUserEligibilityRequest {

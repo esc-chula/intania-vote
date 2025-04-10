@@ -27,8 +27,8 @@ const Page: React.FC = async () => {
 
   return (
     <>
-      <Header className="h-24" />
-      <div className="mt-24 grid gap-5 p-5 sm:grid-cols-2">
+      <Header className="h-20" />
+      <div className="mt-20 grid gap-5 p-5 sm:grid-cols-2">
         {votesData.map((data) => {
           if (!data.vote || !data.choices) {
             return null;

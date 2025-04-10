@@ -182,6 +182,53 @@ func (s voteServerImpl) GetVoteBySlug(ctx context.Context, req *grpcVote.GetVote
 	}, nil
 }
 
+func (s voteServerImpl) GetVotes(ctx context.Context, req *grpcVote.GetVotesRequest) (*grpcVote.GetVotesResponse, error) {
+	votes, err := s.svc.GetVotes(ctx)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "failed to get votes")
+	}
+	if len(votes) == 0 {
+		return &grpcVote.GetVotesResponse{}, nil
+	}
+
+	voteList := make([]*grpcVote.Votes, len(votes))
+	for i, vote := range votes {
+		choices := make([]*grpcChoice.Choice, len(vote.Choices))
+		for j, choice := range vote.Choices {
+			choices[j] = &grpcChoice.Choice{
+				Number:      choice.Number,
+				Name:        choice.Name,
+				Description: choice.Description,
+				Information: choice.Information,
+				Image:       choice.Image,
+			}
+		}
+
+		voteList[i] = &grpcVote.Votes{
+			Vote: &grpcVote.Vote{
+				Name:               vote.Name,
+				Description:        vote.Description,
+				Image:              vote.Image,
+				Slug:               vote.Slug,
+				Owner:              grpcVote.Owner(grpcVote.Owner_value[string(vote.Owner)]),
+				EligibleStudentId:  vote.EligibleStudentId,
+				EligibleDepartment: vote.EligibleDepartment,
+				EligibleYear:       vote.EligibleYear,
+				IsPrivate:          vote.IsPrivate,
+				IsRealTime:         vote.IsRealTime,
+				IsAllowMultiple:    vote.IsAllowMultiple,
+				StartAt:            vote.StartAt.Format(time.RFC3339),
+				EndAt:              vote.EndAt.Format(time.RFC3339),
+			},
+			Choices: choices,
+		}
+	}
+
+	return &grpcVote.GetVotesResponse{
+		Votes: voteList,
+	}, nil
+}
+
 func (s voteServerImpl) GetVotesByUserEligibility(ctx context.Context, req *grpcVote.GetVotesByUserEligibilityRequest) (*grpcVote.GetVotesByUserEligibilityResponse, error) {
 	oidcId := req.GetOidcId()
 	if oidcId == "" {

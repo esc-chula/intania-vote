@@ -123,6 +123,22 @@ export const getVoteBySlug = actionClient
     }
   });
 
+export const getVotes = actionClient.action(async () => {
+  try {
+    const votes = await grpc.vote.GetVotes({});
+
+    return {
+      success: "Successfully fetched votes",
+      votes,
+    };
+  } catch (error) {
+    console.error("Error in get votes action:", error);
+    return {
+      failure: "An error occurred during get votes",
+    };
+  }
+});
+
 export const getVotesByUserEligibility = actionClient.action(async () => {
   try {
     const session = await getSession();

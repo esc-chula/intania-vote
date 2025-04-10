@@ -62,14 +62,6 @@ func (v *voteRepositoryImpl) Create(ctx context.Context, vote *model.Vote, choic
 	return vote, nil
 }
 
-func (v *voteRepositoryImpl) Get(ctx context.Context) ([]*model.Vote, error) {
-	var votes []*model.Vote
-	if err := v.db.WithContext(ctx).Preload("Choices").Find(&votes).Error; err != nil {
-		return nil, err
-	}
-	return votes, nil
-}
-
 func (v *voteRepositoryImpl) GetById(ctx context.Context, id uint) (*model.Vote, error) {
 	var vote model.Vote
 	if err := v.db.WithContext(ctx).Preload("Choices").First(&vote, id).Error; err != nil {
@@ -84,6 +76,14 @@ func (v *voteRepositoryImpl) GetBySlug(ctx context.Context, slug string) (*model
 		return nil, err
 	}
 	return &vote, nil
+}
+
+func (v *voteRepositoryImpl) Get(ctx context.Context) ([]*model.Vote, error) {
+	var votes []*model.Vote
+	if err := v.db.WithContext(ctx).Preload("Choices").Find(&votes).Error; err != nil {
+		return nil, err
+	}
+	return votes, nil
 }
 
 func (v *voteRepositoryImpl) GetByActiveTime(ctx context.Context) ([]*model.Vote, error) {

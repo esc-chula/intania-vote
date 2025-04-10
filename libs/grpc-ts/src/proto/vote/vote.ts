@@ -86,6 +86,13 @@ export interface GetVoteBySlugResponse {
   choices: Choice[];
 }
 
+export interface GetVotesRequest {
+}
+
+export interface GetVotesResponse {
+  votes: Votes[];
+}
+
 export interface GetVotesByUserEligibilityRequest {
   oidcId: string;
 }
@@ -514,6 +521,107 @@ export const GetVoteBySlugResponse: MessageFns<GetVoteBySlugResponse> = {
     const message = createBaseGetVoteBySlugResponse();
     message.vote = (object.vote !== undefined && object.vote !== null) ? Vote.fromPartial(object.vote) : undefined;
     message.choices = object.choices?.map((e) => Choice.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseGetVotesRequest(): GetVotesRequest {
+  return {};
+}
+
+export const GetVotesRequest: MessageFns<GetVotesRequest> = {
+  encode(_: GetVotesRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GetVotesRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetVotesRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(_: any): GetVotesRequest {
+    return {};
+  },
+
+  toJSON(_: GetVotesRequest): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetVotesRequest>, I>>(base?: I): GetVotesRequest {
+    return GetVotesRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetVotesRequest>, I>>(_: I): GetVotesRequest {
+    const message = createBaseGetVotesRequest();
+    return message;
+  },
+};
+
+function createBaseGetVotesResponse(): GetVotesResponse {
+  return { votes: [] };
+}
+
+export const GetVotesResponse: MessageFns<GetVotesResponse> = {
+  encode(message: GetVotesResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.votes) {
+      Votes.encode(v!, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GetVotesResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetVotesResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.votes.push(Votes.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetVotesResponse {
+    return { votes: globalThis.Array.isArray(object?.votes) ? object.votes.map((e: any) => Votes.fromJSON(e)) : [] };
+  },
+
+  toJSON(message: GetVotesResponse): unknown {
+    const obj: any = {};
+    if (message.votes?.length) {
+      obj.votes = message.votes.map((e) => Votes.toJSON(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetVotesResponse>, I>>(base?: I): GetVotesResponse {
+    return GetVotesResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetVotesResponse>, I>>(object: I): GetVotesResponse {
+    const message = createBaseGetVotesResponse();
+    message.votes = object.votes?.map((e) => Votes.fromPartial(e)) || [];
     return message;
   },
 };
@@ -1013,6 +1121,15 @@ export const VoteServiceService = {
     responseSerialize: (value: GetVoteBySlugResponse) => Buffer.from(GetVoteBySlugResponse.encode(value).finish()),
     responseDeserialize: (value: Buffer) => GetVoteBySlugResponse.decode(value),
   },
+  getVotes: {
+    path: "/vote.VoteService/GetVotes",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetVotesRequest) => Buffer.from(GetVotesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer) => GetVotesRequest.decode(value),
+    responseSerialize: (value: GetVotesResponse) => Buffer.from(GetVotesResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer) => GetVotesResponse.decode(value),
+  },
   getVotesByUserEligibility: {
     path: "/vote.VoteService/GetVotesByUserEligibility",
     requestStream: false,
@@ -1030,6 +1147,7 @@ export interface VoteServiceServer extends UntypedServiceImplementation {
   createVote: handleUnaryCall<CreateVoteRequest, CreateVoteResponse>;
   getVoteById: handleUnaryCall<GetVoteByIdRequest, GetVoteByIdResponse>;
   getVoteBySlug: handleUnaryCall<GetVoteBySlugRequest, GetVoteBySlugResponse>;
+  getVotes: handleUnaryCall<GetVotesRequest, GetVotesResponse>;
   getVotesByUserEligibility: handleUnaryCall<GetVotesByUserEligibilityRequest, GetVotesByUserEligibilityResponse>;
 }
 
@@ -1078,6 +1196,21 @@ export interface VoteServiceClient extends Client {
     metadata: Metadata,
     options: Partial<CallOptions>,
     callback: (error: ServiceError | null, response: GetVoteBySlugResponse) => void,
+  ): ClientUnaryCall;
+  getVotes(
+    request: GetVotesRequest,
+    callback: (error: ServiceError | null, response: GetVotesResponse) => void,
+  ): ClientUnaryCall;
+  getVotes(
+    request: GetVotesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: GetVotesResponse) => void,
+  ): ClientUnaryCall;
+  getVotes(
+    request: GetVotesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: GetVotesResponse) => void,
   ): ClientUnaryCall;
   getVotesByUserEligibility(
     request: GetVotesByUserEligibilityRequest,
