@@ -63,8 +63,8 @@ const Page: React.FC<PageProps> = async ({ params, searchParams }) => {
         </Button>
       </Link>
       <Header className="h-24" />
-      <div className="mt-20 flex flex-grow flex-col items-center justify-between p-5">
-        <div className="mt-24 flex flex-col items-center gap-10 text-center">
+      <div className="flex flex-grow flex-col items-center justify-between gap-10 p-5">
+        <div className="mt-24 flex flex-grow flex-col items-center justify-center gap-10 text-center">
           <div className="flex flex-col items-center">
             <Vote size={80} className="text-primary" />
             <h1 className="text-primary text-4xl font-bold">โหวตสำเร็จ</h1>

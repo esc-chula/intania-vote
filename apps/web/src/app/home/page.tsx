@@ -1,7 +1,12 @@
+import Link from "next/link";
+
+import { Bell } from "lucide-react";
 import Header from "~/components/common/header";
 import Navigation from "~/components/common/navigation";
 import VoteCard from "~/components/vote/vote-card";
 import { getVotes } from "~/server/vote";
+
+import { Button } from "@intania-vote/shadcn";
 
 const Page: React.FC = async () => {
   const res = await getVotes();
@@ -12,12 +17,19 @@ const Page: React.FC = async () => {
 
   const votesData = res.data.votes.votes;
 
-  console.log(votesData[0].choices);
-
   return (
     <>
-      <Header className="h-20" />
-      <div className="my-20 grid gap-5 p-5 sm:grid-cols-2">
+      <Link href="/">
+        <Button
+          variant="outline"
+          size="icon"
+          className="fixed right-6 top-5 z-50 h-14 w-14 rounded-full"
+        >
+          <Bell />
+        </Button>
+      </Link>
+      <Header className="h-24" />
+      <div className="mb-20 mt-24 grid gap-5 p-5 sm:grid-cols-2">
         {votesData.map((data) => {
           if (!data.vote || !data.choices) {
             return null;

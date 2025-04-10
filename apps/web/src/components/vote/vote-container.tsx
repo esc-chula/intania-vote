@@ -126,27 +126,29 @@ const VoteContainer: React.FC<VoteContainerProps> = ({
           <p className="text-neutral-600">{description}</p>
         </div>
         <div className="grid flex-grow grid-cols-1 grid-rows-2 gap-5 pb-5">
-          {choices.map((choice, index) => (
-            <VoteBallotCard
-              key={index}
-              isActive={selectedChoice === index + 1}
-              onClick={() => {
-                if (selectedChoice === index + 1) {
-                  setSelectedChoice(0);
-                } else {
+          {choices
+            .sort((a, b) => a.number - b.number)
+            .map((choice, index) => (
+              <VoteBallotCard
+                key={index}
+                isActive={selectedChoice === index + 1}
+                onClick={() => {
+                  if (selectedChoice === index + 1) {
+                    setSelectedChoice(0);
+                  } else {
+                    setSelectedChoice(index + 1);
+                  }
+                }}
+                onVote={() => {
                   setSelectedChoice(index + 1);
-                }
-              }}
-              onVote={() => {
-                setSelectedChoice(index + 1);
-              }}
-              number={choice.number}
-              name={choice.name}
-              description={choice.description}
-              information={choice.information}
-              image={choice.image}
-            />
-          ))}
+                }}
+                number={choice.number}
+                name={choice.name}
+                description={choice.description}
+                information={choice.information}
+                image={choice.image}
+              />
+            ))}
         </div>
       </div>
       <TabBarWrapper
