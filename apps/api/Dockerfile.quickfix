@@ -1,7 +1,10 @@
 # syntax=docker/dockerfile:1
 # compile with env GOOS=linux GOARCH=amd64 go build -o dist/amd64 ./...
+# build image with docker buildx build --platform linux/amd64 -t ghcr.io/esc-chula/intania-vote-api:latest -f Dockerfile.quickfix .
 
 FROM debian:bookworm-slim
+
+LABEL org.opencontainers.image.source=https://github.com/esc-chula/intania-vote
 
 COPY ./dist/amd64/cmd /app
 
