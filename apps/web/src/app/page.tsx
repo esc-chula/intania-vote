@@ -14,7 +14,7 @@ const Page: React.FC = async () => {
 
   const res = await getVotesByUserEligibility();
 
-  if (res?.data?.failure || !res?.data?.votes?.votes) {
+  if (res?.data?.failure || !res?.data?.votes?.votes.length) {
     return redirect("/home");
   }
 
