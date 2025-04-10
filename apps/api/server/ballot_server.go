@@ -102,7 +102,7 @@ func (s ballotServerImpl) VerifyBallot(ctx context.Context, req *grpcBallot.Veri
 
 	return &grpcBallot.VerifyBallotResponse{
 		IsValid:      true,
-		ChoiceNumber: fmt.Sprintf("%d", *choice),
+		ChoiceNumber: int32(*choice),
 		Timestamp:    timestamp.String(),
 	}, nil
 }

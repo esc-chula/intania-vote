@@ -37,7 +37,7 @@ message VerifyBallotRequest {
 
 message VerifyBallotResponse {
     bool isValid = 1;
-    string choiceNumber = 2;
+    int32 choiceNumber = 2;
     string timestamp = 3;
 }
 

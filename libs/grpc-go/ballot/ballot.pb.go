@@ -284,7 +284,7 @@ func (x *VerifyBallotRequest) GetBallotKey() string {
 type VerifyBallotResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	IsValid       bool                   `protobuf:"varint,1,opt,name=isValid,proto3" json:"isValid,omitempty"`
-	ChoiceNumber  string                 `protobuf:"bytes,2,opt,name=choiceNumber,proto3" json:"choiceNumber,omitempty"`
+	ChoiceNumber  int32                  `protobuf:"varint,2,opt,name=choiceNumber,proto3" json:"choiceNumber,omitempty"`
 	Timestamp     string                 `protobuf:"bytes,3,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -327,11 +327,11 @@ func (x *VerifyBallotResponse) GetIsValid() bool {
 	return false
 }
 
-func (x *VerifyBallotResponse) GetChoiceNumber() string {
+func (x *VerifyBallotResponse) GetChoiceNumber() int32 {
 	if x != nil {
 		return x.ChoiceNumber
 	}
-	return ""
+	return 0
 }
 
 func (x *VerifyBallotResponse) GetTimestamp() string {
@@ -447,7 +447,7 @@ const file_proto_ballot_ballot_proto_rawDesc = "" +
 	"\tballotKey\x18\x02 \x01(\tR\tballotKey\"r\n" +
 	"\x14VerifyBallotResponse\x12\x18\n" +
 	"\aisValid\x18\x01 \x01(\bR\aisValid\x12\"\n" +
-	"\fchoiceNumber\x18\x02 \x01(\tR\fchoiceNumber\x12\x1c\n" +
+	"\fchoiceNumber\x18\x02 \x01(\x05R\fchoiceNumber\x12\x1c\n" +
 	"\ttimestamp\x18\x03 \x01(\tR\ttimestamp\"\xc1\x01\n" +
 	"\x05Proof\x12\x1e\n" +
 	"\n" +
