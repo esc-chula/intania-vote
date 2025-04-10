@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package vote;
+
+option go_package = "github.com/esc-chula/intania-vote/libs/grpc-go/vote";
+
+import "proto/choice/choice.proto";
+
+service VoteService {
+    rpc CreateVote(CreateVoteRequest) returns (CreateVoteResponse) {};
+    rpc GetVoteById(GetVoteByIdRequest) returns (GetVoteByIdResponse) {};
+    rpc GetVoteBySlug(GetVoteBySlugRequest) returns (GetVoteBySlugResponse) {};
+    rpc GetVotesByUserEligibility(GetVotesByUserEligibilityRequest) returns (GetVotesByUserEligibilityResponse) {};
+}
+
+message CreateVoteRequest {
+    string oidcId = 1;
+    Vote vote = 2;
+    repeated choice.Choice choices = 3;
+}
+
+message CreateVoteResponse {}
+
+message GetVoteByIdRequest {
+    uint32 id = 1;
+}
+
+message GetVoteByIdResponse {
+    Vote vote = 1;
+    repeated choice.Choice choices = 2;
+}
+
+message GetVoteBySlugRequest {
+    string slug = 1;
+}
+
+message GetVoteBySlugResponse {
+    Vote vote = 1;
+    repeated choice.Choice choices = 2;
+}
+
+message GetVotesByUserEligibilityRequest {
+    string oidcId = 1;
+}
+
+message GetVotesByUserEligibilityResponse {
+    repeated Votes votes = 1;
+}
+
+enum Owner {
+    USER = 0;
+    ESC = 1;
+    ISESC = 2;
+}
+
+message Vote {
+    string name = 1;
+    string description = 2;
+    string slug = 3;
+    optional string image = 4;
+    Owner owner = 5;
+    string eligibleStudentId = 6;
+    string eligibleDepartment = 7;
+    string eligibleYear = 8;
+    bool isPrivate = 9;
+    bool isRealTime = 10;
+    bool isAllowMultiple = 11;
+    string startAt = 12;
+    string endAt = 13;
+}
+
+message Votes {
+    Vote vote = 1;
+    repeated choice.Choice choices = 2;
+}

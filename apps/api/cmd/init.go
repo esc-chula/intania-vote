@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/esc-chula/intania-vote/apps/api/config"
 	"github.com/esc-chula/intania-vote/apps/api/database"
@@ -12,6 +13,8 @@ import (
 )
 
 func InitializeApp() (App, error) {
+	os.Setenv("TZ", "Asia/Bangkok")
+
 	cfg, err := config.LoadConfig()
 	if err != nil {
 		return App{}, fmt.Errorf("failed to load config: %w", err)
@@ -26,7 +29,7 @@ func InitializeApp() (App, error) {
 		DO $$ 
 		BEGIN
 			IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'owner') THEN
-				CREATE TYPE owner AS ENUM ('STUDENT', 'ESC', 'ISESC');
+				CREATE TYPE owner AS ENUM ('USER', 'ESC', 'ISESC');
 			END IF;
 		END $$;
 	`).Error; err != nil {
@@ -38,6 +41,9 @@ func InitializeApp() (App, error) {
 	userRepository := repository.NewUserRepository(gormDB)
 	userService := service.NewUserService(userRepository, cfg)
 	userServiceServer := server.NewUserServer(userService)
+	voteRepository := repository.NewVoteRepository(gormDB)
+	voteService := service.NewVoteService(voteRepository, userRepository, cfg)
+	voteServiceServer := server.NewVoteServer(voteService)
 
-	return NewApp(userServiceServer, cfg), nil
+	return NewApp(userServiceServer, voteServiceServer, cfg), nil
 }

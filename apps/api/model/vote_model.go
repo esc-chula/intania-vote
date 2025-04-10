@@ -9,9 +9,9 @@ import (
 type Owner string
 
 const (
-	Student Owner = "STUDENT"
-	ESC     Owner = "ESC"
-	ISESC   Owner = "ISESC"
+	OwnerUser  Owner = "USER"
+	OwnerESC   Owner = "ESC"
+	OwnerISESC Owner = "ISESC"
 )
 
 func (s *Owner) Scan(value interface{}) error {
@@ -21,7 +21,7 @@ func (s *Owner) Scan(value interface{}) error {
 	}
 
 	switch Owner(strVal) {
-	case Student, ESC, ISESC:
+	case OwnerUser, OwnerESC, OwnerISESC:
 		*s = Owner(strVal)
 		return nil
 	default:
@@ -31,7 +31,7 @@ func (s *Owner) Scan(value interface{}) error {
 
 func (s Owner) Value() (driver.Value, error) {
 	switch s {
-	case Student, ESC, ISESC:
+	case OwnerUser, OwnerESC, OwnerISESC:
 		return string(s), nil
 	default:
 		return nil, fmt.Errorf("invalid value for Owner: %s", s)
@@ -41,6 +41,8 @@ func (s Owner) Value() (driver.Value, error) {
 type Vote struct {
 	Model
 
+	UserId  uint     `gorm:"not null"`
+	User    User     `gorm:"foreignKey:UserId"`
 	Choices []Choice `gorm:"foreignKey:VoteId"`
 
 	Name               string    `gorm:"size:100;not null"`
@@ -51,9 +53,9 @@ type Vote struct {
 	EligibleStudentId  string    `gorm:"size:50"`
 	EligibleDepartment string    `gorm:"size:50"`
 	EligibleYear       string    `gorm:"size:50"`
-	Private            bool      `gorm:"not null"`
-	RealTime           bool      `gorm:"not null"`
-	AllowMultiple      bool      `gorm:"not null"`
+	IsPrivate          bool      `gorm:"not null;default:false"`
+	IsRealTime         bool      `gorm:"not null;default:false"`
+	IsAllowMultiple    bool      `gorm:"not null;default:false"`
 	StartAt            time.Time `gorm:"not null"`
 	EndAt              time.Time `gorm:"not null"`
 }
