@@ -26,7 +26,7 @@ interface VoteContainerProps {
   description: string;
   slug: string;
   choices: {
-    number?: string;
+    number: number;
     name: string;
     description: string;
     information?: string;
@@ -57,7 +57,7 @@ const VoteContainer: React.FC<VoteContainerProps> = ({
     setLoading(true);
 
     const resCreateBallotProof = await createBallotProof({
-      choiceNumber: selectedChoice.toString(),
+      choiceNumber: selectedChoice,
       voteSlug: slug,
     });
 

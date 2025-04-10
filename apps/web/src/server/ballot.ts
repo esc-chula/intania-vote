@@ -9,7 +9,7 @@ import { grpc } from "./grpc";
 export const createBallotProof = actionClient
   .schema(
     z.object({
-      choiceNumber: z.string(),
+      choiceNumber: z.number(),
       voteSlug: z.string(),
     }),
   )
