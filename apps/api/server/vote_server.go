@@ -193,14 +193,24 @@ func (s voteServerImpl) GetVotes(ctx context.Context, req *grpcVote.GetVotesRequ
 
 	voteList := make([]*grpcVote.Votes, len(votes))
 	for i, vote := range votes {
+		isActive := vote.StartAt.Before(time.Now()) && vote.EndAt.After(time.Now())
+
 		choices := make([]*grpcChoice.Choice, len(vote.Choices))
 		for j, choice := range vote.Choices {
+			var ballotCounter *uint32
+			if !isActive {
+				ballotCounter = &choice.BallotCounter
+			} else {
+				ballotCounter = nil
+			}
+
 			choices[j] = &grpcChoice.Choice{
-				Number:      choice.Number,
-				Name:        choice.Name,
-				Description: choice.Description,
-				Information: choice.Information,
-				Image:       choice.Image,
+				Number:        choice.Number,
+				Name:          choice.Name,
+				Description:   choice.Description,
+				Information:   choice.Information,
+				Image:         choice.Image,
+				BallotCounter: ballotCounter,
 			}
 		}
 

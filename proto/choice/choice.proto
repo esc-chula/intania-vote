@@ -10,4 +10,5 @@ message Choice {
     string description = 3;
     optional string information = 4;
     optional string image = 5;
+    optional uint32 ballotCounter = 6;
 }

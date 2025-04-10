@@ -115,7 +115,6 @@ export interface Vote {
   isAllowMultiple: boolean;
   startAt: string;
   endAt: string;
-  tally?: Tally | undefined;
 }
 
 export interface Votes {
@@ -776,7 +775,6 @@ function createBaseVote(): Vote {
     isAllowMultiple: false,
     startAt: "",
     endAt: "",
-    tally: undefined,
   };
 }
 
@@ -820,9 +818,6 @@ export const Vote: MessageFns<Vote> = {
     }
     if (message.endAt !== "") {
       writer.uint32(106).string(message.endAt);
-    }
-    if (message.tally !== undefined) {
-      Tally.encode(message.tally, writer.uint32(114).fork()).join();
     }
     return writer;
   },
@@ -938,14 +933,6 @@ export const Vote: MessageFns<Vote> = {
           message.endAt = reader.string();
           continue;
         }
-        case 14: {
-          if (tag !== 114) {
-            break;
-          }
-
-          message.tally = Tally.decode(reader, reader.uint32());
-          continue;
-        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -970,7 +957,6 @@ export const Vote: MessageFns<Vote> = {
       isAllowMultiple: isSet(object.isAllowMultiple) ? globalThis.Boolean(object.isAllowMultiple) : false,
       startAt: isSet(object.startAt) ? globalThis.String(object.startAt) : "",
       endAt: isSet(object.endAt) ? globalThis.String(object.endAt) : "",
-      tally: isSet(object.tally) ? Tally.fromJSON(object.tally) : undefined,
     };
   },
 
@@ -1015,9 +1001,6 @@ export const Vote: MessageFns<Vote> = {
     if (message.endAt !== "") {
       obj.endAt = message.endAt;
     }
-    if (message.tally !== undefined) {
-      obj.tally = Tally.toJSON(message.tally);
-    }
     return obj;
   },
 
@@ -1039,7 +1022,6 @@ export const Vote: MessageFns<Vote> = {
     message.isAllowMultiple = object.isAllowMultiple ?? false;
     message.startAt = object.startAt ?? "";
     message.endAt = object.endAt ?? "";
-    message.tally = (object.tally !== undefined && object.tally !== null) ? Tally.fromPartial(object.tally) : undefined;
     return message;
   },
 };

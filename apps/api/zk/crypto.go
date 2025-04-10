@@ -200,6 +200,7 @@ func EncryptChoiceId(choiceId uint, key []byte) string {
 
 	// Combine IV and ciphertext
 	result := append(iv, ciphertext...)
+
 	return base64.StdEncoding.EncodeToString(result)
 }
 
@@ -229,6 +230,7 @@ func DecryptChoiceId(encryptedId string, key []byte) (uint, error) {
 			if _, err := fmt.Sscanf(string(plaintext), "%d", &choiceId); err == nil {
 				return choiceId, nil
 			}
+
 			// If parsing as uint failed, but we got valid plaintext
 			if len(plaintext) > 0 {
 				return 0, fmt.Errorf("decrypted content is not a valid choice ID: %s", string(plaintext))

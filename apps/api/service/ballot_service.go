@@ -53,6 +53,7 @@ func (s *ballotServiceImpl) CreateBallotProof(ctx context.Context, oidcId string
 	}
 
 	if choiceNumber == "0" {
+
 		proofData, err := zk.GenerateProof(0, secret)
 		if err != nil {
 			return nil, err
@@ -208,7 +209,7 @@ func (s *ballotServiceImpl) VerifyBallot(ctx context.Context, oidcId string, bal
 
 		choiceId, err := zk.DecryptChoiceId(encryptedChoiceId, encryptionKey)
 		if err != nil {
-			return nil, nil, err
+			continue
 		}
 
 		receiptData := fmt.Sprintf("%s:%s:%s",

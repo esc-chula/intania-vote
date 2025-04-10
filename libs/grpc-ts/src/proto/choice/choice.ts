@@ -13,10 +13,11 @@ export interface Choice {
   description: string;
   information?: string | undefined;
   image?: string | undefined;
+  ballotCounter?: number | undefined;
 }
 
 function createBaseChoice(): Choice {
-  return { number: "", name: "", description: "", information: undefined, image: undefined };
+  return { number: "", name: "", description: "", information: undefined, image: undefined, ballotCounter: undefined };
 }
 
 export const Choice: MessageFns<Choice> = {
@@ -35,6 +36,9 @@ export const Choice: MessageFns<Choice> = {
     }
     if (message.image !== undefined) {
       writer.uint32(42).string(message.image);
+    }
+    if (message.ballotCounter !== undefined) {
+      writer.uint32(48).uint32(message.ballotCounter);
     }
     return writer;
   },
@@ -86,6 +90,14 @@ export const Choice: MessageFns<Choice> = {
           message.image = reader.string();
           continue;
         }
+        case 6: {
+          if (tag !== 48) {
+            break;
+          }
+
+          message.ballotCounter = reader.uint32();
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -102,6 +114,7 @@ export const Choice: MessageFns<Choice> = {
       description: isSet(object.description) ? globalThis.String(object.description) : "",
       information: isSet(object.information) ? globalThis.String(object.information) : undefined,
       image: isSet(object.image) ? globalThis.String(object.image) : undefined,
+      ballotCounter: isSet(object.ballotCounter) ? globalThis.Number(object.ballotCounter) : undefined,
     };
   },
 
@@ -122,6 +135,9 @@ export const Choice: MessageFns<Choice> = {
     if (message.image !== undefined) {
       obj.image = message.image;
     }
+    if (message.ballotCounter !== undefined) {
+      obj.ballotCounter = Math.round(message.ballotCounter);
+    }
     return obj;
   },
 
@@ -135,6 +151,7 @@ export const Choice: MessageFns<Choice> = {
     message.description = object.description ?? "";
     message.information = object.information ?? undefined;
     message.image = object.image ?? undefined;
+    message.ballotCounter = object.ballotCounter ?? undefined;
     return message;
   },
 };

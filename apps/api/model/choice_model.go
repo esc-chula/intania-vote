@@ -11,7 +11,7 @@ type Choice struct {
 	Description   string  `gorm:"size:50"`
 	Information   *string `gorm:"size:700"`
 	Image         *string `gorm:"size:100"`
-	BallotCounter int     `gorm:"default:0"`
+	BallotCounter uint32  `gorm:"default:0"`
 }
 
 func (Choice) TableName() string {
