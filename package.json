@@ -14,6 +14,7 @@
     "@nx-tools/nx-container": "^6.2.0",
     "@nx/cypress": "^20.7.1",
     "@nx/devkit": "19.5.3",
+    "@nx/esbuild": "^20.7.2",
     "@nx/eslint": "19.5.3",
     "@nx/eslint-plugin": "19.5.3",
     "@nx/jest": "19.5.3",
