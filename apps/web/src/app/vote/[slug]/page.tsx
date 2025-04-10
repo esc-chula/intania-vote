@@ -1,11 +1,8 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { X } from "lucide-react";
+import XBackButton from "~/components/common/x-back-button";
 import VoteContainer from "~/components/vote/vote-container";
 import { getVoteBySlug } from "~/server/vote";
-
-import { Button } from "@intania-vote/shadcn";
 
 interface PageProps {
   params: {
@@ -30,15 +27,7 @@ const Page: React.FC<PageProps> = async ({ params }) => {
 
   return (
     <>
-      <Link href="/">
-        <Button
-          variant="outline"
-          size="icon"
-          className="fixed right-6 top-5 h-14 w-14 rounded-full"
-        >
-          <X />
-        </Button>
-      </Link>
+      <XBackButton />
       <VoteContainer
         name={voteData.vote.name}
         description={voteData.vote.description}
