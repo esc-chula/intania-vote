@@ -1,0 +1,8 @@
+# syntax=docker/dockerfile:1
+# compile with env GOOS=linux GOARCH=amd64 go build -o dist/amd64 ./...
+
+FROM debian:bookworm-slim
+
+COPY ./dist/amd64/cmd /app
+
+ENTRYPOINT ["/app"]
