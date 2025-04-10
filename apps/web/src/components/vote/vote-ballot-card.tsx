@@ -21,7 +21,7 @@ interface VoteBallotCardProps {
   isActive: boolean;
   onClick?: () => void;
   onVote?: () => void;
-  number?: string;
+  number: number;
   name: string;
   description: string;
   information?: string;

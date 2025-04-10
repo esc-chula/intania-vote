@@ -106,7 +106,7 @@ const VoteCard: React.FC<VoteCardProps> = ({
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [endAt, startAt]);
 
   const isDislaying = initialTopContainerHeight && time ? true : false;
 

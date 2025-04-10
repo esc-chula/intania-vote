@@ -542,7 +542,6 @@ type Vote struct {
 	IsAllowMultiple    bool                   `protobuf:"varint,11,opt,name=isAllowMultiple,proto3" json:"isAllowMultiple,omitempty"`
 	StartAt            string                 `protobuf:"bytes,12,opt,name=startAt,proto3" json:"startAt,omitempty"`
 	EndAt              string                 `protobuf:"bytes,13,opt,name=endAt,proto3" json:"endAt,omitempty"`
-	Tally              *Tally                 `protobuf:"bytes,14,opt,name=tally,proto3,oneof" json:"tally,omitempty"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -666,13 +665,6 @@ func (x *Vote) GetEndAt() string {
 		return x.EndAt
 	}
 	return ""
-}
-
-func (x *Vote) GetTally() *Tally {
-	if x != nil {
-		return x.Tally
-	}
-	return nil
 }
 
 type Votes struct {
@@ -860,7 +852,7 @@ const file_proto_vote_vote_proto_rawDesc = "" +
 	" GetVotesByUserEligibilityRequest\x12\x16\n" +
 	"\x06oidcId\x18\x01 \x01(\tR\x06oidcId\"F\n" +
 	"!GetVotesByUserEligibilityResponse\x12!\n" +
-	"\x05votes\x18\x01 \x03(\v2\v.vote.VotesR\x05votes\"\xe4\x03\n" +
+	"\x05votes\x18\x01 \x03(\v2\v.vote.VotesR\x05votes\"\xb2\x03\n" +
 	"\x04Vote\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x12\n" +
@@ -877,10 +869,8 @@ const file_proto_vote_vote_proto_rawDesc = "" +
 	"isRealTime\x12(\n" +
 	"\x0fisAllowMultiple\x18\v \x01(\bR\x0fisAllowMultiple\x12\x18\n" +
 	"\astartAt\x18\f \x01(\tR\astartAt\x12\x14\n" +
-	"\x05endAt\x18\r \x01(\tR\x05endAt\x12&\n" +
-	"\x05tally\x18\x0e \x01(\v2\v.vote.TallyH\x01R\x05tally\x88\x01\x01B\b\n" +
-	"\x06_imageB\b\n" +
-	"\x06_tally\"Q\n" +
+	"\x05endAt\x18\r \x01(\tR\x05endAtB\b\n" +
+	"\x06_image\"Q\n" +
 	"\x05Votes\x12\x1e\n" +
 	"\x04vote\x18\x01 \x01(\v2\n" +
 	".vote.VoteR\x04vote\x12(\n" +
@@ -945,25 +935,24 @@ var file_proto_vote_vote_proto_depIdxs = []int32{
 	12, // 6: vote.GetVotesResponse.votes:type_name -> vote.Votes
 	12, // 7: vote.GetVotesByUserEligibilityResponse.votes:type_name -> vote.Votes
 	0,  // 8: vote.Vote.owner:type_name -> vote.Owner
-	13, // 9: vote.Vote.tally:type_name -> vote.Tally
-	11, // 10: vote.Votes.vote:type_name -> vote.Vote
-	15, // 11: vote.Votes.choices:type_name -> choice.Choice
-	14, // 12: vote.Tally.choices:type_name -> vote.TallyChoices
-	1,  // 13: vote.VoteService.CreateVote:input_type -> vote.CreateVoteRequest
-	3,  // 14: vote.VoteService.GetVoteById:input_type -> vote.GetVoteByIdRequest
-	5,  // 15: vote.VoteService.GetVoteBySlug:input_type -> vote.GetVoteBySlugRequest
-	7,  // 16: vote.VoteService.GetVotes:input_type -> vote.GetVotesRequest
-	9,  // 17: vote.VoteService.GetVotesByUserEligibility:input_type -> vote.GetVotesByUserEligibilityRequest
-	2,  // 18: vote.VoteService.CreateVote:output_type -> vote.CreateVoteResponse
-	4,  // 19: vote.VoteService.GetVoteById:output_type -> vote.GetVoteByIdResponse
-	6,  // 20: vote.VoteService.GetVoteBySlug:output_type -> vote.GetVoteBySlugResponse
-	8,  // 21: vote.VoteService.GetVotes:output_type -> vote.GetVotesResponse
-	10, // 22: vote.VoteService.GetVotesByUserEligibility:output_type -> vote.GetVotesByUserEligibilityResponse
-	18, // [18:23] is the sub-list for method output_type
-	13, // [13:18] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	11, // 9: vote.Votes.vote:type_name -> vote.Vote
+	15, // 10: vote.Votes.choices:type_name -> choice.Choice
+	14, // 11: vote.Tally.choices:type_name -> vote.TallyChoices
+	1,  // 12: vote.VoteService.CreateVote:input_type -> vote.CreateVoteRequest
+	3,  // 13: vote.VoteService.GetVoteById:input_type -> vote.GetVoteByIdRequest
+	5,  // 14: vote.VoteService.GetVoteBySlug:input_type -> vote.GetVoteBySlugRequest
+	7,  // 15: vote.VoteService.GetVotes:input_type -> vote.GetVotesRequest
+	9,  // 16: vote.VoteService.GetVotesByUserEligibility:input_type -> vote.GetVotesByUserEligibilityRequest
+	2,  // 17: vote.VoteService.CreateVote:output_type -> vote.CreateVoteResponse
+	4,  // 18: vote.VoteService.GetVoteById:output_type -> vote.GetVoteByIdResponse
+	6,  // 19: vote.VoteService.GetVoteBySlug:output_type -> vote.GetVoteBySlugResponse
+	8,  // 20: vote.VoteService.GetVotes:output_type -> vote.GetVotesResponse
+	10, // 21: vote.VoteService.GetVotesByUserEligibility:output_type -> vote.GetVotesByUserEligibilityResponse
+	17, // [17:22] is the sub-list for method output_type
+	12, // [12:17] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_proto_vote_vote_proto_init() }

@@ -37,14 +37,14 @@ const RootContainer: React.FC = () => {
               endAt: new Date(new Date().getTime() + 1000 * 60 * 60),
               choices: [
                 {
-                  number: "1",
+                  number: 1,
                   name: "ปราชญ์ธนบดี คนไว",
                   description: "พรรค เลิกกั๊กแล้วรักกวศ.",
                   information: "# Test Information",
                   image: "/mock.jpg",
                 },
                 {
-                  number: "2",
+                  number: 2,
                   name: "วรัญยชญ์ ข่ายม่าน",
                   description: "พรรค Avenginia",
                   information: "# Test Information",
@@ -71,14 +71,14 @@ const RootContainer: React.FC = () => {
               endAt: new Date(new Date().getTime() + 1000 * 60 * 60),
               choices: [
                 {
-                  number: "1",
+                  number: 1,
                   name: "กฤติพงษ์ เหลืองนิยมกุล",
                   description: "Kneck",
                   information: "# Test Information",
                   image: "/mock.jpg",
                 },
                 {
-                  number: "2",
+                  number: 2,
                   name: "เนื้อบุญญ์ กระจ่างวงษ์",
                   description: "เนื้อบุญญ์",
                   information: "# Test Information",
@@ -105,7 +105,7 @@ const RootContainer: React.FC = () => {
               endAt: new Date(new Date().getTime() + 1000 * 60 * 60),
               choices: [
                 {
-                  number: "1",
+                  number: 1,
                   name: "คุณากร เชาวนวิรัตน์",
                   description: "ก้อง",
                   information: "# Test Information",

@@ -8,21 +8,22 @@
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 
 export interface Choice {
-  number: string;
+  number: number;
   name: string;
   description: string;
   information?: string | undefined;
   image?: string | undefined;
+  ballotCounter?: number | undefined;
 }
 
 function createBaseChoice(): Choice {
-  return { number: "", name: "", description: "", information: undefined, image: undefined };
+  return { number: 0, name: "", description: "", information: undefined, image: undefined, ballotCounter: undefined };
 }
 
 export const Choice: MessageFns<Choice> = {
   encode(message: Choice, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.number !== "") {
-      writer.uint32(10).string(message.number);
+    if (message.number !== 0) {
+      writer.uint32(8).uint32(message.number);
     }
     if (message.name !== "") {
       writer.uint32(18).string(message.name);
@@ -36,6 +37,9 @@ export const Choice: MessageFns<Choice> = {
     if (message.image !== undefined) {
       writer.uint32(42).string(message.image);
     }
+    if (message.ballotCounter !== undefined) {
+      writer.uint32(48).uint32(message.ballotCounter);
+    }
     return writer;
   },
 
@@ -47,11 +51,11 @@ export const Choice: MessageFns<Choice> = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1: {
-          if (tag !== 10) {
+          if (tag !== 8) {
             break;
           }
 
-          message.number = reader.string();
+          message.number = reader.uint32();
           continue;
         }
         case 2: {
@@ -86,6 +90,14 @@ export const Choice: MessageFns<Choice> = {
           message.image = reader.string();
           continue;
         }
+        case 6: {
+          if (tag !== 48) {
+            break;
+          }
+
+          message.ballotCounter = reader.uint32();
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -97,18 +109,19 @@ export const Choice: MessageFns<Choice> = {
 
   fromJSON(object: any): Choice {
     return {
-      number: isSet(object.number) ? globalThis.String(object.number) : "",
+      number: isSet(object.number) ? globalThis.Number(object.number) : 0,
       name: isSet(object.name) ? globalThis.String(object.name) : "",
       description: isSet(object.description) ? globalThis.String(object.description) : "",
       information: isSet(object.information) ? globalThis.String(object.information) : undefined,
       image: isSet(object.image) ? globalThis.String(object.image) : undefined,
+      ballotCounter: isSet(object.ballotCounter) ? globalThis.Number(object.ballotCounter) : undefined,
     };
   },
 
   toJSON(message: Choice): unknown {
     const obj: any = {};
-    if (message.number !== "") {
-      obj.number = message.number;
+    if (message.number !== 0) {
+      obj.number = Math.round(message.number);
     }
     if (message.name !== "") {
       obj.name = message.name;
@@ -122,6 +135,9 @@ export const Choice: MessageFns<Choice> = {
     if (message.image !== undefined) {
       obj.image = message.image;
     }
+    if (message.ballotCounter !== undefined) {
+      obj.ballotCounter = Math.round(message.ballotCounter);
+    }
     return obj;
   },
 
@@ -130,11 +146,12 @@ export const Choice: MessageFns<Choice> = {
   },
   fromPartial<I extends Exact<DeepPartial<Choice>, I>>(object: I): Choice {
     const message = createBaseChoice();
-    message.number = object.number ?? "";
+    message.number = object.number ?? 0;
     message.name = object.name ?? "";
     message.description = object.description ?? "";
     message.information = object.information ?? undefined;
     message.image = object.image ?? undefined;
+    message.ballotCounter = object.ballotCounter ?? undefined;
     return message;
   },
 };

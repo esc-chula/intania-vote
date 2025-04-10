@@ -12,6 +12,8 @@ const Page: React.FC = async () => {
 
   const votesData = res.data.votes.votes;
 
+  console.log(votesData[0].choices);
+
   return (
     <>
       <Header className="h-20" />

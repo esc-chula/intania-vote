@@ -18,12 +18,11 @@ import {
   type ServiceError,
   type UntypedServiceImplementation,
 } from "@grpc/grpc-js";
-import { Choice } from "../choice/choice";
 
 export interface CreateBallotProofRequest {
   oidcId: string;
   voteSlug: string;
-  choiceNumber: string;
+  choiceNumber: number;
 }
 
 export interface CreateBallotProofResponse {
@@ -48,7 +47,7 @@ export interface VerifyBallotRequest {
 
 export interface VerifyBallotResponse {
   isValid: boolean;
-  choice?: Choice | undefined;
+  choiceNumber: string;
   timestamp: string;
 }
 
@@ -62,7 +61,7 @@ export interface Proof {
 }
 
 function createBaseCreateBallotProofRequest(): CreateBallotProofRequest {
-  return { oidcId: "", voteSlug: "", choiceNumber: "" };
+  return { oidcId: "", voteSlug: "", choiceNumber: 0 };
 }
 
 export const CreateBallotProofRequest: MessageFns<CreateBallotProofRequest> = {
@@ -73,8 +72,8 @@ export const CreateBallotProofRequest: MessageFns<CreateBallotProofRequest> = {
     if (message.voteSlug !== "") {
       writer.uint32(18).string(message.voteSlug);
     }
-    if (message.choiceNumber !== "") {
-      writer.uint32(26).string(message.choiceNumber);
+    if (message.choiceNumber !== 0) {
+      writer.uint32(24).int32(message.choiceNumber);
     }
     return writer;
   },
@@ -103,11 +102,11 @@ export const CreateBallotProofRequest: MessageFns<CreateBallotProofRequest> = {
           continue;
         }
         case 3: {
-          if (tag !== 26) {
+          if (tag !== 24) {
             break;
           }
 
-          message.choiceNumber = reader.string();
+          message.choiceNumber = reader.int32();
           continue;
         }
       }
@@ -123,7 +122,7 @@ export const CreateBallotProofRequest: MessageFns<CreateBallotProofRequest> = {
     return {
       oidcId: isSet(object.oidcId) ? globalThis.String(object.oidcId) : "",
       voteSlug: isSet(object.voteSlug) ? globalThis.String(object.voteSlug) : "",
-      choiceNumber: isSet(object.choiceNumber) ? globalThis.String(object.choiceNumber) : "",
+      choiceNumber: isSet(object.choiceNumber) ? globalThis.Number(object.choiceNumber) : 0,
     };
   },
 
@@ -135,8 +134,8 @@ export const CreateBallotProofRequest: MessageFns<CreateBallotProofRequest> = {
     if (message.voteSlug !== "") {
       obj.voteSlug = message.voteSlug;
     }
-    if (message.choiceNumber !== "") {
-      obj.choiceNumber = message.choiceNumber;
+    if (message.choiceNumber !== 0) {
+      obj.choiceNumber = Math.round(message.choiceNumber);
     }
     return obj;
   },
@@ -148,7 +147,7 @@ export const CreateBallotProofRequest: MessageFns<CreateBallotProofRequest> = {
     const message = createBaseCreateBallotProofRequest();
     message.oidcId = object.oidcId ?? "";
     message.voteSlug = object.voteSlug ?? "";
-    message.choiceNumber = object.choiceNumber ?? "";
+    message.choiceNumber = object.choiceNumber ?? 0;
     return message;
   },
 };
@@ -438,7 +437,7 @@ export const VerifyBallotRequest: MessageFns<VerifyBallotRequest> = {
 };
 
 function createBaseVerifyBallotResponse(): VerifyBallotResponse {
-  return { isValid: false, choice: undefined, timestamp: "" };
+  return { isValid: false, choiceNumber: "", timestamp: "" };
 }
 
 export const VerifyBallotResponse: MessageFns<VerifyBallotResponse> = {
@@ -446,8 +445,8 @@ export const VerifyBallotResponse: MessageFns<VerifyBallotResponse> = {
     if (message.isValid !== false) {
       writer.uint32(8).bool(message.isValid);
     }
-    if (message.choice !== undefined) {
-      Choice.encode(message.choice, writer.uint32(18).fork()).join();
+    if (message.choiceNumber !== "") {
+      writer.uint32(18).string(message.choiceNumber);
     }
     if (message.timestamp !== "") {
       writer.uint32(26).string(message.timestamp);
@@ -475,7 +474,7 @@ export const VerifyBallotResponse: MessageFns<VerifyBallotResponse> = {
             break;
           }
 
-          message.choice = Choice.decode(reader, reader.uint32());
+          message.choiceNumber = reader.string();
           continue;
         }
         case 3: {
@@ -498,7 +497,7 @@ export const VerifyBallotResponse: MessageFns<VerifyBallotResponse> = {
   fromJSON(object: any): VerifyBallotResponse {
     return {
       isValid: isSet(object.isValid) ? globalThis.Boolean(object.isValid) : false,
-      choice: isSet(object.choice) ? Choice.fromJSON(object.choice) : undefined,
+      choiceNumber: isSet(object.choiceNumber) ? globalThis.String(object.choiceNumber) : "",
       timestamp: isSet(object.timestamp) ? globalThis.String(object.timestamp) : "",
     };
   },
@@ -508,8 +507,8 @@ export const VerifyBallotResponse: MessageFns<VerifyBallotResponse> = {
     if (message.isValid !== false) {
       obj.isValid = message.isValid;
     }
-    if (message.choice !== undefined) {
-      obj.choice = Choice.toJSON(message.choice);
+    if (message.choiceNumber !== "") {
+      obj.choiceNumber = message.choiceNumber;
     }
     if (message.timestamp !== "") {
       obj.timestamp = message.timestamp;
@@ -523,9 +522,7 @@ export const VerifyBallotResponse: MessageFns<VerifyBallotResponse> = {
   fromPartial<I extends Exact<DeepPartial<VerifyBallotResponse>, I>>(object: I): VerifyBallotResponse {
     const message = createBaseVerifyBallotResponse();
     message.isValid = object.isValid ?? false;
-    message.choice = (object.choice !== undefined && object.choice !== null)
-      ? Choice.fromPartial(object.choice)
-      : undefined;
+    message.choiceNumber = object.choiceNumber ?? "";
     message.timestamp = object.timestamp ?? "";
     return message;
   },

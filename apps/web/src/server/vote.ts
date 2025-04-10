@@ -26,7 +26,7 @@ export const createVote = actionClient
       endAt: z.date(),
       choices: z.array(
         z.object({
-          number: z.string().max(10),
+          number: z.number(),
           name: z.string().max(50),
           description: z.string().max(50),
           information: z.string().max(700).optional(),
