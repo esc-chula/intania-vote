@@ -115,11 +115,22 @@ export interface Vote {
   isAllowMultiple: boolean;
   startAt: string;
   endAt: string;
+  tally?: Tally | undefined;
 }
 
 export interface Votes {
   vote: Vote | undefined;
   choices: Choice[];
+}
+
+export interface Tally {
+  choices: TallyChoices[];
+  total: number;
+}
+
+export interface TallyChoices {
+  number: string;
+  count: number;
 }
 
 function createBaseCreateVoteRequest(): CreateVoteRequest {
@@ -765,6 +776,7 @@ function createBaseVote(): Vote {
     isAllowMultiple: false,
     startAt: "",
     endAt: "",
+    tally: undefined,
   };
 }
 
@@ -808,6 +820,9 @@ export const Vote: MessageFns<Vote> = {
     }
     if (message.endAt !== "") {
       writer.uint32(106).string(message.endAt);
+    }
+    if (message.tally !== undefined) {
+      Tally.encode(message.tally, writer.uint32(114).fork()).join();
     }
     return writer;
   },
@@ -923,6 +938,14 @@ export const Vote: MessageFns<Vote> = {
           message.endAt = reader.string();
           continue;
         }
+        case 14: {
+          if (tag !== 114) {
+            break;
+          }
+
+          message.tally = Tally.decode(reader, reader.uint32());
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -947,6 +970,7 @@ export const Vote: MessageFns<Vote> = {
       isAllowMultiple: isSet(object.isAllowMultiple) ? globalThis.Boolean(object.isAllowMultiple) : false,
       startAt: isSet(object.startAt) ? globalThis.String(object.startAt) : "",
       endAt: isSet(object.endAt) ? globalThis.String(object.endAt) : "",
+      tally: isSet(object.tally) ? Tally.fromJSON(object.tally) : undefined,
     };
   },
 
@@ -991,6 +1015,9 @@ export const Vote: MessageFns<Vote> = {
     if (message.endAt !== "") {
       obj.endAt = message.endAt;
     }
+    if (message.tally !== undefined) {
+      obj.tally = Tally.toJSON(message.tally);
+    }
     return obj;
   },
 
@@ -1012,6 +1039,7 @@ export const Vote: MessageFns<Vote> = {
     message.isAllowMultiple = object.isAllowMultiple ?? false;
     message.startAt = object.startAt ?? "";
     message.endAt = object.endAt ?? "";
+    message.tally = (object.tally !== undefined && object.tally !== null) ? Tally.fromPartial(object.tally) : undefined;
     return message;
   },
 };
@@ -1088,6 +1116,160 @@ export const Votes: MessageFns<Votes> = {
     const message = createBaseVotes();
     message.vote = (object.vote !== undefined && object.vote !== null) ? Vote.fromPartial(object.vote) : undefined;
     message.choices = object.choices?.map((e) => Choice.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseTally(): Tally {
+  return { choices: [], total: 0 };
+}
+
+export const Tally: MessageFns<Tally> = {
+  encode(message: Tally, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.choices) {
+      TallyChoices.encode(v!, writer.uint32(10).fork()).join();
+    }
+    if (message.total !== 0) {
+      writer.uint32(16).uint32(message.total);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): Tally {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseTally();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.choices.push(TallyChoices.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.total = reader.uint32();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Tally {
+    return {
+      choices: globalThis.Array.isArray(object?.choices)
+        ? object.choices.map((e: any) => TallyChoices.fromJSON(e))
+        : [],
+      total: isSet(object.total) ? globalThis.Number(object.total) : 0,
+    };
+  },
+
+  toJSON(message: Tally): unknown {
+    const obj: any = {};
+    if (message.choices?.length) {
+      obj.choices = message.choices.map((e) => TallyChoices.toJSON(e));
+    }
+    if (message.total !== 0) {
+      obj.total = Math.round(message.total);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<Tally>, I>>(base?: I): Tally {
+    return Tally.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<Tally>, I>>(object: I): Tally {
+    const message = createBaseTally();
+    message.choices = object.choices?.map((e) => TallyChoices.fromPartial(e)) || [];
+    message.total = object.total ?? 0;
+    return message;
+  },
+};
+
+function createBaseTallyChoices(): TallyChoices {
+  return { number: "", count: 0 };
+}
+
+export const TallyChoices: MessageFns<TallyChoices> = {
+  encode(message: TallyChoices, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.number !== "") {
+      writer.uint32(10).string(message.number);
+    }
+    if (message.count !== 0) {
+      writer.uint32(16).uint32(message.count);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): TallyChoices {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseTallyChoices();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.number = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.count = reader.uint32();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): TallyChoices {
+    return {
+      number: isSet(object.number) ? globalThis.String(object.number) : "",
+      count: isSet(object.count) ? globalThis.Number(object.count) : 0,
+    };
+  },
+
+  toJSON(message: TallyChoices): unknown {
+    const obj: any = {};
+    if (message.number !== "") {
+      obj.number = message.number;
+    }
+    if (message.count !== 0) {
+      obj.count = Math.round(message.count);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<TallyChoices>, I>>(base?: I): TallyChoices {
+    return TallyChoices.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<TallyChoices>, I>>(object: I): TallyChoices {
+    const message = createBaseTallyChoices();
+    message.number = object.number ?? "";
+    message.count = object.count ?? 0;
     return message;
   },
 };

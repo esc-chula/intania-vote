@@ -127,7 +127,11 @@ func EncryptWithServerKey(choiceId uint, cfg *config.Config) string {
 }
 
 // Helper function to decrypt with server key
-func DecryptWithServerKey(encrypted string, key []byte) (uint, error) {
+func DecryptWithServerKey(encrypted string, cfg *config.Config) (uint, error) {
+	h := hmac.New(sha256.New, []byte(cfg.HmacKey))
+	h.Write([]byte(cfg.HmacSalt))
+	key := h.Sum(nil)
+
 	ciphertext, err := base64.StdEncoding.DecodeString(encrypted)
 	if err != nil {
 		return 0, err
@@ -199,11 +203,11 @@ func EncryptChoiceId(choiceId uint, key []byte) string {
 	return base64.StdEncoding.EncodeToString(result)
 }
 
-func DecryptCandidateID(encryptedID string, key []byte) (uint, error) {
+func DecryptChoiceId(encryptedId string, key []byte) (uint, error) {
 	// Decode base64
-	ciphertext, err := base64.StdEncoding.DecodeString(encryptedID)
+	ciphertext, err := base64.StdEncoding.DecodeString(encryptedId)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("base64 decode error: %w", err)
 	}
 
 	// Try AES decryption first
@@ -221,21 +225,28 @@ func DecryptCandidateID(encryptedID string, key []byte) (uint, error) {
 			stream.XORKeyStream(plaintext, ciphertext)
 
 			// Convert to uint
-			var candidateID uint
-			if _, err := fmt.Sscanf(string(plaintext), "%d", &candidateID); err == nil {
-				return candidateID, nil
+			var choiceId uint
+			if _, err := fmt.Sscanf(string(plaintext), "%d", &choiceId); err == nil {
+				return choiceId, nil
+			}
+			// If parsing as uint failed, but we got valid plaintext
+			if len(plaintext) > 0 {
+				return 0, fmt.Errorf("decrypted content is not a valid choice ID: %s", string(plaintext))
 			}
 		}
 	}
 
 	// Fallback to XOR decryption
 	plaintext := XorEncrypt(ciphertext, key)
-	var candidateID uint
-	if _, err := fmt.Sscanf(string(plaintext), "%d", &candidateID); err != nil {
-		return 0, err
+
+	// Try to parse as uint
+	var choiceId uint
+	if _, err := fmt.Sscanf(string(plaintext), "%d", &choiceId); err != nil {
+		// If it's not a valid uint, return a meaningful error
+		return 0, fmt.Errorf("decrypted content is not a valid choice ID: %s", string(plaintext))
 	}
 
-	return candidateID, nil
+	return choiceId, nil
 }
 
 // Simple XOR encryption as fallback

@@ -25,7 +25,8 @@ const (
 type CreateBallotProofRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	OidcId        string                 `protobuf:"bytes,1,opt,name=oidcId,proto3" json:"oidcId,omitempty"`
-	ChoiceId      uint32                 `protobuf:"varint,2,opt,name=choiceId,proto3" json:"choiceId,omitempty"`
+	VoteSlug      string                 `protobuf:"bytes,2,opt,name=voteSlug,proto3" json:"voteSlug,omitempty"`
+	ChoiceNumber  string                 `protobuf:"bytes,3,opt,name=choiceNumber,proto3" json:"choiceNumber,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -67,11 +68,18 @@ func (x *CreateBallotProofRequest) GetOidcId() string {
 	return ""
 }
 
-func (x *CreateBallotProofRequest) GetChoiceId() uint32 {
+func (x *CreateBallotProofRequest) GetVoteSlug() string {
 	if x != nil {
-		return x.ChoiceId
+		return x.VoteSlug
 	}
-	return 0
+	return ""
+}
+
+func (x *CreateBallotProofRequest) GetChoiceNumber() string {
+	if x != nil {
+		return x.ChoiceNumber
+	}
+	return ""
 }
 
 type CreateBallotProofResponse struct {
@@ -422,10 +430,11 @@ var File_proto_ballot_ballot_proto protoreflect.FileDescriptor
 
 const file_proto_ballot_ballot_proto_rawDesc = "" +
 	"\n" +
-	"\x19proto/ballot/ballot.proto\x12\x06ballot\x1a\x19proto/choice/choice.proto\"N\n" +
+	"\x19proto/ballot/ballot.proto\x12\x06ballot\x1a\x19proto/choice/choice.proto\"r\n" +
 	"\x18CreateBallotProofRequest\x12\x16\n" +
 	"\x06oidcId\x18\x01 \x01(\tR\x06oidcId\x12\x1a\n" +
-	"\bchoiceId\x18\x02 \x01(\rR\bchoiceId\"@\n" +
+	"\bvoteSlug\x18\x02 \x01(\tR\bvoteSlug\x12\"\n" +
+	"\fchoiceNumber\x18\x03 \x01(\tR\fchoiceNumber\"@\n" +
 	"\x19CreateBallotProofResponse\x12#\n" +
 	"\x05proof\x18\x01 \x01(\v2\r.ballot.ProofR\x05proof\"n\n" +
 	"\x13CreateBallotRequest\x12\x16\n" +

@@ -542,6 +542,7 @@ type Vote struct {
 	IsAllowMultiple    bool                   `protobuf:"varint,11,opt,name=isAllowMultiple,proto3" json:"isAllowMultiple,omitempty"`
 	StartAt            string                 `protobuf:"bytes,12,opt,name=startAt,proto3" json:"startAt,omitempty"`
 	EndAt              string                 `protobuf:"bytes,13,opt,name=endAt,proto3" json:"endAt,omitempty"`
+	Tally              *Tally                 `protobuf:"bytes,14,opt,name=tally,proto3,oneof" json:"tally,omitempty"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -667,6 +668,13 @@ func (x *Vote) GetEndAt() string {
 	return ""
 }
 
+func (x *Vote) GetTally() *Tally {
+	if x != nil {
+		return x.Tally
+	}
+	return nil
+}
+
 type Votes struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Vote          *Vote                  `protobuf:"bytes,1,opt,name=vote,proto3" json:"vote,omitempty"`
@@ -719,6 +727,110 @@ func (x *Votes) GetChoices() []*choice.Choice {
 	return nil
 }
 
+type Tally struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Choices       []*TallyChoices        `protobuf:"bytes,1,rep,name=choices,proto3" json:"choices,omitempty"`
+	Total         uint32                 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Tally) Reset() {
+	*x = Tally{}
+	mi := &file_proto_vote_vote_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Tally) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Tally) ProtoMessage() {}
+
+func (x *Tally) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_vote_vote_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Tally.ProtoReflect.Descriptor instead.
+func (*Tally) Descriptor() ([]byte, []int) {
+	return file_proto_vote_vote_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *Tally) GetChoices() []*TallyChoices {
+	if x != nil {
+		return x.Choices
+	}
+	return nil
+}
+
+func (x *Tally) GetTotal() uint32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+type TallyChoices struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Number        string                 `protobuf:"bytes,1,opt,name=number,proto3" json:"number,omitempty"`
+	Count         uint32                 `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TallyChoices) Reset() {
+	*x = TallyChoices{}
+	mi := &file_proto_vote_vote_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TallyChoices) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TallyChoices) ProtoMessage() {}
+
+func (x *TallyChoices) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_vote_vote_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TallyChoices.ProtoReflect.Descriptor instead.
+func (*TallyChoices) Descriptor() ([]byte, []int) {
+	return file_proto_vote_vote_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *TallyChoices) GetNumber() string {
+	if x != nil {
+		return x.Number
+	}
+	return ""
+}
+
+func (x *TallyChoices) GetCount() uint32 {
+	if x != nil {
+		return x.Count
+	}
+	return 0
+}
+
 var File_proto_vote_vote_proto protoreflect.FileDescriptor
 
 const file_proto_vote_vote_proto_rawDesc = "" +
@@ -748,7 +860,7 @@ const file_proto_vote_vote_proto_rawDesc = "" +
 	" GetVotesByUserEligibilityRequest\x12\x16\n" +
 	"\x06oidcId\x18\x01 \x01(\tR\x06oidcId\"F\n" +
 	"!GetVotesByUserEligibilityResponse\x12!\n" +
-	"\x05votes\x18\x01 \x03(\v2\v.vote.VotesR\x05votes\"\xb2\x03\n" +
+	"\x05votes\x18\x01 \x03(\v2\v.vote.VotesR\x05votes\"\xe4\x03\n" +
 	"\x04Vote\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x12\n" +
@@ -765,12 +877,20 @@ const file_proto_vote_vote_proto_rawDesc = "" +
 	"isRealTime\x12(\n" +
 	"\x0fisAllowMultiple\x18\v \x01(\bR\x0fisAllowMultiple\x12\x18\n" +
 	"\astartAt\x18\f \x01(\tR\astartAt\x12\x14\n" +
-	"\x05endAt\x18\r \x01(\tR\x05endAtB\b\n" +
-	"\x06_image\"Q\n" +
+	"\x05endAt\x18\r \x01(\tR\x05endAt\x12&\n" +
+	"\x05tally\x18\x0e \x01(\v2\v.vote.TallyH\x01R\x05tally\x88\x01\x01B\b\n" +
+	"\x06_imageB\b\n" +
+	"\x06_tally\"Q\n" +
 	"\x05Votes\x12\x1e\n" +
 	"\x04vote\x18\x01 \x01(\v2\n" +
 	".vote.VoteR\x04vote\x12(\n" +
-	"\achoices\x18\x02 \x03(\v2\x0e.choice.ChoiceR\achoices*%\n" +
+	"\achoices\x18\x02 \x03(\v2\x0e.choice.ChoiceR\achoices\"K\n" +
+	"\x05Tally\x12,\n" +
+	"\achoices\x18\x01 \x03(\v2\x12.vote.TallyChoicesR\achoices\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\rR\x05total\"<\n" +
+	"\fTallyChoices\x12\x16\n" +
+	"\x06number\x18\x01 \x01(\tR\x06number\x12\x14\n" +
+	"\x05count\x18\x02 \x01(\rR\x05count*%\n" +
 	"\x05Owner\x12\b\n" +
 	"\x04USER\x10\x00\x12\a\n" +
 	"\x03ESC\x10\x01\x12\t\n" +
@@ -796,7 +916,7 @@ func file_proto_vote_vote_proto_rawDescGZIP() []byte {
 }
 
 var file_proto_vote_vote_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_proto_vote_vote_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_proto_vote_vote_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_proto_vote_vote_proto_goTypes = []any{
 	(Owner)(0),                                // 0: vote.Owner
 	(*CreateVoteRequest)(nil),                 // 1: vote.CreateVoteRequest
@@ -811,35 +931,39 @@ var file_proto_vote_vote_proto_goTypes = []any{
 	(*GetVotesByUserEligibilityResponse)(nil), // 10: vote.GetVotesByUserEligibilityResponse
 	(*Vote)(nil),                              // 11: vote.Vote
 	(*Votes)(nil),                             // 12: vote.Votes
-	(*choice.Choice)(nil),                     // 13: choice.Choice
+	(*Tally)(nil),                             // 13: vote.Tally
+	(*TallyChoices)(nil),                      // 14: vote.TallyChoices
+	(*choice.Choice)(nil),                     // 15: choice.Choice
 }
 var file_proto_vote_vote_proto_depIdxs = []int32{
 	11, // 0: vote.CreateVoteRequest.vote:type_name -> vote.Vote
-	13, // 1: vote.CreateVoteRequest.choices:type_name -> choice.Choice
+	15, // 1: vote.CreateVoteRequest.choices:type_name -> choice.Choice
 	11, // 2: vote.GetVoteByIdResponse.vote:type_name -> vote.Vote
-	13, // 3: vote.GetVoteByIdResponse.choices:type_name -> choice.Choice
+	15, // 3: vote.GetVoteByIdResponse.choices:type_name -> choice.Choice
 	11, // 4: vote.GetVoteBySlugResponse.vote:type_name -> vote.Vote
-	13, // 5: vote.GetVoteBySlugResponse.choices:type_name -> choice.Choice
+	15, // 5: vote.GetVoteBySlugResponse.choices:type_name -> choice.Choice
 	12, // 6: vote.GetVotesResponse.votes:type_name -> vote.Votes
 	12, // 7: vote.GetVotesByUserEligibilityResponse.votes:type_name -> vote.Votes
 	0,  // 8: vote.Vote.owner:type_name -> vote.Owner
-	11, // 9: vote.Votes.vote:type_name -> vote.Vote
-	13, // 10: vote.Votes.choices:type_name -> choice.Choice
-	1,  // 11: vote.VoteService.CreateVote:input_type -> vote.CreateVoteRequest
-	3,  // 12: vote.VoteService.GetVoteById:input_type -> vote.GetVoteByIdRequest
-	5,  // 13: vote.VoteService.GetVoteBySlug:input_type -> vote.GetVoteBySlugRequest
-	7,  // 14: vote.VoteService.GetVotes:input_type -> vote.GetVotesRequest
-	9,  // 15: vote.VoteService.GetVotesByUserEligibility:input_type -> vote.GetVotesByUserEligibilityRequest
-	2,  // 16: vote.VoteService.CreateVote:output_type -> vote.CreateVoteResponse
-	4,  // 17: vote.VoteService.GetVoteById:output_type -> vote.GetVoteByIdResponse
-	6,  // 18: vote.VoteService.GetVoteBySlug:output_type -> vote.GetVoteBySlugResponse
-	8,  // 19: vote.VoteService.GetVotes:output_type -> vote.GetVotesResponse
-	10, // 20: vote.VoteService.GetVotesByUserEligibility:output_type -> vote.GetVotesByUserEligibilityResponse
-	16, // [16:21] is the sub-list for method output_type
-	11, // [11:16] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	13, // 9: vote.Vote.tally:type_name -> vote.Tally
+	11, // 10: vote.Votes.vote:type_name -> vote.Vote
+	15, // 11: vote.Votes.choices:type_name -> choice.Choice
+	14, // 12: vote.Tally.choices:type_name -> vote.TallyChoices
+	1,  // 13: vote.VoteService.CreateVote:input_type -> vote.CreateVoteRequest
+	3,  // 14: vote.VoteService.GetVoteById:input_type -> vote.GetVoteByIdRequest
+	5,  // 15: vote.VoteService.GetVoteBySlug:input_type -> vote.GetVoteBySlugRequest
+	7,  // 16: vote.VoteService.GetVotes:input_type -> vote.GetVotesRequest
+	9,  // 17: vote.VoteService.GetVotesByUserEligibility:input_type -> vote.GetVotesByUserEligibilityRequest
+	2,  // 18: vote.VoteService.CreateVote:output_type -> vote.CreateVoteResponse
+	4,  // 19: vote.VoteService.GetVoteById:output_type -> vote.GetVoteByIdResponse
+	6,  // 20: vote.VoteService.GetVoteBySlug:output_type -> vote.GetVoteBySlugResponse
+	8,  // 21: vote.VoteService.GetVotes:output_type -> vote.GetVotesResponse
+	10, // 22: vote.VoteService.GetVotesByUserEligibility:output_type -> vote.GetVotesByUserEligibilityResponse
+	18, // [18:23] is the sub-list for method output_type
+	13, // [13:18] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_proto_vote_vote_proto_init() }
@@ -854,7 +978,7 @@ func file_proto_vote_vote_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_vote_vote_proto_rawDesc), len(file_proto_vote_vote_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   12,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

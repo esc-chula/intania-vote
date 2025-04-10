@@ -32,12 +32,16 @@ func (s ballotServerImpl) CreateBallotProof(ctx context.Context, req *grpcBallot
 	if oidcId == "" {
 		return nil, status.Error(codes.FailedPrecondition, "missing oidcId")
 	}
-	choiceId := req.GetChoiceId()
-	if choiceId == 0 {
-		return nil, status.Error(codes.FailedPrecondition, "missing choiceId")
+	voteSlug := req.GetVoteSlug()
+	if voteSlug == "" {
+		return nil, status.Error(codes.FailedPrecondition, "missing voteSlug")
+	}
+	choiceNumber := req.GetChoiceNumber()
+	if choiceNumber == "" {
+		return nil, status.Error(codes.FailedPrecondition, "missing choiceNumber")
 	}
 
-	proofData, err := s.svc.CreateBallotProof(ctx, oidcId, uint(choiceId))
+	proofData, err := s.svc.CreateBallotProof(ctx, oidcId, voteSlug, choiceNumber)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create proof: %v", err)
 	}
@@ -97,6 +101,14 @@ func (s ballotServerImpl) VerifyBallot(ctx context.Context, req *grpcBallot.Veri
 	choice, timestamp, err := s.svc.VerifyBallot(ctx, oidcId, ballotKey)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to verify ballot: %v", err)
+	}
+
+	if choice == nil {
+		return &grpcBallot.VerifyBallotResponse{
+			IsValid:   true,
+			Choice:    nil,
+			Timestamp: timestamp.String(),
+		}, nil
 	}
 
 	return &grpcBallot.VerifyBallotResponse{

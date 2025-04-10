@@ -22,7 +22,8 @@ import { Choice } from "../choice/choice";
 
 export interface CreateBallotProofRequest {
   oidcId: string;
-  choiceId: number;
+  voteSlug: string;
+  choiceNumber: string;
 }
 
 export interface CreateBallotProofResponse {
@@ -61,7 +62,7 @@ export interface Proof {
 }
 
 function createBaseCreateBallotProofRequest(): CreateBallotProofRequest {
-  return { oidcId: "", choiceId: 0 };
+  return { oidcId: "", voteSlug: "", choiceNumber: "" };
 }
 
 export const CreateBallotProofRequest: MessageFns<CreateBallotProofRequest> = {
@@ -69,8 +70,11 @@ export const CreateBallotProofRequest: MessageFns<CreateBallotProofRequest> = {
     if (message.oidcId !== "") {
       writer.uint32(10).string(message.oidcId);
     }
-    if (message.choiceId !== 0) {
-      writer.uint32(16).uint32(message.choiceId);
+    if (message.voteSlug !== "") {
+      writer.uint32(18).string(message.voteSlug);
+    }
+    if (message.choiceNumber !== "") {
+      writer.uint32(26).string(message.choiceNumber);
     }
     return writer;
   },
@@ -91,11 +95,19 @@ export const CreateBallotProofRequest: MessageFns<CreateBallotProofRequest> = {
           continue;
         }
         case 2: {
-          if (tag !== 16) {
+          if (tag !== 18) {
             break;
           }
 
-          message.choiceId = reader.uint32();
+          message.voteSlug = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.choiceNumber = reader.string();
           continue;
         }
       }
@@ -110,7 +122,8 @@ export const CreateBallotProofRequest: MessageFns<CreateBallotProofRequest> = {
   fromJSON(object: any): CreateBallotProofRequest {
     return {
       oidcId: isSet(object.oidcId) ? globalThis.String(object.oidcId) : "",
-      choiceId: isSet(object.choiceId) ? globalThis.Number(object.choiceId) : 0,
+      voteSlug: isSet(object.voteSlug) ? globalThis.String(object.voteSlug) : "",
+      choiceNumber: isSet(object.choiceNumber) ? globalThis.String(object.choiceNumber) : "",
     };
   },
 
@@ -119,8 +132,11 @@ export const CreateBallotProofRequest: MessageFns<CreateBallotProofRequest> = {
     if (message.oidcId !== "") {
       obj.oidcId = message.oidcId;
     }
-    if (message.choiceId !== 0) {
-      obj.choiceId = Math.round(message.choiceId);
+    if (message.voteSlug !== "") {
+      obj.voteSlug = message.voteSlug;
+    }
+    if (message.choiceNumber !== "") {
+      obj.choiceNumber = message.choiceNumber;
     }
     return obj;
   },
@@ -131,7 +147,8 @@ export const CreateBallotProofRequest: MessageFns<CreateBallotProofRequest> = {
   fromPartial<I extends Exact<DeepPartial<CreateBallotProofRequest>, I>>(object: I): CreateBallotProofRequest {
     const message = createBaseCreateBallotProofRequest();
     message.oidcId = object.oidcId ?? "";
-    message.choiceId = object.choiceId ?? 0;
+    message.voteSlug = object.voteSlug ?? "";
+    message.choiceNumber = object.choiceNumber ?? "";
     return message;
   },
 };

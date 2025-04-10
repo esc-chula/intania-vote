@@ -8,7 +8,7 @@
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 
 export interface Choice {
-  number?: string | undefined;
+  number: string;
   name: string;
   description: string;
   information?: string | undefined;
@@ -16,12 +16,12 @@ export interface Choice {
 }
 
 function createBaseChoice(): Choice {
-  return { number: undefined, name: "", description: "", information: undefined, image: undefined };
+  return { number: "", name: "", description: "", information: undefined, image: undefined };
 }
 
 export const Choice: MessageFns<Choice> = {
   encode(message: Choice, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.number !== undefined) {
+    if (message.number !== "") {
       writer.uint32(10).string(message.number);
     }
     if (message.name !== "") {
@@ -97,7 +97,7 @@ export const Choice: MessageFns<Choice> = {
 
   fromJSON(object: any): Choice {
     return {
-      number: isSet(object.number) ? globalThis.String(object.number) : undefined,
+      number: isSet(object.number) ? globalThis.String(object.number) : "",
       name: isSet(object.name) ? globalThis.String(object.name) : "",
       description: isSet(object.description) ? globalThis.String(object.description) : "",
       information: isSet(object.information) ? globalThis.String(object.information) : undefined,
@@ -107,7 +107,7 @@ export const Choice: MessageFns<Choice> = {
 
   toJSON(message: Choice): unknown {
     const obj: any = {};
-    if (message.number !== undefined) {
+    if (message.number !== "") {
       obj.number = message.number;
     }
     if (message.name !== "") {
@@ -130,7 +130,7 @@ export const Choice: MessageFns<Choice> = {
   },
   fromPartial<I extends Exact<DeepPartial<Choice>, I>>(object: I): Choice {
     const message = createBaseChoice();
-    message.number = object.number ?? undefined;
+    message.number = object.number ?? "";
     message.name = object.name ?? "";
     message.description = object.description ?? "";
     message.information = object.information ?? undefined;

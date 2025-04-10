@@ -74,9 +74,20 @@ message Vote {
     bool isAllowMultiple = 11;
     string startAt = 12;
     string endAt = 13;
+    optional Tally tally = 14;
 }
 
 message Votes {
     Vote vote = 1;
     repeated choice.Choice choices = 2;
+}
+
+message Tally {
+    repeated TallyChoices choices = 1;
+    uint32 total = 2;
+}
+
+message TallyChoices {
+    string number = 1;
+    uint32 count = 2;
 }

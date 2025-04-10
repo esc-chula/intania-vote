@@ -14,7 +14,8 @@ service BallotService {
 
 message CreateBallotProofRequest {
     string oidcId = 1;
-    uint32 choiceId = 2;
+    string voteSlug = 2;
+    string choiceNumber = 3;
 }
 
 message CreateBallotProofResponse {

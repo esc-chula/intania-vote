@@ -23,7 +23,7 @@ const (
 
 type Choice struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Number        *string                `protobuf:"bytes,1,opt,name=number,proto3,oneof" json:"number,omitempty"`
+	Number        string                 `protobuf:"bytes,1,opt,name=number,proto3" json:"number,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	Information   *string                `protobuf:"bytes,4,opt,name=information,proto3,oneof" json:"information,omitempty"`
@@ -63,8 +63,8 @@ func (*Choice) Descriptor() ([]byte, []int) {
 }
 
 func (x *Choice) GetNumber() string {
-	if x != nil && x.Number != nil {
-		return *x.Number
+	if x != nil {
+		return x.Number
 	}
 	return ""
 }
@@ -101,14 +101,13 @@ var File_proto_choice_choice_proto protoreflect.FileDescriptor
 
 const file_proto_choice_choice_proto_rawDesc = "" +
 	"\n" +
-	"\x19proto/choice/choice.proto\x12\x06choice\"\xc2\x01\n" +
-	"\x06Choice\x12\x1b\n" +
-	"\x06number\x18\x01 \x01(\tH\x00R\x06number\x88\x01\x01\x12\x12\n" +
+	"\x19proto/choice/choice.proto\x12\x06choice\"\xb2\x01\n" +
+	"\x06Choice\x12\x16\n" +
+	"\x06number\x18\x01 \x01(\tR\x06number\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12%\n" +
-	"\vinformation\x18\x04 \x01(\tH\x01R\vinformation\x88\x01\x01\x12\x19\n" +
-	"\x05image\x18\x05 \x01(\tH\x02R\x05image\x88\x01\x01B\t\n" +
-	"\a_numberB\x0e\n" +
+	"\vinformation\x18\x04 \x01(\tH\x00R\vinformation\x88\x01\x01\x12\x19\n" +
+	"\x05image\x18\x05 \x01(\tH\x01R\x05image\x88\x01\x01B\x0e\n" +
 	"\f_informationB\b\n" +
 	"\x06_imageB7Z5github.com/esc-chula/intania-vote/libs/grpc-go/choiceb\x06proto3"
 

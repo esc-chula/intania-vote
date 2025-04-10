@@ -57,7 +57,8 @@ const VoteContainer: React.FC<VoteContainerProps> = ({
     setLoading(true);
 
     const resCreateBallotProof = await createBallotProof({
-      choiceId: selectedChoice,
+      choiceNumber: selectedChoice.toString(),
+      voteSlug: slug,
     });
 
     if (
@@ -91,6 +92,8 @@ const VoteContainer: React.FC<VoteContainerProps> = ({
       console.error("Proof is undefined", proofData);
       return;
     }
+
+    console.log("proof", proofData.proof);
 
     const resCreateBallot = await createBallot({
       voteSlug: slug,

@@ -63,3 +63,13 @@ type Vote struct {
 func (Vote) TableName() string {
 	return "votes"
 }
+
+type Tally struct {
+	Choices []TallyChoices
+	Total   uint
+}
+
+type TallyChoices struct {
+	Number string
+	Count  uint
+}

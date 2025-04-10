@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 
 import Header from "~/components/common/header";
-import RootContainer from "~/components/root/root-container";
 import VoteCard from "~/components/vote/vote-card";
 import { getSession } from "~/lib/auth";
 import { getVotesByUserEligibility } from "~/server/vote";
@@ -66,7 +65,6 @@ const Page: React.FC = async () => {
             />
           );
         })}
-        <RootContainer />
       </div>
     </>
   );
