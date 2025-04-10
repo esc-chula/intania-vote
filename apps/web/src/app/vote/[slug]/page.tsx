@@ -18,7 +18,7 @@ const Page: React.FC<PageProps> = async ({ params }) => {
 
   const res = await getVoteBySlug({ slug });
 
-  if (!res?.data?.vote || res.data.failure) {
+  if (res?.data?.failure || !res?.data?.vote) {
     return notFound();
   }
 

@@ -122,3 +122,25 @@ export const getVoteBySlug = actionClient
       };
     }
   });
+
+export const getVotesByUserEligibility = actionClient.action(async () => {
+  try {
+    const session = await getSession();
+    const oidcId = session?.user?.oidcId;
+    if (!oidcId) {
+      return { failure: "User is not authenticated" };
+    }
+
+    const votes = await grpc.vote.GetVotesByUserEligibility({ oidcId });
+
+    return {
+      success: "Successfully fetched votes",
+      votes,
+    };
+  } catch (error) {
+    console.error("Error in get votes by user eligibility action:", error);
+    return {
+      failure: "An error occurred during get votes by user eligibility",
+    };
+  }
+});

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	"github.com/esc-chula/intania-vote/apps/api/model"
 	"gorm.io/gorm"
@@ -9,9 +10,10 @@ import (
 
 type VoteRepository interface {
 	Create(ctx context.Context, vote *model.Vote, choices []*model.Choice) (*model.Vote, error)
-	Get(ctx context.Context) ([]*model.Vote, error)
 	GetById(ctx context.Context, id uint) (*model.Vote, error)
 	GetBySlug(ctx context.Context, slug string) (*model.Vote, error)
+	Get(ctx context.Context) ([]*model.Vote, error)
+	GetByActiveTime(ctx context.Context) ([]*model.Vote, error)
 }
 
 type voteRepositoryImpl struct {
@@ -82,4 +84,12 @@ func (v *voteRepositoryImpl) GetBySlug(ctx context.Context, slug string) (*model
 		return nil, err
 	}
 	return &vote, nil
+}
+
+func (v *voteRepositoryImpl) GetByActiveTime(ctx context.Context) ([]*model.Vote, error) {
+	var votes []*model.Vote
+	if err := v.db.WithContext(ctx).Preload("Choices").Where("start_at <= ? AND end_at >= ?", time.Now(), time.Now()).Find(&votes).Error; err != nil {
+		return nil, err
+	}
+	return votes, nil
 }

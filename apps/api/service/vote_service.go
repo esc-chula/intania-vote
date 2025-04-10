@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"regexp"
 
 	"github.com/esc-chula/intania-vote/apps/api/config"
 	"github.com/esc-chula/intania-vote/apps/api/model"
@@ -13,7 +14,7 @@ type VoteService interface {
 	CreateVote(ctx context.Context, oidcId string, vote *model.Vote, choices []*model.Choice) (*model.Vote, error)
 	GetVoteById(ctx context.Context, id uint) (*model.Vote, error)
 	GetVoteBySlug(ctx context.Context, slug string) (*model.Vote, error)
-	GetUserEligibleVotes(ctx context.Context, userId uint) ([]*model.Vote, error)
+	GetVotesByUserEligibility(ctx context.Context, oidcId string) ([]*model.Vote, error)
 }
 
 type voteServiceImpl struct {
@@ -72,6 +73,31 @@ func (s *voteServiceImpl) GetVoteBySlug(ctx context.Context, slug string) (*mode
 	return vote, nil
 }
 
-func (s *voteServiceImpl) GetUserEligibleVotes(ctx context.Context, userId uint) ([]*model.Vote, error) {
-	return nil, nil
+func (s *voteServiceImpl) GetVotesByUserEligibility(ctx context.Context, oidcId string) ([]*model.Vote, error) {
+	user, err := s.userRepo.GetByOidcId(ctx, oidcId)
+	if err != nil {
+		return nil, err
+	}
+
+	activeVotes, err := s.voteRepo.GetByActiveTime(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if len(activeVotes) == 0 {
+		return nil, nil
+	}
+
+	eligibleVotes := make([]*model.Vote, 0)
+	for _, vote := range activeVotes {
+		if vote.EligibleStudentId == "*" || (user.StudentId != "" && regexp.MustCompile(vote.EligibleStudentId).MatchString(user.StudentId)) {
+			eligibleVotes = append(eligibleVotes, vote)
+			continue
+		}
+	}
+
+	if len(eligibleVotes) == 0 {
+		return nil, nil
+	}
+
+	return eligibleVotes, nil
 }

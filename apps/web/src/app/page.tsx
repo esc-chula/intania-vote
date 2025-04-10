@@ -1,62 +1,38 @@
-"use client";
-
-import { signIn } from "next-auth/react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
-import { createVote } from "~/server/vote";
+import RootContainer from "~/components/root/root-container";
+import { getSession } from "~/lib/auth";
+import { getVotesByUserEligibility } from "~/server/vote";
 
-import { Button } from "@intania-vote/shadcn";
+const Page: React.FC = async () => {
+  const session = await getSession();
 
-const Page: React.FC = () => {
+  if (!session) {
+    return redirect("/api/auth/signin");
+  }
+
+  const res = await getVotesByUserEligibility();
+
+  if (res?.data?.failure || !res?.data?.votes?.votes) {
+    return redirect("/home");
+  }
+
+  const votesData = res.data.votes.votes;
+
   return (
     <>
-      <div className="flex flex-col gap-4 p-4">
-        <div>
-          <Button
-            onClick={() => {
-              signIn("intania");
-            }}
-          >
-            Login with Intania
-          </Button>
-        </div>
-        <Link href="/vote/test">
-          <Button>Test Election</Button>
-        </Link>
-        <div>
-          <Button
-            onClick={() => {
-              createVote({
-                name: "Test Vote",
-                description: "Test Description",
-                slug: "test",
-                image: "/mock.jpg",
-                owner: "USER",
-                eligibleStudentId: "*",
-                eligibleDepartment: "*",
-                eligibleYear: "*",
-                isPrivate: false,
-                isRealTime: false,
-                isAllowMultiple: false,
-                startAt: new Date(),
-                endAt: new Date(new Date().getTime() + 1000 * 60 * 60),
-                choices: [
-                  {
-                    number: "1",
-                    name: "Choice 1",
-                    description: "Choice 1 Description",
-                    information: "Choice 1 Information",
-                  },
-                ],
-              }).catch((err) => {
-                console.error(err);
-              });
-            }}
-          >
-            Create Vote
-          </Button>
-        </div>
-      </div>
+      {votesData.map((data) => {
+        if (!data.vote || !data.choices) {
+          return null;
+        }
+        return (
+          <Link key={data.vote.slug} href={`/vote/${data.vote.slug}`}>
+            {data.vote.name}
+          </Link>
+        );
+      })}
+      <RootContainer />
     </>
   );
 };

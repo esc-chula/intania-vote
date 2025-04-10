@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/esc-chula/intania-vote/apps/api/config"
 	"github.com/esc-chula/intania-vote/apps/api/database"
@@ -12,6 +13,8 @@ import (
 )
 
 func InitializeApp() (App, error) {
+	os.Setenv("TZ", "Asia/Bangkok")
+
 	cfg, err := config.LoadConfig()
 	if err != nil {
 		return App{}, fmt.Errorf("failed to load config: %w", err)
