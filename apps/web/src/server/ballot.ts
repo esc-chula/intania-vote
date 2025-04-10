@@ -9,10 +9,11 @@ import { grpc } from "./grpc";
 export const createBallotProof = actionClient
   .schema(
     z.object({
-      choiceId: z.number(),
+      choiceNumber: z.string(),
+      voteSlug: z.string(),
     }),
   )
-  .action(async ({ parsedInput: { choiceId } }) => {
+  .action(async ({ parsedInput: { choiceNumber, voteSlug } }) => {
     try {
       const session = await getSession();
       const oidcId = session?.user?.oidcId;
@@ -21,8 +22,9 @@ export const createBallotProof = actionClient
       }
 
       const proof = await grpc.ballot.CreateBallotProof({
-        choiceId,
         oidcId,
+        voteSlug,
+        choiceNumber,
       });
 
       return { success: "Successfully created ballot proof", proof };

@@ -62,7 +62,7 @@ func (s voteServerImpl) CreateVote(ctx context.Context, req *grpcVote.CreateVote
 		choiceImage := choice.GetImage()
 
 		choicesList[i] = &model.Choice{
-			Number:      &choiceNumber,
+			Number:      choiceNumber,
 			Name:        choice.GetName(),
 			Description: choice.GetDescription(),
 			Information: &choiceInformation,

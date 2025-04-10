@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -18,7 +19,7 @@ import (
 )
 
 type BallotService interface {
-	CreateBallotProof(ctx context.Context, oidcId string, choiceId uint) (*zk.Proof, error)
+	CreateBallotProof(ctx context.Context, oidcId string, voteSlug string, choiceNumber string) (*zk.Proof, error)
 	CreateBallot(ctx context.Context, oidcId string, voteSlug string, proof zk.Proof) (*model.Ballot, *string, error)
 	VerifyBallot(ctx context.Context, oidcId string, ballotKey string) (*model.Choice, *time.Time, error)
 }
@@ -43,10 +44,20 @@ func NewBallotService(ballotRepo repository.BallotRepository, userRepo repositor
 	}
 }
 
-func (s *ballotServiceImpl) CreateBallotProof(ctx context.Context, oidcId string, choiceId uint) (*zk.Proof, error) {
+func (s *ballotServiceImpl) CreateBallotProof(ctx context.Context, oidcId string, voteSlug string, choiceNumber string) (*zk.Proof, error) {
 	secret := zk.DeriveSecretFromSub(oidcId, s.cfg)
 
-	proofData, err := zk.GenerateProof(choiceId, secret)
+	vote, err := s.voteRepo.GetBySlug(ctx, voteSlug)
+	if err != nil {
+		return nil, err
+	}
+
+	choice, err := s.choiceRepo.GetByVoteIdAndNumber(ctx, vote.Id, choiceNumber)
+	if err != nil {
+		return nil, err
+	}
+
+	proofData, err := zk.GenerateProof(choice.Id, secret)
 	if err != nil {
 		return nil, err
 	}
@@ -89,6 +100,7 @@ func (s *ballotServiceImpl) CreateBallot(ctx context.Context, oidcId string, vot
 	isHasValidProof := false
 	var choiceId uint
 	for _, c := range vote.Choices {
+		log.Println("choiceId", c.Id)
 		isValid := zk.VerifyProof(proofMap, c.Id, secret)
 
 		if isValid {

@@ -22,11 +22,11 @@ const RootContainer: React.FC = () => {
         <Button
           onClick={() => {
             createVote({
-              name: "Test Vote",
+              name: "เลือกตั้งหัวหน้านิสิต กวศ. 68",
               description: "Test Description",
-              slug: "test",
+              slug: "esc-68-president",
               image: "/mock.jpg",
-              owner: "USER",
+              owner: "ESC",
               eligibleStudentId: "*",
               eligibleDepartment: "*",
               eligibleYear: "*",
@@ -38,9 +38,78 @@ const RootContainer: React.FC = () => {
               choices: [
                 {
                   number: "1",
-                  name: "Choice 1",
-                  description: "Choice 1 Description",
-                  information: "Choice 1 Information",
+                  name: "ปราชญ์ธนบดี คนไว",
+                  description: "พรรค เลิกกั๊กแล้วรักกวศ.",
+                  information: "# Test Information",
+                  image: "/mock.jpg",
+                },
+                {
+                  number: "2",
+                  name: "วรัญยชญ์ ข่ายม่าน",
+                  description: "พรรค Avenginia",
+                  information: "# Test Information",
+                  image: "/mock.jpg",
+                },
+              ],
+            }).catch((err) => {
+              console.error(err);
+            });
+
+            createVote({
+              name: "เลือกตั้งหัวหน้าชั้นปี 4 ปีการศึกษา 2568",
+              description: "Test Description",
+              slug: "year-4-68-president",
+              image: "/mock.jpg",
+              owner: "ESC",
+              eligibleStudentId: "*",
+              eligibleDepartment: "*",
+              eligibleYear: "*",
+              isPrivate: false,
+              isRealTime: false,
+              isAllowMultiple: false,
+              startAt: new Date(),
+              endAt: new Date(new Date().getTime() + 1000 * 60 * 60),
+              choices: [
+                {
+                  number: "1",
+                  name: "กฤติพงษ์ เหลืองนิยมกุล",
+                  description: "Kneck",
+                  information: "# Test Information",
+                  image: "/mock.jpg",
+                },
+                {
+                  number: "2",
+                  name: "เนื้อบุญญ์ กระจ่างวงษ์",
+                  description: "เนื้อบุญญ์",
+                  information: "# Test Information",
+                  image: "/mock.jpg",
+                },
+              ],
+            }).catch((err) => {
+              console.error(err);
+            });
+
+            createVote({
+              name: "เลือกตั้งหัวหน้าชั้นปี 2 ปีการศึกษา 2568",
+              description: "Test Description",
+              slug: "year-2-68-president",
+              image: "/mock.jpg",
+              owner: "ESC",
+              eligibleStudentId: "*",
+              eligibleDepartment: "*",
+              eligibleYear: "*",
+              isPrivate: false,
+              isRealTime: false,
+              isAllowMultiple: false,
+              startAt: new Date(),
+              endAt: new Date(new Date().getTime() + 1000 * 60 * 60),
+              choices: [
+                {
+                  number: "1",
+                  name: "คุณากร เชาวนวิรัตน์",
+                  description: "ก้อง",
+                  information: "# Test Information",
+                  image: "/mock.jpg",
                 },
               ],
             }).catch((err) => {

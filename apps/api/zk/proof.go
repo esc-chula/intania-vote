@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
+	"log"
 	"math/big"
 )
 
@@ -29,6 +30,9 @@ func GenerateProof(choiceId uint, secret string) (*Proof, error) {
 	}
 
 	// Create commitment
+	log.Println("generating proof", choiceId, secret)
+	log.Println("m", m)
+	log.Println("r", r)
 	commitment := CreatePedersenCommitment(m, r)
 
 	// Create a nullifier (unique identifier for this vote)
@@ -117,6 +121,9 @@ func VerifyProof(proofData map[string]string, choiceId uint, secret string) bool
 	m := new(big.Int).SetUint64(uint64(choiceId))
 
 	// Verify the commitment: Check if commitment = g^m * h^r
+	log.Println("verifying proof", choiceId, secret)
+	log.Println("m", m)
+	log.Println("r", blindingFactor)
 	expectedCommitment := CreatePedersenCommitment(m, blindingFactor)
 	if commitment.Cmp(expectedCommitment) != 0 {
 		return false

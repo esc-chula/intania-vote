@@ -4,8 +4,6 @@ import RootContainer from "~/components/root/root-container";
 import VoteCard from "~/components/vote/vote-card";
 import { getVotes } from "~/server/vote";
 
-import { Button } from "@intania-vote/shadcn";
-
 const Page: React.FC = async () => {
   const res = await getVotes();
 
@@ -18,7 +16,7 @@ const Page: React.FC = async () => {
   return (
     <>
       <Header className="h-20" />
-      <div className="mt-20 grid gap-5 p-5 sm:grid-cols-2">
+      <div className="my-20 grid gap-5 p-5 sm:grid-cols-2">
         {votesData.map((data) => {
           if (!data.vote || !data.choices) {
             return null;
@@ -56,11 +54,7 @@ const Page: React.FC = async () => {
             />
           );
         })}
-      </div>
-      <RootContainer />
-      <div className="flex h-screen w-full flex-col items-center justify-center">
-        ทดสอบ
-        <Button>Click me</Button>
+        <RootContainer />
       </div>
       <Navigation />
     </>
