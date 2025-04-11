@@ -42,7 +42,7 @@ const VoteResultCard: React.FC<VoteResultCardProps> = ({
 
   return (
     <div className="relative flex flex-grow flex-col gap-3 overflow-hidden rounded-3xl border border-neutral-200 bg-neutral-50 p-4">
-      <h2 className="text-lg font-semibold text-neutral-700">ผลการโหวต</h2>
+      <h2 className="z-20 text-lg font-semibold text-neutral-700">ผลการโหวต</h2>
       {now > endAt && tally ? (
         <>
           {choices.map((choice) => (
@@ -96,7 +96,7 @@ const VoteResultCard: React.FC<VoteResultCardProps> = ({
       )}
 
       {now > endAt ? null : (
-        <div className="absolute bottom-0 left-0 right-0 top-9 flex flex-col items-center justify-center gap-4 text-center backdrop-blur-sm">
+        <div className="absolute bottom-0 left-0 right-0 top-0 z-10 flex flex-col items-center justify-center gap-4 text-center backdrop-blur-xl">
           {time ? (
             <div className="flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white py-1 pl-2.5 pr-3 text-xs font-bold text-neutral-700 shadow-xl">
               <span className="aspect-square w-2 animate-pulse rounded-full bg-red-500" />
@@ -123,7 +123,7 @@ const MockVoteResult: React.FC = () => {
         <div
           className="bg-primary h-full rounded-full px-4"
           style={{
-            width: "40%",
+            width: "80%",
           }}
         ></div>
       </div>
@@ -131,7 +131,7 @@ const MockVoteResult: React.FC = () => {
         <div
           className="bg-primary h-full rounded-full px-4"
           style={{
-            width: "60%",
+            width: "50%",
           }}
         ></div>
       </div>
@@ -146,6 +146,18 @@ const MockVoteResult: React.FC = () => {
         <p className="text-neutral-600">XXX</p>
         <p className="text-neutral-600">รวม</p>
         <p className="text-neutral-600">XXX</p>
+      </div>
+      <div className="grid grid-cols-2 rounded-2xl border border-neutral-200 bg-white p-3 text-sm">
+        <p className="font-bold text-neutral-800">ข้อมูล</p>
+        <p className="font-bold text-neutral-800">จำนวน</p>
+        <p className="font-bold text-neutral-600">งดออกเสียง</p>
+        <p className="font-bold text-neutral-600">XX</p>
+        <p className="font-bold text-neutral-600">ไม่รับรอง</p>
+        <p className="font-bold text-neutral-600">XX</p>
+        <p className="font-bold text-neutral-600">เลือกโหวต</p>
+        <p className="font-bold text-neutral-600">XXX</p>
+        <p className="font-bold text-neutral-600">รวม</p>
+        <p className="font-bold text-neutral-600">XXX</p>
       </div>
     </>
   );
