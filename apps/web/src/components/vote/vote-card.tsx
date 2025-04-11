@@ -66,9 +66,9 @@ const VoteCard: React.FC<VoteCardProps> = ({
       case "User":
         return null;
       case "ESC":
-        return "/asssets/esc.jpg";
+        return "/assets/esc.jpg";
       case "ISESC":
-        return "/asssets/isesc.jpg";
+        return "/assets/isesc.jpg";
       default:
         return null;
     }
