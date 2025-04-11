@@ -35,7 +35,7 @@ const Page: React.FC = async () => {
         </div>
       </Header>
       <div className="flex min-h-dvh flex-col items-center justify-between gap-3.5 px-5 pb-5 pt-24">
-        <div className="grid gap-5 sm:grid-cols-2">
+        <div className="grid max-w-screen-md gap-5 sm:grid-cols-2">
           {votesData
             .sort((a, b) => {
               if (!a.vote || !b.vote) return 0;

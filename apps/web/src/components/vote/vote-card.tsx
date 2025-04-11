@@ -84,26 +84,27 @@ const VoteCard: React.FC<VoteCardProps> = ({
     <div className="flex flex-col">
       <div
         className={cn(
-          "w-full cursor-pointer overflow-hidden",
+          "w-full overflow-hidden",
           isDislaying ? "h-auto" : "h-0",
+          (now > startAt && isEligible) || now > endAt ? "cursor-pointer" : "",
         )}
         onClick={() => {
-          if (now < startAt || !isEligible) {
-            return;
+          if ((now > startAt && isEligible) || now > endAt) {
+            router.push(`/vote/${slug}`);
           }
-          // check regex with
-          router.push(`/vote/${slug}`);
         }}
       >
         <div ref={topContainerRef} className="relative z-10">
           <div
             className={cn(
               "flex flex-col gap-4 p-5 text-white",
-              now > startAt ? "text-white" : "text-neutral-800",
+              now > startAt && isEligible ? "text-white" : "text-neutral-800",
             )}
             style={{
               height:
-                now > startAt ? (initialTopContainerHeight ?? "auto") : "auto",
+                now > startAt && isEligible
+                  ? (initialTopContainerHeight ?? "auto")
+                  : "auto",
             }}
           >
             <div className="flex items-center justify-between">
@@ -137,7 +138,9 @@ const VoteCard: React.FC<VoteCardProps> = ({
                 <div
                   className={cn(
                     "text-xs font-bold",
-                    now > startAt ? "text-white" : "text-neutral-600",
+                    now > startAt && isEligible
+                      ? "text-white"
+                      : "text-neutral-600",
                   )}
                 >
                   <span>{time}</span>
@@ -145,17 +148,22 @@ const VoteCard: React.FC<VoteCardProps> = ({
               )}
             </div>
             <h2 className="text-3xl font-bold">{name}</h2>
+            {!isEligible && now > endAt ? (
+              <div className="flex h-12 w-full items-center justify-center rounded-full border border-neutral-200 bg-white font-semibold text-neutral-600 hover:bg-white/90">
+                ดูผล
+              </div>
+            ) : null}
           </div>
           <div
             className={cn(
               "absolute inset-0 -z-10",
-              now > startAt
+              now > startAt && isEligible
                 ? "bg-primary rounded-t-4xl rounded-br-4xl"
                 : "rounded-4xl border border-neutral-200 bg-neutral-50",
             )}
           />
         </div>
-        {now > startAt ? (
+        {now > startAt && isEligible ? (
           <div className="flex">
             <div className="bg-primary rounded-b-4xl flex flex-grow -translate-y-px items-end gap-2 px-5 pb-5 pt-10 text-white">
               {now > endAt ? (

@@ -54,13 +54,18 @@ const VoteResultCard: React.FC<VoteResultCardProps> = ({ startAt, endAt }) => {
         <p className="text-neutral-600">รวม</p>
         <p className="text-neutral-600">XXX</p>
       </div>
-      <div className="absolute bottom-0 left-0 right-0 top-9 grid place-content-center backdrop-blur-sm">
+      <div className="absolute bottom-0 left-0 right-0 top-9 flex flex-col items-center justify-center gap-4 text-center backdrop-blur-sm">
         {time ? (
           <div className="flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white py-1 pl-2.5 pr-3 text-xs font-bold text-neutral-700 shadow-xl">
             <span className="aspect-square w-2 animate-pulse rounded-full bg-red-500" />
             <span>{time}</span>
           </div>
         ) : null}
+        <p className="text-xs text-neutral-600">
+          การโหวตของคุณได้ถูกบันทึกแล้ว
+          <br />
+          ในอีกไม่นาน หน้านี้ก็จะแสดงผลลัพธ์ของการโหวต
+        </p>
       </div>
     </div>
   );
