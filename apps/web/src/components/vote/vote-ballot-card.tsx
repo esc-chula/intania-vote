@@ -91,7 +91,7 @@ const VoteBallotCard: React.FC<VoteBallotCardProps> = ({
           </div>
         </DrawerTrigger>
         <DrawerContent>
-          <div className="mx-auto flex h-[90vh] w-full flex-col justify-between overflow-y-auto">
+          <div className="mx-auto flex h-[80vh] w-full flex-col justify-between overflow-y-auto">
             <div className="px-4 pt-4">
               <DrawerHeader className="flex flex-col items-center gap-4">
                 {image ? (
