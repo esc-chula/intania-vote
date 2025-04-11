@@ -12,6 +12,7 @@ type BallotRepository interface {
 	GetBallotsByUserId(ctx context.Context, userId uint) ([]*model.Ballot, error)
 	GetBallotsByVoteId(ctx context.Context, voteId uint) ([]*model.Ballot, error)
 	HasUserVoted(ctx context.Context, userId uint, voteId uint) (bool, error)
+	CountByVoteId(ctx context.Context, voteId uint) (int64, error)
 }
 
 type ballotRepositoryImpl struct {
@@ -59,4 +60,14 @@ func (ballotRepo *ballotRepositoryImpl) HasUserVoted(ctx context.Context, userId
 		return false, err
 	}
 	return count > 0, nil
+}
+
+func (ballotRepo *ballotRepositoryImpl) CountByVoteId(ctx context.Context, voteId uint) (int64, error) {
+	var count int64
+	if err := ballotRepo.db.WithContext(ctx).Model(&model.Ballot{}).
+		Where("vote_id = ?", voteId).
+		Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return count, nil
 }

@@ -89,6 +89,7 @@ message Vote {
 message Votes {
     Vote vote = 1;
     repeated choice.Choice choices = 2;
+    uint32 totalBallots = 3;
 }
 
 message Tally {

@@ -110,12 +110,20 @@ func (s voteServerImpl) GetVoteById(ctx context.Context, req *grpcVote.GetVoteBy
 
 	choices := make([]*grpcChoice.Choice, len(vote.Choices))
 	for i, choice := range vote.Choices {
+		var ballotCounter *uint32
+		if vote.EndAt.Before(time.Now()) {
+			ballotCounter = &choice.BallotCounter
+		} else {
+			ballotCounter = nil
+		}
+
 		choices[i] = &grpcChoice.Choice{
-			Number:      choice.Number,
-			Name:        choice.Name,
-			Description: choice.Description,
-			Information: choice.Information,
-			Image:       choice.Image,
+			Number:        choice.Number,
+			Name:          choice.Name,
+			Description:   choice.Description,
+			Information:   choice.Information,
+			Image:         choice.Image,
+			BallotCounter: ballotCounter,
 		}
 	}
 
@@ -155,12 +163,20 @@ func (s voteServerImpl) GetVoteBySlug(ctx context.Context, req *grpcVote.GetVote
 
 	choices := make([]*grpcChoice.Choice, len(vote.Choices))
 	for i, choice := range vote.Choices {
+		var ballotCounter *uint32
+		if vote.EndAt.Before(time.Now()) {
+			ballotCounter = &choice.BallotCounter
+		} else {
+			ballotCounter = nil
+		}
+
 		choices[i] = &grpcChoice.Choice{
-			Number:      choice.Number,
-			Name:        choice.Name,
-			Description: choice.Description,
-			Information: choice.Information,
-			Image:       choice.Image,
+			Number:        choice.Number,
+			Name:          choice.Name,
+			Description:   choice.Description,
+			Information:   choice.Information,
+			Image:         choice.Image,
+			BallotCounter: ballotCounter,
 		}
 	}
 
@@ -195,12 +211,11 @@ func (s voteServerImpl) GetVotes(ctx context.Context, req *grpcVote.GetVotesRequ
 
 	voteList := make([]*grpcVote.Votes, len(votes))
 	for i, vote := range votes {
-		isActive := vote.StartAt.Before(time.Now()) && vote.EndAt.After(time.Now())
 
 		choices := make([]*grpcChoice.Choice, len(vote.Choices))
 		for j, choice := range vote.Choices {
 			var ballotCounter *uint32
-			if !isActive {
+			if vote.EndAt.Before(time.Now()) {
 				ballotCounter = &choice.BallotCounter
 			} else {
 				ballotCounter = nil
@@ -214,6 +229,11 @@ func (s voteServerImpl) GetVotes(ctx context.Context, req *grpcVote.GetVotesRequ
 				Image:         choice.Image,
 				BallotCounter: ballotCounter,
 			}
+		}
+
+		ballotsCount, err := s.ballotSvc.CountBallotsByVoteId(ctx, vote.Id)
+		if err != nil {
+			return nil, status.Error(codes.Internal, "failed to get ballots count")
 		}
 
 		voteList[i] = &grpcVote.Votes{
@@ -232,7 +252,8 @@ func (s voteServerImpl) GetVotes(ctx context.Context, req *grpcVote.GetVotesRequ
 				StartAt:            vote.StartAt.Format(time.RFC3339),
 				EndAt:              vote.EndAt.Format(time.RFC3339),
 			},
-			Choices: choices,
+			Choices:      choices,
+			TotalBallots: uint32(ballotsCount),
 		}
 	}
 
@@ -276,11 +297,12 @@ func (s voteServerImpl) GetVotesByUserEligibility(ctx context.Context, req *grpc
 		choices := make([]*grpcChoice.Choice, len(vote.Choices))
 		for j, choice := range vote.Choices {
 			choices[j] = &grpcChoice.Choice{
-				Number:      choice.Number,
-				Name:        choice.Name,
-				Description: choice.Description,
-				Information: choice.Information,
-				Image:       choice.Image,
+				Number:        choice.Number,
+				Name:          choice.Name,
+				Description:   choice.Description,
+				Information:   choice.Information,
+				Image:         choice.Image,
+				BallotCounter: nil,
 			}
 		}
 

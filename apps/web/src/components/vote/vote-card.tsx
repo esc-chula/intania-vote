@@ -21,6 +21,7 @@ interface VoteCardProps {
   choices: {
     name: string;
   }[];
+  totalBallots: number;
 }
 
 const VoteCard: React.FC<VoteCardProps> = ({
@@ -31,6 +32,7 @@ const VoteCard: React.FC<VoteCardProps> = ({
   startAt,
   endAt,
   choices,
+  totalBallots,
 }) => {
   const router = useRouter();
 
@@ -186,7 +188,7 @@ const VoteCard: React.FC<VoteCardProps> = ({
             <div className="relative flex rounded-3xl bg-white pl-2 pt-2 text-neutral-700">
               <div className="z-20 flex flex-col items-center justify-center gap-1.5 rounded-2xl border-2 border-neutral-400 bg-white p-4 text-center">
                 <Vote />
-                <span className="text-xs">??</span>
+                <span className="text-xs">{totalBallots}</span>
               </div>
               <div className="bg-primary rounded-br-4xl rounded-tr-4xl rounded-bl-4xl absolute left-0 top-0 -z-10 aspect-square w-[4rem] -translate-x-px -translate-y-px" />
             </div>

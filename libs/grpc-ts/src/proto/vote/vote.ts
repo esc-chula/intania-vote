@@ -129,6 +129,7 @@ export interface Vote {
 export interface Votes {
   vote: Vote | undefined;
   choices: Choice[];
+  totalBallots: number;
 }
 
 export interface Tally {
@@ -1170,7 +1171,7 @@ export const Vote: MessageFns<Vote> = {
 };
 
 function createBaseVotes(): Votes {
-  return { vote: undefined, choices: [] };
+  return { vote: undefined, choices: [], totalBallots: 0 };
 }
 
 export const Votes: MessageFns<Votes> = {
@@ -1180,6 +1181,9 @@ export const Votes: MessageFns<Votes> = {
     }
     for (const v of message.choices) {
       Choice.encode(v!, writer.uint32(18).fork()).join();
+    }
+    if (message.totalBallots !== 0) {
+      writer.uint32(24).uint32(message.totalBallots);
     }
     return writer;
   },
@@ -1207,6 +1211,14 @@ export const Votes: MessageFns<Votes> = {
           message.choices.push(Choice.decode(reader, reader.uint32()));
           continue;
         }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.totalBallots = reader.uint32();
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -1220,6 +1232,7 @@ export const Votes: MessageFns<Votes> = {
     return {
       vote: isSet(object.vote) ? Vote.fromJSON(object.vote) : undefined,
       choices: globalThis.Array.isArray(object?.choices) ? object.choices.map((e: any) => Choice.fromJSON(e)) : [],
+      totalBallots: isSet(object.totalBallots) ? globalThis.Number(object.totalBallots) : 0,
     };
   },
 
@@ -1231,6 +1244,9 @@ export const Votes: MessageFns<Votes> = {
     if (message.choices?.length) {
       obj.choices = message.choices.map((e) => Choice.toJSON(e));
     }
+    if (message.totalBallots !== 0) {
+      obj.totalBallots = Math.round(message.totalBallots);
+    }
     return obj;
   },
 
@@ -1241,6 +1257,7 @@ export const Votes: MessageFns<Votes> = {
     const message = createBaseVotes();
     message.vote = (object.vote !== undefined && object.vote !== null) ? Vote.fromPartial(object.vote) : undefined;
     message.choices = object.choices?.map((e) => Choice.fromPartial(e)) || [];
+    message.totalBallots = object.totalBallots ?? 0;
     return message;
   },
 };

@@ -87,6 +87,7 @@ const Page: React.FC = async () => {
                   choices={data.choices.map((choice) => ({
                     name: choice.name,
                   }))}
+                  totalBallots={data.totalBallots}
                 />
               );
             })}

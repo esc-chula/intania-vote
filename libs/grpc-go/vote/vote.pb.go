@@ -767,6 +767,7 @@ type Votes struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Vote          *Vote                  `protobuf:"bytes,1,opt,name=vote,proto3" json:"vote,omitempty"`
 	Choices       []*choice.Choice       `protobuf:"bytes,2,rep,name=choices,proto3" json:"choices,omitempty"`
+	TotalBallots  uint32                 `protobuf:"varint,3,opt,name=totalBallots,proto3" json:"totalBallots,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -813,6 +814,13 @@ func (x *Votes) GetChoices() []*choice.Choice {
 		return x.Choices
 	}
 	return nil
+}
+
+func (x *Votes) GetTotalBallots() uint32 {
+	if x != nil {
+		return x.TotalBallots
+	}
+	return 0
 }
 
 type Tally struct {
@@ -971,11 +979,12 @@ const file_proto_vote_vote_proto_rawDesc = "" +
 	"\x0fisAllowMultiple\x18\v \x01(\bR\x0fisAllowMultiple\x12\x18\n" +
 	"\astartAt\x18\f \x01(\tR\astartAt\x12\x14\n" +
 	"\x05endAt\x18\r \x01(\tR\x05endAtB\b\n" +
-	"\x06_image\"Q\n" +
+	"\x06_image\"u\n" +
 	"\x05Votes\x12\x1e\n" +
 	"\x04vote\x18\x01 \x01(\v2\n" +
 	".vote.VoteR\x04vote\x12(\n" +
-	"\achoices\x18\x02 \x03(\v2\x0e.choice.ChoiceR\achoices\"K\n" +
+	"\achoices\x18\x02 \x03(\v2\x0e.choice.ChoiceR\achoices\x12\"\n" +
+	"\ftotalBallots\x18\x03 \x01(\rR\ftotalBallots\"K\n" +
 	"\x05Tally\x12,\n" +
 	"\achoices\x18\x01 \x03(\v2\x12.vote.TallyChoicesR\achoices\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\rR\x05total\"<\n" +

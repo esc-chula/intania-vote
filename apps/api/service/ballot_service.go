@@ -25,6 +25,7 @@ type BallotService interface {
 	// TallyByVoteSlug(ctx context.Context, voteSlug string) ([]*model.Tally, error)
 	GetBallotsByOidcId(ctx context.Context, oidcId string) ([]*model.Ballot, error)
 	HasUserVoted(ctx context.Context, oidcId string, voteSlug string) (bool, error)
+	CountBallotsByVoteId(ctx context.Context, voteId uint) (int64, error)
 }
 
 type ballotServiceImpl struct {
@@ -295,4 +296,12 @@ func (s *ballotServiceImpl) HasUserVoted(ctx context.Context, oidcId string, vot
 		return false, err
 	}
 	return hasVoted, nil
+}
+
+func (s *ballotServiceImpl) CountBallotsByVoteId(ctx context.Context, voteId uint) (int64, error) {
+	count, err := s.ballotRepo.CountByVoteId(ctx, voteId)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
 }

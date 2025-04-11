@@ -80,7 +80,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({ isMobile, voteName }) => {
         <Story className="w-[1080px]" voteName={voteName} />
       </div>
 
-      <Button variant="outline" size="lg" onClick={handleShare}>
+      <Button variant="outline" size="lg" onClick={handleDownload}>
         <Share />
         แชร์
       </Button>
