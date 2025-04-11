@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { Tally } from "@intania-vote/grpc-ts";
 import { Button } from "@intania-vote/shadcn";
 
 import VoteChoicesInfo from "./vote-choices-info";
@@ -22,6 +23,7 @@ interface VoteResultContainerProps {
     image?: string;
   }[];
   isEligible?: boolean;
+  tally?: Tally;
 }
 
 const VoteResultContainer: React.FC<VoteResultContainerProps> = ({
@@ -32,6 +34,7 @@ const VoteResultContainer: React.FC<VoteResultContainerProps> = ({
   endAt,
   choices,
   isEligible = true,
+  tally,
 }) => {
   const [tab, setTab] = useState<"result" | "info">("result");
 
@@ -61,7 +64,12 @@ const VoteResultContainer: React.FC<VoteResultContainerProps> = ({
           </div>
           {tab === "result" ? (
             <>
-              <VoteResultCard startAt={startAt} endAt={endAt} />
+              <VoteResultCard
+                startAt={startAt}
+                endAt={endAt}
+                choices={choices}
+                tally={tally}
+              />
               {isEligible ? <VoteVerifyCard /> : null}
             </>
           ) : (

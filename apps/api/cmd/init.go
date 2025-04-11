@@ -39,11 +39,11 @@ func InitializeApp() (App, error) {
 	gormDB.AutoMigrate(model.User{}, model.Vote{}, model.Choice{}, model.Ballot{})
 
 	userRepository := repository.NewUserRepository(gormDB)
-	userService := service.NewUserService(userRepository, cfg)
 	voteRepository := repository.NewVoteRepository(gormDB)
-	voteService := service.NewVoteService(voteRepository, userRepository, cfg)
 	choiceRepository := repository.NewChoiceRepository(gormDB)
 	ballotRepository := repository.NewBallotRepository(gormDB)
+	userService := service.NewUserService(userRepository, cfg)
+	voteService := service.NewVoteService(voteRepository, userRepository, ballotRepository, cfg)
 	ballotService := service.NewBallotService(ballotRepository, userRepository, voteRepository, choiceRepository, cfg)
 
 	userServiceServer := server.NewUserServer(userService)

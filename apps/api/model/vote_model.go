@@ -70,6 +70,6 @@ type Tally struct {
 }
 
 type TallyChoices struct {
-	Number string
+	Number int
 	Count  uint
 }

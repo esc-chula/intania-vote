@@ -184,3 +184,27 @@ export const hasUserVoted = actionClient
       };
     }
   });
+
+export const tallyVoteBySlug = actionClient
+  .schema(z.object({ slug: z.string().max(100) }))
+  .action(async ({ parsedInput: { slug } }) => {
+    try {
+      const session = await getSession();
+      const oidcId = session?.user?.oidcId;
+      if (!oidcId) {
+        return { failure: "User is not authenticated" };
+      }
+
+      const tallyVote = await grpc.vote.TallyVoteBySlug({ slug });
+
+      return {
+        success: "Successfully tallied vote",
+        tallyVote,
+      };
+    } catch (error) {
+      console.error("Error in tally vote by slug action:", error);
+      return {
+        failure: "An error occurred during tally vote by slug",
+      };
+    }
+  });

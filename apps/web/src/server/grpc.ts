@@ -25,6 +25,8 @@ import {
   type VerifyBallotResponse,
   type HasUserVotedRequest,
   type HasUserVotedResponse,
+  type TallyVoteBySlugRequest,
+  type TallyVoteBySlugResponse,
 } from "@intania-vote/grpc-ts";
 
 const GRPC_ADDRESS = process.env.GRPC_ADDRESS || "localhost:4000";
@@ -106,6 +108,14 @@ function HasUserVoted(req: HasUserVotedRequest): Promise<HasUserVotedResponse> {
   });
 }
 
+function TallyVoteBySlug(
+  req: TallyVoteBySlugRequest,
+): Promise<TallyVoteBySlugResponse> {
+  return new Promise((resolve, reject) => {
+    voteClient.tallyVoteBySlug(req, r(resolve, reject));
+  });
+}
+
 const ballotClient = new BallotServiceClient(
   GRPC_ADDRESS,
   credentials.createInsecure(),
@@ -143,6 +153,7 @@ export const grpc = {
     GetVotes,
     GetVotesByUserEligibility,
     HasUserVoted,
+    TallyVoteBySlug,
   },
   ballot: {
     CreateBallotProof,

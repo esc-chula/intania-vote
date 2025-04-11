@@ -110,6 +110,14 @@ export interface HasUserVotedResponse {
   hasVoted: boolean;
 }
 
+export interface TallyVoteBySlugRequest {
+  slug: string;
+}
+
+export interface TallyVoteBySlugResponse {
+  tally: Tally | undefined;
+}
+
 export interface Vote {
   name: string;
   description: string;
@@ -138,7 +146,7 @@ export interface Tally {
 }
 
 export interface TallyChoices {
-  number: string;
+  number: number;
   count: number;
 }
 
@@ -904,6 +912,122 @@ export const HasUserVotedResponse: MessageFns<HasUserVotedResponse> = {
   },
 };
 
+function createBaseTallyVoteBySlugRequest(): TallyVoteBySlugRequest {
+  return { slug: "" };
+}
+
+export const TallyVoteBySlugRequest: MessageFns<TallyVoteBySlugRequest> = {
+  encode(message: TallyVoteBySlugRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.slug !== "") {
+      writer.uint32(10).string(message.slug);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): TallyVoteBySlugRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseTallyVoteBySlugRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.slug = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): TallyVoteBySlugRequest {
+    return { slug: isSet(object.slug) ? globalThis.String(object.slug) : "" };
+  },
+
+  toJSON(message: TallyVoteBySlugRequest): unknown {
+    const obj: any = {};
+    if (message.slug !== "") {
+      obj.slug = message.slug;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<TallyVoteBySlugRequest>, I>>(base?: I): TallyVoteBySlugRequest {
+    return TallyVoteBySlugRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<TallyVoteBySlugRequest>, I>>(object: I): TallyVoteBySlugRequest {
+    const message = createBaseTallyVoteBySlugRequest();
+    message.slug = object.slug ?? "";
+    return message;
+  },
+};
+
+function createBaseTallyVoteBySlugResponse(): TallyVoteBySlugResponse {
+  return { tally: undefined };
+}
+
+export const TallyVoteBySlugResponse: MessageFns<TallyVoteBySlugResponse> = {
+  encode(message: TallyVoteBySlugResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.tally !== undefined) {
+      Tally.encode(message.tally, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): TallyVoteBySlugResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseTallyVoteBySlugResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.tally = Tally.decode(reader, reader.uint32());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): TallyVoteBySlugResponse {
+    return { tally: isSet(object.tally) ? Tally.fromJSON(object.tally) : undefined };
+  },
+
+  toJSON(message: TallyVoteBySlugResponse): unknown {
+    const obj: any = {};
+    if (message.tally !== undefined) {
+      obj.tally = Tally.toJSON(message.tally);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<TallyVoteBySlugResponse>, I>>(base?: I): TallyVoteBySlugResponse {
+    return TallyVoteBySlugResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<TallyVoteBySlugResponse>, I>>(object: I): TallyVoteBySlugResponse {
+    const message = createBaseTallyVoteBySlugResponse();
+    message.tally = (object.tally !== undefined && object.tally !== null) ? Tally.fromPartial(object.tally) : undefined;
+    return message;
+  },
+};
+
 function createBaseVote(): Vote {
   return {
     name: "",
@@ -1341,13 +1465,13 @@ export const Tally: MessageFns<Tally> = {
 };
 
 function createBaseTallyChoices(): TallyChoices {
-  return { number: "", count: 0 };
+  return { number: 0, count: 0 };
 }
 
 export const TallyChoices: MessageFns<TallyChoices> = {
   encode(message: TallyChoices, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.number !== "") {
-      writer.uint32(10).string(message.number);
+    if (message.number !== 0) {
+      writer.uint32(8).int32(message.number);
     }
     if (message.count !== 0) {
       writer.uint32(16).uint32(message.count);
@@ -1363,11 +1487,11 @@ export const TallyChoices: MessageFns<TallyChoices> = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1: {
-          if (tag !== 10) {
+          if (tag !== 8) {
             break;
           }
 
-          message.number = reader.string();
+          message.number = reader.int32();
           continue;
         }
         case 2: {
@@ -1389,15 +1513,15 @@ export const TallyChoices: MessageFns<TallyChoices> = {
 
   fromJSON(object: any): TallyChoices {
     return {
-      number: isSet(object.number) ? globalThis.String(object.number) : "",
+      number: isSet(object.number) ? globalThis.Number(object.number) : 0,
       count: isSet(object.count) ? globalThis.Number(object.count) : 0,
     };
   },
 
   toJSON(message: TallyChoices): unknown {
     const obj: any = {};
-    if (message.number !== "") {
-      obj.number = message.number;
+    if (message.number !== 0) {
+      obj.number = Math.round(message.number);
     }
     if (message.count !== 0) {
       obj.count = Math.round(message.count);
@@ -1410,7 +1534,7 @@ export const TallyChoices: MessageFns<TallyChoices> = {
   },
   fromPartial<I extends Exact<DeepPartial<TallyChoices>, I>>(object: I): TallyChoices {
     const message = createBaseTallyChoices();
-    message.number = object.number ?? "";
+    message.number = object.number ?? 0;
     message.count = object.count ?? 0;
     return message;
   },
@@ -1474,6 +1598,15 @@ export const VoteServiceService = {
     responseSerialize: (value: HasUserVotedResponse) => Buffer.from(HasUserVotedResponse.encode(value).finish()),
     responseDeserialize: (value: Buffer) => HasUserVotedResponse.decode(value),
   },
+  tallyVoteBySlug: {
+    path: "/vote.VoteService/TallyVoteBySlug",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: TallyVoteBySlugRequest) => Buffer.from(TallyVoteBySlugRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer) => TallyVoteBySlugRequest.decode(value),
+    responseSerialize: (value: TallyVoteBySlugResponse) => Buffer.from(TallyVoteBySlugResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer) => TallyVoteBySlugResponse.decode(value),
+  },
 } as const;
 
 export interface VoteServiceServer extends UntypedServiceImplementation {
@@ -1483,6 +1616,7 @@ export interface VoteServiceServer extends UntypedServiceImplementation {
   getVotes: handleUnaryCall<GetVotesRequest, GetVotesResponse>;
   getVotesByUserEligibility: handleUnaryCall<GetVotesByUserEligibilityRequest, GetVotesByUserEligibilityResponse>;
   hasUserVoted: handleUnaryCall<HasUserVotedRequest, HasUserVotedResponse>;
+  tallyVoteBySlug: handleUnaryCall<TallyVoteBySlugRequest, TallyVoteBySlugResponse>;
 }
 
 export interface VoteServiceClient extends Client {
@@ -1575,6 +1709,21 @@ export interface VoteServiceClient extends Client {
     metadata: Metadata,
     options: Partial<CallOptions>,
     callback: (error: ServiceError | null, response: HasUserVotedResponse) => void,
+  ): ClientUnaryCall;
+  tallyVoteBySlug(
+    request: TallyVoteBySlugRequest,
+    callback: (error: ServiceError | null, response: TallyVoteBySlugResponse) => void,
+  ): ClientUnaryCall;
+  tallyVoteBySlug(
+    request: TallyVoteBySlugRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: TallyVoteBySlugResponse) => void,
+  ): ClientUnaryCall;
+  tallyVoteBySlug(
+    request: TallyVoteBySlugRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: TallyVoteBySlugResponse) => void,
   ): ClientUnaryCall;
 }
 

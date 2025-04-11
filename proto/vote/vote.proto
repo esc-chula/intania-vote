@@ -13,6 +13,7 @@ service VoteService {
     rpc GetVotes(GetVotesRequest) returns (GetVotesResponse) {};
     rpc GetVotesByUserEligibility(GetVotesByUserEligibilityRequest) returns (GetVotesByUserEligibilityResponse) {};
     rpc HasUserVoted(HasUserVotedRequest) returns (HasUserVotedResponse) {};
+    rpc TallyVoteBySlug(TallyVoteBySlugRequest) returns (TallyVoteBySlugResponse) {};
 }
 
 message CreateVoteRequest {
@@ -64,6 +65,14 @@ message HasUserVotedResponse {
     bool hasVoted = 1;
 }
 
+message TallyVoteBySlugRequest {
+    string slug = 1;
+}
+
+message TallyVoteBySlugResponse {
+    Tally tally = 1;
+}
+
 enum Owner {
     USER = 0;
     ESC = 1;
@@ -98,6 +107,6 @@ message Tally {
 }
 
 message TallyChoices {
-    string number = 1;
+    int32 number = 1;
     uint32 count = 2;
 }

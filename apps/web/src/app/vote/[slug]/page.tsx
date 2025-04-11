@@ -4,7 +4,9 @@ import XBackButton from "~/components/common/x-back-button";
 import VoteBallotContainer from "~/components/vote/vote-ballot-container";
 import VoteResultContainer from "~/components/vote/vote-result-container";
 import { getSession } from "~/lib/auth";
-import { getVoteBySlug, hasUserVoted } from "~/server/vote";
+import { getVoteBySlug, hasUserVoted, tallyVoteBySlug } from "~/server/vote";
+
+import { TallyVoteBySlugResponse } from "@intania-vote/grpc-ts";
 
 export const dynamic = "force-dynamic";
 
@@ -52,10 +54,26 @@ const Page: React.FC<PageProps> = async ({ params }) => {
 
   const hasUserVotedData = resHasUserVoted.data.hasVoted;
 
+  let tallyData = null as TallyVoteBySlugResponse | null;
+
+  if (new Date() > new Date(voteData.vote.endAt)) {
+    const resTallyVoteBySlug = await tallyVoteBySlug({ slug });
+    if (
+      resTallyVoteBySlug?.data?.failure ||
+      !resTallyVoteBySlug?.data?.tallyVote
+    ) {
+      return notFound();
+    }
+
+    tallyData = resTallyVoteBySlug.data.tallyVote;
+  }
+
   return (
     <>
       <XBackButton />
-      {hasUserVotedData.hasVoted || !isEligible ? (
+      {hasUserVotedData.hasVoted ||
+      !isEligible ||
+      new Date() > new Date(voteData.vote.endAt) ? (
         <VoteResultContainer
           name={voteData.vote.name}
           description={voteData.vote.description}
@@ -70,6 +88,7 @@ const Page: React.FC<PageProps> = async ({ params }) => {
             image: choice.image,
           }))}
           isEligible={isEligible}
+          tally={tallyData?.tally}
         />
       ) : (
         <VoteBallotContainer

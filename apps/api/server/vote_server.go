@@ -365,3 +365,42 @@ func (s voteServerImpl) HasUserVoted(ctx context.Context, req *grpcVote.HasUserV
 		HasVoted: false,
 	}, nil
 }
+
+func (s voteServerImpl) TallyVoteBySlug(ctx context.Context, req *grpcVote.TallyVoteBySlugRequest) (*grpcVote.TallyVoteBySlugResponse, error) {
+	slug := req.GetSlug()
+	if slug == "" {
+		return nil, status.Error(codes.FailedPrecondition, "missing slug")
+	}
+
+	vote, err := s.svc.GetVoteBySlug(ctx, slug)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "failed to get vote")
+	}
+	if vote == nil {
+		return nil, status.Error(codes.NotFound, "vote not found")
+	}
+
+	if vote.EndAt.After(time.Now()) {
+		return nil, status.Error(codes.FailedPrecondition, "vote has not ended yet")
+	}
+
+	tally, err := s.svc.TallyVoteById(ctx, vote.Id)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "failed to tally vote")
+	}
+
+	choices := make([]*grpcVote.TallyChoices, len(tally.Choices))
+	for i, choice := range tally.Choices {
+		choices[i] = &grpcVote.TallyChoices{
+			Number: int32(choice.Number),
+			Count:  uint32(choice.Count),
+		}
+	}
+
+	return &grpcVote.TallyVoteBySlugResponse{
+		Tally: &grpcVote.Tally{
+			Choices: choices,
+			Total:   uint32(tally.Total),
+		},
+	}, nil
+}

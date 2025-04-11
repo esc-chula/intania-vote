@@ -7,6 +7,7 @@ import (
 	"github.com/esc-chula/intania-vote/apps/api/config"
 	"github.com/esc-chula/intania-vote/apps/api/model"
 	"github.com/esc-chula/intania-vote/apps/api/repository"
+	"github.com/esc-chula/intania-vote/apps/api/zk"
 	"gorm.io/gorm"
 )
 
@@ -16,21 +17,24 @@ type VoteService interface {
 	GetVoteBySlug(ctx context.Context, slug string) (*model.Vote, error)
 	GetVotes(ctx context.Context) ([]*model.Vote, error)
 	GetVotesByUserEligibility(ctx context.Context, oidcId string) ([]*model.Vote, error)
+	TallyVoteById(ctx context.Context, id uint) (*model.Tally, error)
 }
 
 type voteServiceImpl struct {
-	voteRepo repository.VoteRepository
-	userRepo repository.UserRepository
-	cfg      *config.Config
+	voteRepo   repository.VoteRepository
+	userRepo   repository.UserRepository
+	ballotRepo repository.BallotRepository
+	cfg        *config.Config
 }
 
 var _ VoteService = &voteServiceImpl{}
 
-func NewVoteService(voteRepo repository.VoteRepository, userRepo repository.UserRepository, cfg *config.Config) VoteService {
+func NewVoteService(voteRepo repository.VoteRepository, userRepo repository.UserRepository, ballotRepo repository.BallotRepository, cfg *config.Config) VoteService {
 	return &voteServiceImpl{
-		voteRepo: voteRepo,
-		userRepo: userRepo,
-		cfg:      cfg,
+		voteRepo:   voteRepo,
+		userRepo:   userRepo,
+		ballotRepo: ballotRepo,
+		cfg:        cfg,
 	}
 }
 
@@ -113,4 +117,80 @@ func (s *voteServiceImpl) GetVotesByUserEligibility(ctx context.Context, oidcId 
 	}
 
 	return eligibleVotes, nil
+}
+
+func (s *voteServiceImpl) TallyVoteById(ctx context.Context, id uint) (*model.Tally, error) {
+	vote, err := s.voteRepo.GetById(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	if vote == nil {
+		return nil, nil
+	}
+
+	choices := vote.Choices
+
+	ballots, err := s.ballotRepo.GetBallotsByVoteId(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	choiceBallotCounts := make(map[int]int)
+
+	for _, ballot := range ballots {
+		choiceId, err := zk.DecryptWithServerKey(ballot.EncryptedBallot, s.cfg)
+		if err != nil {
+			continue
+		}
+
+		found := false
+		for _, choice := range choices {
+			if choice.Id == uint(choiceId) {
+				choiceBallotCounts[choiceId]++
+				found = true
+				break
+			}
+		}
+
+		if !found {
+			if choiceId == 0 {
+				choiceBallotCounts[0]++
+			} else if choiceId == -1 {
+				choiceBallotCounts[-1]++
+			}
+		}
+	}
+
+	var tally []model.TallyChoices
+	totalBallots := 0
+
+	for _, choice := range choices {
+		count := choiceBallotCounts[int(choice.Id)]
+		tally = append(tally, model.TallyChoices{
+			Number: int(choice.Number),
+			Count:  uint(count),
+		})
+		totalBallots += count
+	}
+
+	if noVotes := choiceBallotCounts[0]; noVotes > 0 {
+		tally = append(tally, model.TallyChoices{
+			Number: 0,
+			Count:  uint(noVotes),
+		})
+		totalBallots += noVotes
+	}
+
+	if voteNos := choiceBallotCounts[-1]; voteNos > 0 {
+		tally = append(tally, model.TallyChoices{
+			Number: -1,
+			Count:  uint(voteNos),
+		})
+		totalBallots += voteNos
+	}
+
+	return &model.Tally{
+		Choices: tally,
+		Total:   uint(totalBallots),
+	}, nil
 }
