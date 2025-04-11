@@ -35,10 +35,12 @@ const Page: React.FC<PageProps> = async ({ params }) => {
     return notFound();
   }
 
+  let isEligible = true;
+
   if (voteData.vote.eligibleStudentId !== "*") {
     const regex = new RegExp(voteData.vote.eligibleStudentId);
     if (!regex.test(studentId)) {
-      return notFound();
+      isEligible = false;
     }
   }
 
@@ -53,7 +55,7 @@ const Page: React.FC<PageProps> = async ({ params }) => {
   return (
     <>
       <XBackButton />
-      {hasUserVotedData.hasVoted ? (
+      {hasUserVotedData.hasVoted || !isEligible ? (
         <VoteResultContainer
           name={voteData.vote.name}
           description={voteData.vote.description}
@@ -67,6 +69,7 @@ const Page: React.FC<PageProps> = async ({ params }) => {
             information: choice.information,
             image: choice.image,
           }))}
+          isEligible={isEligible}
         />
       ) : (
         <VoteBallotContainer

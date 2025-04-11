@@ -21,6 +21,7 @@ interface VoteResultContainerProps {
     information?: string;
     image?: string;
   }[];
+  isEligible?: boolean;
 }
 
 const VoteResultContainer: React.FC<VoteResultContainerProps> = ({
@@ -30,6 +31,7 @@ const VoteResultContainer: React.FC<VoteResultContainerProps> = ({
   startAt,
   endAt,
   choices,
+  isEligible = true,
 }) => {
   const [tab, setTab] = useState<"result" | "info">("result");
 
@@ -60,7 +62,7 @@ const VoteResultContainer: React.FC<VoteResultContainerProps> = ({
           {tab === "result" ? (
             <>
               <VoteResultCard startAt={startAt} endAt={endAt} />
-              <VoteVerifyCard />
+              {isEligible ? <VoteVerifyCard /> : null}
             </>
           ) : (
             <>

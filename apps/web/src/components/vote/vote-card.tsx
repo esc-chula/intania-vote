@@ -84,14 +84,11 @@ const VoteCard: React.FC<VoteCardProps> = ({
     <div className="flex flex-col">
       <div
         className={cn(
-          "w-full overflow-hidden",
+          "w-full cursor-pointer overflow-hidden",
           isDislaying ? "h-auto" : "h-0",
-          (now > startAt && isEligible) || now > endAt ? "cursor-pointer" : "",
         )}
         onClick={() => {
-          if ((now > startAt && isEligible) || now > endAt) {
-            router.push(`/vote/${slug}`);
-          }
+          router.push(`/vote/${slug}`);
         }}
       >
         <div ref={topContainerRef} className="relative z-10">
