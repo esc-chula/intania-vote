@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
 
 import XBackButton from "~/components/common/x-back-button";
-import VoteContainer from "~/components/vote/vote-container";
-import { getVoteBySlug } from "~/server/vote";
+import VoteBallotContainer from "~/components/vote/vote-ballot-container";
+import VoteResultContainer from "~/components/vote/vote-result-container";
+import { getVoteBySlug, hasUserVoted } from "~/server/vote";
 
 interface PageProps {
   params: {
@@ -13,33 +14,58 @@ interface PageProps {
 const Page: React.FC<PageProps> = async ({ params }) => {
   const slug = params.slug;
 
-  const res = await getVoteBySlug({ slug });
+  const resGetVoteBySlug = await getVoteBySlug({ slug });
 
-  if (res?.data?.failure || !res?.data?.vote) {
+  if (resGetVoteBySlug?.data?.failure || !resGetVoteBySlug?.data?.vote) {
     return notFound();
   }
 
-  const voteData = res.data.vote;
+  const voteData = resGetVoteBySlug.data.vote;
 
   if (!voteData.vote || !voteData.choices) {
     return notFound();
   }
 
+  const resHasUserVoted = await hasUserVoted({ slug });
+
+  if (resHasUserVoted?.data?.failure || !resHasUserVoted?.data?.hasVoted) {
+    return notFound();
+  }
+
+  const hasUserVotedData = resHasUserVoted.data.hasVoted;
+
   return (
     <>
       <XBackButton />
-      <VoteContainer
-        name={voteData.vote.name}
-        description={voteData.vote.description}
-        slug={voteData.vote.slug}
-        choices={voteData.choices.map((choice) => ({
-          number: choice.number,
-          name: choice.name,
-          description: choice.description,
-          information: choice.information,
-          image: choice.image,
-        }))}
-      />
+      {hasUserVotedData.hasVoted ? (
+        <VoteResultContainer
+          name={voteData.vote.name}
+          description={voteData.vote.description}
+          slug={voteData.vote.slug}
+          startAt={new Date(voteData.vote.startAt)}
+          endAt={new Date(voteData.vote.endAt)}
+          choices={voteData.choices.map((choice) => ({
+            number: choice.number,
+            name: choice.name,
+            description: choice.description,
+            information: choice.information,
+            image: choice.image,
+          }))}
+        />
+      ) : (
+        <VoteBallotContainer
+          name={voteData.vote.name}
+          description={voteData.vote.description}
+          slug={voteData.vote.slug}
+          choices={voteData.choices.map((choice) => ({
+            number: choice.number,
+            name: choice.name,
+            description: choice.description,
+            information: choice.information,
+            image: choice.image,
+          }))}
+        />
+      )}
     </>
   );
 };

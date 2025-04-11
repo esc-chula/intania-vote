@@ -309,3 +309,37 @@ func (s voteServerImpl) GetVotesByUserEligibility(ctx context.Context, req *grpc
 		Votes: voteList,
 	}, nil
 }
+
+func (s voteServerImpl) HasUserVoted(ctx context.Context, req *grpcVote.HasUserVotedRequest) (*grpcVote.HasUserVotedResponse, error) {
+	oidcId := req.GetOidcId()
+	if oidcId == "" {
+		return nil, status.Error(codes.FailedPrecondition, "missing oidcId")
+	}
+	slug := req.GetSlug()
+	if slug == "" {
+		return nil, status.Error(codes.FailedPrecondition, "missing slug")
+	}
+
+	vote, err := s.svc.GetVoteBySlug(ctx, slug)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "failed to get vote")
+	}
+	if vote == nil {
+		return nil, status.Error(codes.NotFound, "vote not found")
+	}
+
+	hasVoted, err := s.ballotSvc.HasUserVoted(ctx, oidcId, slug)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "failed to get ballots")
+	}
+
+	if hasVoted {
+		return &grpcVote.HasUserVotedResponse{
+			HasVoted: true,
+		}, nil
+	}
+
+	return &grpcVote.HasUserVotedResponse{
+		HasVoted: false,
+	}, nil
+}

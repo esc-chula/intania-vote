@@ -101,6 +101,15 @@ export interface GetVotesByUserEligibilityResponse {
   votes: Votes[];
 }
 
+export interface HasUserVotedRequest {
+  oidcId: string;
+  slug: string;
+}
+
+export interface HasUserVotedResponse {
+  hasVoted: boolean;
+}
+
 export interface Vote {
   name: string;
   description: string;
@@ -760,6 +769,140 @@ export const GetVotesByUserEligibilityResponse: MessageFns<GetVotesByUserEligibi
   },
 };
 
+function createBaseHasUserVotedRequest(): HasUserVotedRequest {
+  return { oidcId: "", slug: "" };
+}
+
+export const HasUserVotedRequest: MessageFns<HasUserVotedRequest> = {
+  encode(message: HasUserVotedRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.oidcId !== "") {
+      writer.uint32(10).string(message.oidcId);
+    }
+    if (message.slug !== "") {
+      writer.uint32(18).string(message.slug);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): HasUserVotedRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseHasUserVotedRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.oidcId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.slug = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): HasUserVotedRequest {
+    return {
+      oidcId: isSet(object.oidcId) ? globalThis.String(object.oidcId) : "",
+      slug: isSet(object.slug) ? globalThis.String(object.slug) : "",
+    };
+  },
+
+  toJSON(message: HasUserVotedRequest): unknown {
+    const obj: any = {};
+    if (message.oidcId !== "") {
+      obj.oidcId = message.oidcId;
+    }
+    if (message.slug !== "") {
+      obj.slug = message.slug;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<HasUserVotedRequest>, I>>(base?: I): HasUserVotedRequest {
+    return HasUserVotedRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<HasUserVotedRequest>, I>>(object: I): HasUserVotedRequest {
+    const message = createBaseHasUserVotedRequest();
+    message.oidcId = object.oidcId ?? "";
+    message.slug = object.slug ?? "";
+    return message;
+  },
+};
+
+function createBaseHasUserVotedResponse(): HasUserVotedResponse {
+  return { hasVoted: false };
+}
+
+export const HasUserVotedResponse: MessageFns<HasUserVotedResponse> = {
+  encode(message: HasUserVotedResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.hasVoted !== false) {
+      writer.uint32(8).bool(message.hasVoted);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): HasUserVotedResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseHasUserVotedResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.hasVoted = reader.bool();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): HasUserVotedResponse {
+    return { hasVoted: isSet(object.hasVoted) ? globalThis.Boolean(object.hasVoted) : false };
+  },
+
+  toJSON(message: HasUserVotedResponse): unknown {
+    const obj: any = {};
+    if (message.hasVoted !== false) {
+      obj.hasVoted = message.hasVoted;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<HasUserVotedResponse>, I>>(base?: I): HasUserVotedResponse {
+    return HasUserVotedResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<HasUserVotedResponse>, I>>(object: I): HasUserVotedResponse {
+    const message = createBaseHasUserVotedResponse();
+    message.hasVoted = object.hasVoted ?? false;
+    return message;
+  },
+};
+
 function createBaseVote(): Vote {
   return {
     name: "",
@@ -1305,6 +1448,15 @@ export const VoteServiceService = {
       Buffer.from(GetVotesByUserEligibilityResponse.encode(value).finish()),
     responseDeserialize: (value: Buffer) => GetVotesByUserEligibilityResponse.decode(value),
   },
+  hasUserVoted: {
+    path: "/vote.VoteService/HasUserVoted",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: HasUserVotedRequest) => Buffer.from(HasUserVotedRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer) => HasUserVotedRequest.decode(value),
+    responseSerialize: (value: HasUserVotedResponse) => Buffer.from(HasUserVotedResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer) => HasUserVotedResponse.decode(value),
+  },
 } as const;
 
 export interface VoteServiceServer extends UntypedServiceImplementation {
@@ -1313,6 +1465,7 @@ export interface VoteServiceServer extends UntypedServiceImplementation {
   getVoteBySlug: handleUnaryCall<GetVoteBySlugRequest, GetVoteBySlugResponse>;
   getVotes: handleUnaryCall<GetVotesRequest, GetVotesResponse>;
   getVotesByUserEligibility: handleUnaryCall<GetVotesByUserEligibilityRequest, GetVotesByUserEligibilityResponse>;
+  hasUserVoted: handleUnaryCall<HasUserVotedRequest, HasUserVotedResponse>;
 }
 
 export interface VoteServiceClient extends Client {
@@ -1390,6 +1543,21 @@ export interface VoteServiceClient extends Client {
     metadata: Metadata,
     options: Partial<CallOptions>,
     callback: (error: ServiceError | null, response: GetVotesByUserEligibilityResponse) => void,
+  ): ClientUnaryCall;
+  hasUserVoted(
+    request: HasUserVotedRequest,
+    callback: (error: ServiceError | null, response: HasUserVotedResponse) => void,
+  ): ClientUnaryCall;
+  hasUserVoted(
+    request: HasUserVotedRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: HasUserVotedResponse) => void,
+  ): ClientUnaryCall;
+  hasUserVoted(
+    request: HasUserVotedRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: HasUserVotedResponse) => void,
   ): ClientUnaryCall;
 }
 

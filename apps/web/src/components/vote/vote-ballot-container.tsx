@@ -7,9 +7,10 @@ import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 import TabBarWrapper from "~/components/common/tab-bar-wrapper";
 import VoteBallotCard from "~/components/vote/vote-ballot-card";
+import { choicesGridClassName } from "~/lib/vote";
 import { createBallot, createBallotProof } from "~/server/ballot";
 
-import { Button, useToast } from "@intania-vote/shadcn";
+import { Button, cn, useToast } from "@intania-vote/shadcn";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -21,7 +22,7 @@ import {
   AlertDialogTrigger,
 } from "@intania-vote/shadcn";
 
-interface VoteContainerProps {
+interface VoteBallotContainerProps {
   name: string;
   description: string;
   slug: string;
@@ -34,7 +35,7 @@ interface VoteContainerProps {
   }[];
 }
 
-const VoteContainer: React.FC<VoteContainerProps> = ({
+const VoteBallotContainer: React.FC<VoteBallotContainerProps> = ({
   name,
   description,
   slug,
@@ -121,12 +122,22 @@ const VoteContainer: React.FC<VoteContainerProps> = ({
 
   return (
     <>
-      <div className="flex flex-grow flex-col gap-4 px-5 pb-20">
+      <div
+        className={cn(
+          "flex flex-grow flex-col gap-4 px-5",
+          selectedChoice <= 0 && choices.length === 1 ? "pb-32" : "pb-20",
+        )}
+      >
         <div className="flex flex-shrink flex-col pt-7">
           <h1 className="pr-20 text-3xl font-bold text-neutral-800">{name}</h1>
           <p className="text-neutral-600">{description}</p>
         </div>
-        <div className="grid flex-grow grid-cols-1 grid-rows-2 gap-5 pb-5">
+        <div
+          className={cn(
+            "grid flex-grow gap-5 pb-5",
+            choicesGridClassName(choices.length),
+          )}
+        >
           {choices
             .sort((a, b) => a.number - b.number)
             .map((choice, index) => (
@@ -153,7 +164,9 @@ const VoteContainer: React.FC<VoteContainerProps> = ({
         </div>
       </div>
       <TabBarWrapper
-        className={selectedChoice <= 0 && choices.length === 1 ? "h-32" : ""}
+        className={
+          selectedChoice <= 0 && choices.length === 1 ? "h-32" : "h-20"
+        }
       >
         <div className="flex h-full w-full flex-col items-center justify-center gap-3 px-2 py-2">
           <AlertDialog
@@ -228,4 +241,4 @@ const VoteContainer: React.FC<VoteContainerProps> = ({
   );
 };
 
-export default VoteContainer;
+export default VoteBallotContainer;

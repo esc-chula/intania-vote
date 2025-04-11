@@ -527,6 +527,102 @@ func (x *GetVotesByUserEligibilityResponse) GetVotes() []*Votes {
 	return nil
 }
 
+type HasUserVotedRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	OidcId        string                 `protobuf:"bytes,1,opt,name=oidcId,proto3" json:"oidcId,omitempty"`
+	Slug          string                 `protobuf:"bytes,2,opt,name=slug,proto3" json:"slug,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *HasUserVotedRequest) Reset() {
+	*x = HasUserVotedRequest{}
+	mi := &file_proto_vote_vote_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *HasUserVotedRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HasUserVotedRequest) ProtoMessage() {}
+
+func (x *HasUserVotedRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_vote_vote_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HasUserVotedRequest.ProtoReflect.Descriptor instead.
+func (*HasUserVotedRequest) Descriptor() ([]byte, []int) {
+	return file_proto_vote_vote_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *HasUserVotedRequest) GetOidcId() string {
+	if x != nil {
+		return x.OidcId
+	}
+	return ""
+}
+
+func (x *HasUserVotedRequest) GetSlug() string {
+	if x != nil {
+		return x.Slug
+	}
+	return ""
+}
+
+type HasUserVotedResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	HasVoted      bool                   `protobuf:"varint,1,opt,name=hasVoted,proto3" json:"hasVoted,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *HasUserVotedResponse) Reset() {
+	*x = HasUserVotedResponse{}
+	mi := &file_proto_vote_vote_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *HasUserVotedResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HasUserVotedResponse) ProtoMessage() {}
+
+func (x *HasUserVotedResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_vote_vote_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HasUserVotedResponse.ProtoReflect.Descriptor instead.
+func (*HasUserVotedResponse) Descriptor() ([]byte, []int) {
+	return file_proto_vote_vote_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *HasUserVotedResponse) GetHasVoted() bool {
+	if x != nil {
+		return x.HasVoted
+	}
+	return false
+}
+
 type Vote struct {
 	state              protoimpl.MessageState `protogen:"open.v1"`
 	Name               string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -548,7 +644,7 @@ type Vote struct {
 
 func (x *Vote) Reset() {
 	*x = Vote{}
-	mi := &file_proto_vote_vote_proto_msgTypes[10]
+	mi := &file_proto_vote_vote_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -560,7 +656,7 @@ func (x *Vote) String() string {
 func (*Vote) ProtoMessage() {}
 
 func (x *Vote) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_vote_vote_proto_msgTypes[10]
+	mi := &file_proto_vote_vote_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -573,7 +669,7 @@ func (x *Vote) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Vote.ProtoReflect.Descriptor instead.
 func (*Vote) Descriptor() ([]byte, []int) {
-	return file_proto_vote_vote_proto_rawDescGZIP(), []int{10}
+	return file_proto_vote_vote_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *Vote) GetName() string {
@@ -677,7 +773,7 @@ type Votes struct {
 
 func (x *Votes) Reset() {
 	*x = Votes{}
-	mi := &file_proto_vote_vote_proto_msgTypes[11]
+	mi := &file_proto_vote_vote_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -689,7 +785,7 @@ func (x *Votes) String() string {
 func (*Votes) ProtoMessage() {}
 
 func (x *Votes) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_vote_vote_proto_msgTypes[11]
+	mi := &file_proto_vote_vote_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -702,7 +798,7 @@ func (x *Votes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Votes.ProtoReflect.Descriptor instead.
 func (*Votes) Descriptor() ([]byte, []int) {
-	return file_proto_vote_vote_proto_rawDescGZIP(), []int{11}
+	return file_proto_vote_vote_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *Votes) GetVote() *Vote {
@@ -729,7 +825,7 @@ type Tally struct {
 
 func (x *Tally) Reset() {
 	*x = Tally{}
-	mi := &file_proto_vote_vote_proto_msgTypes[12]
+	mi := &file_proto_vote_vote_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -741,7 +837,7 @@ func (x *Tally) String() string {
 func (*Tally) ProtoMessage() {}
 
 func (x *Tally) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_vote_vote_proto_msgTypes[12]
+	mi := &file_proto_vote_vote_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -754,7 +850,7 @@ func (x *Tally) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Tally.ProtoReflect.Descriptor instead.
 func (*Tally) Descriptor() ([]byte, []int) {
-	return file_proto_vote_vote_proto_rawDescGZIP(), []int{12}
+	return file_proto_vote_vote_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *Tally) GetChoices() []*TallyChoices {
@@ -781,7 +877,7 @@ type TallyChoices struct {
 
 func (x *TallyChoices) Reset() {
 	*x = TallyChoices{}
-	mi := &file_proto_vote_vote_proto_msgTypes[13]
+	mi := &file_proto_vote_vote_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -793,7 +889,7 @@ func (x *TallyChoices) String() string {
 func (*TallyChoices) ProtoMessage() {}
 
 func (x *TallyChoices) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_vote_vote_proto_msgTypes[13]
+	mi := &file_proto_vote_vote_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -806,7 +902,7 @@ func (x *TallyChoices) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TallyChoices.ProtoReflect.Descriptor instead.
 func (*TallyChoices) Descriptor() ([]byte, []int) {
-	return file_proto_vote_vote_proto_rawDescGZIP(), []int{13}
+	return file_proto_vote_vote_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *TallyChoices) GetNumber() string {
@@ -852,7 +948,12 @@ const file_proto_vote_vote_proto_rawDesc = "" +
 	" GetVotesByUserEligibilityRequest\x12\x16\n" +
 	"\x06oidcId\x18\x01 \x01(\tR\x06oidcId\"F\n" +
 	"!GetVotesByUserEligibilityResponse\x12!\n" +
-	"\x05votes\x18\x01 \x03(\v2\v.vote.VotesR\x05votes\"\xb2\x03\n" +
+	"\x05votes\x18\x01 \x03(\v2\v.vote.VotesR\x05votes\"A\n" +
+	"\x13HasUserVotedRequest\x12\x16\n" +
+	"\x06oidcId\x18\x01 \x01(\tR\x06oidcId\x12\x12\n" +
+	"\x04slug\x18\x02 \x01(\tR\x04slug\"2\n" +
+	"\x14HasUserVotedResponse\x12\x1a\n" +
+	"\bhasVoted\x18\x01 \x01(\bR\bhasVoted\"\xb2\x03\n" +
 	"\x04Vote\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x12\n" +
@@ -884,14 +985,15 @@ const file_proto_vote_vote_proto_rawDesc = "" +
 	"\x05Owner\x12\b\n" +
 	"\x04USER\x10\x00\x12\a\n" +
 	"\x03ESC\x10\x01\x12\t\n" +
-	"\x05ISESC\x10\x022\x8f\x03\n" +
+	"\x05ISESC\x10\x022\xd8\x03\n" +
 	"\vVoteService\x12A\n" +
 	"\n" +
 	"CreateVote\x12\x17.vote.CreateVoteRequest\x1a\x18.vote.CreateVoteResponse\"\x00\x12D\n" +
 	"\vGetVoteById\x12\x18.vote.GetVoteByIdRequest\x1a\x19.vote.GetVoteByIdResponse\"\x00\x12J\n" +
 	"\rGetVoteBySlug\x12\x1a.vote.GetVoteBySlugRequest\x1a\x1b.vote.GetVoteBySlugResponse\"\x00\x12;\n" +
 	"\bGetVotes\x12\x15.vote.GetVotesRequest\x1a\x16.vote.GetVotesResponse\"\x00\x12n\n" +
-	"\x19GetVotesByUserEligibility\x12&.vote.GetVotesByUserEligibilityRequest\x1a'.vote.GetVotesByUserEligibilityResponse\"\x00B5Z3github.com/esc-chula/intania-vote/libs/grpc-go/voteb\x06proto3"
+	"\x19GetVotesByUserEligibility\x12&.vote.GetVotesByUserEligibilityRequest\x1a'.vote.GetVotesByUserEligibilityResponse\"\x00\x12G\n" +
+	"\fHasUserVoted\x12\x19.vote.HasUserVotedRequest\x1a\x1a.vote.HasUserVotedResponse\"\x00B5Z3github.com/esc-chula/intania-vote/libs/grpc-go/voteb\x06proto3"
 
 var (
 	file_proto_vote_vote_proto_rawDescOnce sync.Once
@@ -906,7 +1008,7 @@ func file_proto_vote_vote_proto_rawDescGZIP() []byte {
 }
 
 var file_proto_vote_vote_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_proto_vote_vote_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_proto_vote_vote_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_proto_vote_vote_proto_goTypes = []any{
 	(Owner)(0),                                // 0: vote.Owner
 	(*CreateVoteRequest)(nil),                 // 1: vote.CreateVoteRequest
@@ -919,37 +1021,41 @@ var file_proto_vote_vote_proto_goTypes = []any{
 	(*GetVotesResponse)(nil),                  // 8: vote.GetVotesResponse
 	(*GetVotesByUserEligibilityRequest)(nil),  // 9: vote.GetVotesByUserEligibilityRequest
 	(*GetVotesByUserEligibilityResponse)(nil), // 10: vote.GetVotesByUserEligibilityResponse
-	(*Vote)(nil),                              // 11: vote.Vote
-	(*Votes)(nil),                             // 12: vote.Votes
-	(*Tally)(nil),                             // 13: vote.Tally
-	(*TallyChoices)(nil),                      // 14: vote.TallyChoices
-	(*choice.Choice)(nil),                     // 15: choice.Choice
+	(*HasUserVotedRequest)(nil),               // 11: vote.HasUserVotedRequest
+	(*HasUserVotedResponse)(nil),              // 12: vote.HasUserVotedResponse
+	(*Vote)(nil),                              // 13: vote.Vote
+	(*Votes)(nil),                             // 14: vote.Votes
+	(*Tally)(nil),                             // 15: vote.Tally
+	(*TallyChoices)(nil),                      // 16: vote.TallyChoices
+	(*choice.Choice)(nil),                     // 17: choice.Choice
 }
 var file_proto_vote_vote_proto_depIdxs = []int32{
-	11, // 0: vote.CreateVoteRequest.vote:type_name -> vote.Vote
-	15, // 1: vote.CreateVoteRequest.choices:type_name -> choice.Choice
-	11, // 2: vote.GetVoteByIdResponse.vote:type_name -> vote.Vote
-	15, // 3: vote.GetVoteByIdResponse.choices:type_name -> choice.Choice
-	11, // 4: vote.GetVoteBySlugResponse.vote:type_name -> vote.Vote
-	15, // 5: vote.GetVoteBySlugResponse.choices:type_name -> choice.Choice
-	12, // 6: vote.GetVotesResponse.votes:type_name -> vote.Votes
-	12, // 7: vote.GetVotesByUserEligibilityResponse.votes:type_name -> vote.Votes
+	13, // 0: vote.CreateVoteRequest.vote:type_name -> vote.Vote
+	17, // 1: vote.CreateVoteRequest.choices:type_name -> choice.Choice
+	13, // 2: vote.GetVoteByIdResponse.vote:type_name -> vote.Vote
+	17, // 3: vote.GetVoteByIdResponse.choices:type_name -> choice.Choice
+	13, // 4: vote.GetVoteBySlugResponse.vote:type_name -> vote.Vote
+	17, // 5: vote.GetVoteBySlugResponse.choices:type_name -> choice.Choice
+	14, // 6: vote.GetVotesResponse.votes:type_name -> vote.Votes
+	14, // 7: vote.GetVotesByUserEligibilityResponse.votes:type_name -> vote.Votes
 	0,  // 8: vote.Vote.owner:type_name -> vote.Owner
-	11, // 9: vote.Votes.vote:type_name -> vote.Vote
-	15, // 10: vote.Votes.choices:type_name -> choice.Choice
-	14, // 11: vote.Tally.choices:type_name -> vote.TallyChoices
+	13, // 9: vote.Votes.vote:type_name -> vote.Vote
+	17, // 10: vote.Votes.choices:type_name -> choice.Choice
+	16, // 11: vote.Tally.choices:type_name -> vote.TallyChoices
 	1,  // 12: vote.VoteService.CreateVote:input_type -> vote.CreateVoteRequest
 	3,  // 13: vote.VoteService.GetVoteById:input_type -> vote.GetVoteByIdRequest
 	5,  // 14: vote.VoteService.GetVoteBySlug:input_type -> vote.GetVoteBySlugRequest
 	7,  // 15: vote.VoteService.GetVotes:input_type -> vote.GetVotesRequest
 	9,  // 16: vote.VoteService.GetVotesByUserEligibility:input_type -> vote.GetVotesByUserEligibilityRequest
-	2,  // 17: vote.VoteService.CreateVote:output_type -> vote.CreateVoteResponse
-	4,  // 18: vote.VoteService.GetVoteById:output_type -> vote.GetVoteByIdResponse
-	6,  // 19: vote.VoteService.GetVoteBySlug:output_type -> vote.GetVoteBySlugResponse
-	8,  // 20: vote.VoteService.GetVotes:output_type -> vote.GetVotesResponse
-	10, // 21: vote.VoteService.GetVotesByUserEligibility:output_type -> vote.GetVotesByUserEligibilityResponse
-	17, // [17:22] is the sub-list for method output_type
-	12, // [12:17] is the sub-list for method input_type
+	11, // 17: vote.VoteService.HasUserVoted:input_type -> vote.HasUserVotedRequest
+	2,  // 18: vote.VoteService.CreateVote:output_type -> vote.CreateVoteResponse
+	4,  // 19: vote.VoteService.GetVoteById:output_type -> vote.GetVoteByIdResponse
+	6,  // 20: vote.VoteService.GetVoteBySlug:output_type -> vote.GetVoteBySlugResponse
+	8,  // 21: vote.VoteService.GetVotes:output_type -> vote.GetVotesResponse
+	10, // 22: vote.VoteService.GetVotesByUserEligibility:output_type -> vote.GetVotesByUserEligibilityResponse
+	12, // 23: vote.VoteService.HasUserVoted:output_type -> vote.HasUserVotedResponse
+	18, // [18:24] is the sub-list for method output_type
+	12, // [12:18] is the sub-list for method input_type
 	12, // [12:12] is the sub-list for extension type_name
 	12, // [12:12] is the sub-list for extension extendee
 	0,  // [0:12] is the sub-list for field type_name
@@ -960,14 +1066,14 @@ func file_proto_vote_vote_proto_init() {
 	if File_proto_vote_vote_proto != nil {
 		return
 	}
-	file_proto_vote_vote_proto_msgTypes[10].OneofWrappers = []any{}
+	file_proto_vote_vote_proto_msgTypes[12].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_vote_vote_proto_rawDesc), len(file_proto_vote_vote_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   14,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
