@@ -15,7 +15,7 @@
       },
       "configurations": {
         "local": {
-          "tags": ["api:latest"],
+          "tags": ["intania-vote-api:latest"],
           "push": false
         },
         "production": {

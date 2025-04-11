@@ -102,7 +102,7 @@
       },
       "configurations": {
         "local": {
-          "tags": ["web:latest"],
+          "tags": ["intania-vote-web:latest"],
           "push": false
         },
         "production": {
