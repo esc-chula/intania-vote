@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { User, Vote } from "lucide-react";
 import { calculateTime } from "~/lib/vote";
@@ -30,6 +30,8 @@ const VoteCard: React.FC<VoteCardProps> = ({
   endAt,
   choices,
 }) => {
+  const router = useRouter();
+
   const topContainerRef = useRef<HTMLDivElement>(null);
   const [initialTopContainerHeight, setInitialTopContainerHeight] = useState<
     number | null
@@ -78,9 +80,12 @@ const VoteCard: React.FC<VoteCardProps> = ({
 
   return (
     <div className="flex flex-col">
-      <Link
-        href={`/vote/${slug}`}
+      <div
         className={cn("w-full overflow-hidden", isDislaying ? "h-auto" : "h-0")}
+        onClick={() => {
+          if (now < startAt) return;
+          router.push(`/vote/${slug}`);
+        }}
       >
         <div ref={topContainerRef} className="relative z-10">
           <div
@@ -168,13 +173,13 @@ const VoteCard: React.FC<VoteCardProps> = ({
             <div className="relative flex rounded-3xl bg-white pl-2 pt-2 text-neutral-700">
               <div className="z-20 flex flex-col items-center justify-center gap-1.5 rounded-2xl border-2 border-neutral-400 bg-white p-4 text-center">
                 <Vote />
-                <span className="text-xs">129</span>
+                <span className="text-xs">??</span>
               </div>
               <div className="bg-primary rounded-br-4xl rounded-tr-4xl rounded-bl-4xl absolute left-0 top-0 -z-10 aspect-square w-[4rem] -translate-x-px -translate-y-px" />
             </div>
           </div>
         ) : null}
-      </Link>
+      </div>
       {isDislaying ? null : <Skeleton className="rounded-4xl h-44 w-full" />}
     </div>
   );
