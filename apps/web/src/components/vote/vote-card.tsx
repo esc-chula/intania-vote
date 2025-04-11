@@ -66,9 +66,9 @@ const VoteCard: React.FC<VoteCardProps> = ({
       case "User":
         return null;
       case "ESC":
-        return "/images/esc.jpg";
+        return "/asssets/esc.jpg";
       case "ISESC":
-        return "/images/isesc.jpg";
+        return "/asssets/isesc.jpg";
       default:
         return null;
     }
@@ -102,6 +102,7 @@ const VoteCard: React.FC<VoteCardProps> = ({
                       alt={owner}
                       fill
                       className="object-contain"
+                      sizes="100%"
                     />
                   </div>
                 ) : (

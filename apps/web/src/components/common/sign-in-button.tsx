@@ -2,16 +2,21 @@
 
 import { signIn } from "next-auth/react";
 
+import { Cog } from "lucide-react";
+
 import { Button } from "@intania-vote/shadcn";
 
 const SignInButton: React.FC = () => {
   return (
     <Button
+      className="font-semibold"
+      size="lg"
       onClick={() => {
         signIn("intania");
       }}
     >
-      Login with Intania
+      <Cog />
+      Sign in with Intania
     </Button>
   );
 };
