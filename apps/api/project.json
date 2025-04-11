@@ -7,11 +7,12 @@
   "targets": {
     "container": {
       "executor": "@nx-tools/nx-container:build",
+      "dependsOn": ["build"],
+      "defaultConfiguration": "local",
       "options": {
-        "file": "apps/api/Dockerfile",
-        "platforms": ["linux/amd64", "linux/arm64"],
-        "tags": ["ghcr.io/esc-chula/intania-vote-api:latest"],
-        "context": "apps/api"
+        "engine": "docker",
+        "context": "dist/apps/api",
+        "file": "apps/api/Dockerfile"
       },
       "configurations": {
         "local": {
@@ -25,9 +26,9 @@
       }
     },
     "build": {
-      "executor": "@nx-go/nx-go:build",
+      "executor": "nx:run-commands",
       "options": {
-        "main": "./apps/api/cmd/..."
+        "command": "go build -o dist/apps/api/amd64 ./apps/api/cmd/..."
       }
     },
     "serve": {
