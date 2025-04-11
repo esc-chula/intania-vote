@@ -12,6 +12,16 @@
         "platforms": ["linux/amd64", "linux/arm64"],
         "tags": ["ghcr.io/esc-chula/intania-vote-api:latest"],
         "context": "apps/api"
+      },
+      "configurations": {
+        "local": {
+          "tags": ["api:latest"],
+          "push": false
+        },
+        "production": {
+          "tags": ["ghcr.io/esc-chula/intania-vote/intania-vote-api:latest"],
+          "push": true
+        }
       }
     },
     "build": {

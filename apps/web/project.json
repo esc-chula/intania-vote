@@ -106,7 +106,7 @@
           "push": false
         },
         "production": {
-          "tags": ["ghcr.io/esc-chula/intania-vote/web:latest"],
+          "tags": ["ghcr.io/esc-chula/intania-vote/intania-vote-web:latest"],
           "push": true
         }
       }
