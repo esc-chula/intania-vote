@@ -81,7 +81,10 @@ const VoteCard: React.FC<VoteCardProps> = ({
   return (
     <div className="flex flex-col">
       <div
-        className={cn("w-full overflow-hidden", isDislaying ? "h-auto" : "h-0")}
+        className={cn(
+          "w-full cursor-pointer overflow-hidden",
+          isDislaying ? "h-auto" : "h-0",
+        )}
         onClick={() => {
           if (now < startAt) return;
           router.push(`/vote/${slug}`);

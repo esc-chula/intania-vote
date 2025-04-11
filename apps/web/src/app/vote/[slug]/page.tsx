@@ -5,6 +5,8 @@ import VoteBallotContainer from "~/components/vote/vote-ballot-container";
 import VoteResultContainer from "~/components/vote/vote-result-container";
 import { getVoteBySlug, hasUserVoted } from "~/server/vote";
 
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   params: {
     slug: string;

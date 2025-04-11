@@ -10,6 +10,8 @@ import { getVoteBySlug } from "~/server/vote";
 
 import { Button, Input } from "@intania-vote/shadcn";
 
+export const dynamic = "force-dynamic";
+
 interface SearchParamProps {
   ballot_key?: string;
 }
