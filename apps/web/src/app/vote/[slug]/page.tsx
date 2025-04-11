@@ -35,8 +35,8 @@ const Page: React.FC<PageProps> = async ({ params }) => {
     return notFound();
   }
 
-  const regex = new RegExp(voteData.vote.eligibleStudentId);
   if (voteData.vote.eligibleStudentId !== "*") {
+    const regex = new RegExp(voteData.vote.eligibleStudentId);
     if (!regex.test(studentId)) {
       return notFound();
     }

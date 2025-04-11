@@ -66,7 +66,7 @@ const Page: React.FC<PageProps> = async ({ params, searchParams }) => {
             <p className="font-semibold text-neutral-700">
               {voteData.vote.name}
             </p>
-            <p className="mt-2 font-medium text-neutral-500">
+            {/* <p className="mt-2 font-medium text-neutral-500">
               “
               {verifiedData.choiceNumber === 0
                 ? "งดออกเสียง"
@@ -74,7 +74,7 @@ const Page: React.FC<PageProps> = async ({ params, searchParams }) => {
                   ? "ไม่รับรอง"
                   : `หมายเลข ${verifiedData.choiceNumber}`}
               ”
-            </p>
+            </p> */}
           </div>
           <div className="fle-col flex flex-col items-center gap-4">
             <Link href="/">
@@ -82,10 +82,10 @@ const Page: React.FC<PageProps> = async ({ params, searchParams }) => {
                 กลับหน้าแรก
               </Button>
             </Link>
-            <Button variant="outline" size="lg">
+            {/* <Button variant="outline" size="lg">
               <Share />
               แชร์
-            </Button>
+            </Button> */}
           </div>
         </div>
         <div className="flex w-full max-w-sm flex-col items-center gap-3 rounded-2xl border border-neutral-200 bg-neutral-50 px-2 py-4 text-center">

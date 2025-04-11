@@ -66,11 +66,15 @@ const Page: React.FC = async () => {
             let isEligible = false;
 
             // test regex with data.vote.eligibleStudentId with session.user.studentId, eligibleStudentId is a regex string and can be * to match any string
-            const regex = new RegExp(data.vote.eligibleStudentId);
             if (data.vote.eligibleStudentId === "*") {
               isEligible = true;
             } else {
+              const regex = new RegExp(data.vote.eligibleStudentId);
               isEligible = regex.test(studentId);
+            }
+
+            if (!isEligible) {
+              return null;
             }
 
             return (

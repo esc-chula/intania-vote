@@ -73,6 +73,7 @@ const Page: React.FC = async () => {
                   slug={data.vote.slug}
                   image={data.vote.image}
                   owner={owner}
+                  isEligible={true}
                   startAt={new Date(data.vote.startAt)}
                   endAt={new Date(data.vote.endAt)}
                   choices={data.choices.map((choice) => ({
