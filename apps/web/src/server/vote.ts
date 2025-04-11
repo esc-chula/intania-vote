@@ -160,3 +160,27 @@ export const getVotesByUserEligibility = actionClient.action(async () => {
     };
   }
 });
+
+export const hasUserVoted = actionClient
+  .schema(z.object({ slug: z.string().max(100) }))
+  .action(async ({ parsedInput: { slug } }) => {
+    try {
+      const session = await getSession();
+      const oidcId = session?.user?.oidcId;
+      if (!oidcId) {
+        return { failure: "User is not authenticated" };
+      }
+
+      const hasVoted = await grpc.vote.HasUserVoted({ slug, oidcId });
+
+      return {
+        success: "Successfully checked if user has voted",
+        hasVoted,
+      };
+    } catch (error) {
+      console.error("Error in has user voted action:", error);
+      return {
+        failure: "An error occurred during check if user has voted",
+      };
+    }
+  });

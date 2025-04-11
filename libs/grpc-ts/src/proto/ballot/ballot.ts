@@ -47,7 +47,7 @@ export interface VerifyBallotRequest {
 
 export interface VerifyBallotResponse {
   isValid: boolean;
-  choiceNumber: string;
+  choiceNumber: number;
   timestamp: string;
 }
 
@@ -437,7 +437,7 @@ export const VerifyBallotRequest: MessageFns<VerifyBallotRequest> = {
 };
 
 function createBaseVerifyBallotResponse(): VerifyBallotResponse {
-  return { isValid: false, choiceNumber: "", timestamp: "" };
+  return { isValid: false, choiceNumber: 0, timestamp: "" };
 }
 
 export const VerifyBallotResponse: MessageFns<VerifyBallotResponse> = {
@@ -445,8 +445,8 @@ export const VerifyBallotResponse: MessageFns<VerifyBallotResponse> = {
     if (message.isValid !== false) {
       writer.uint32(8).bool(message.isValid);
     }
-    if (message.choiceNumber !== "") {
-      writer.uint32(18).string(message.choiceNumber);
+    if (message.choiceNumber !== 0) {
+      writer.uint32(16).int32(message.choiceNumber);
     }
     if (message.timestamp !== "") {
       writer.uint32(26).string(message.timestamp);
@@ -470,11 +470,11 @@ export const VerifyBallotResponse: MessageFns<VerifyBallotResponse> = {
           continue;
         }
         case 2: {
-          if (tag !== 18) {
+          if (tag !== 16) {
             break;
           }
 
-          message.choiceNumber = reader.string();
+          message.choiceNumber = reader.int32();
           continue;
         }
         case 3: {
@@ -497,7 +497,7 @@ export const VerifyBallotResponse: MessageFns<VerifyBallotResponse> = {
   fromJSON(object: any): VerifyBallotResponse {
     return {
       isValid: isSet(object.isValid) ? globalThis.Boolean(object.isValid) : false,
-      choiceNumber: isSet(object.choiceNumber) ? globalThis.String(object.choiceNumber) : "",
+      choiceNumber: isSet(object.choiceNumber) ? globalThis.Number(object.choiceNumber) : 0,
       timestamp: isSet(object.timestamp) ? globalThis.String(object.timestamp) : "",
     };
   },
@@ -507,8 +507,8 @@ export const VerifyBallotResponse: MessageFns<VerifyBallotResponse> = {
     if (message.isValid !== false) {
       obj.isValid = message.isValid;
     }
-    if (message.choiceNumber !== "") {
-      obj.choiceNumber = message.choiceNumber;
+    if (message.choiceNumber !== 0) {
+      obj.choiceNumber = Math.round(message.choiceNumber);
     }
     if (message.timestamp !== "") {
       obj.timestamp = message.timestamp;
@@ -522,7 +522,7 @@ export const VerifyBallotResponse: MessageFns<VerifyBallotResponse> = {
   fromPartial<I extends Exact<DeepPartial<VerifyBallotResponse>, I>>(object: I): VerifyBallotResponse {
     const message = createBaseVerifyBallotResponse();
     message.isValid = object.isValid ?? false;
-    message.choiceNumber = object.choiceNumber ?? "";
+    message.choiceNumber = object.choiceNumber ?? 0;
     message.timestamp = object.timestamp ?? "";
     return message;
   },

@@ -12,6 +12,7 @@ service VoteService {
     rpc GetVoteBySlug(GetVoteBySlugRequest) returns (GetVoteBySlugResponse) {};
     rpc GetVotes(GetVotesRequest) returns (GetVotesResponse) {};
     rpc GetVotesByUserEligibility(GetVotesByUserEligibilityRequest) returns (GetVotesByUserEligibilityResponse) {};
+    rpc HasUserVoted(HasUserVotedRequest) returns (HasUserVotedResponse) {};
 }
 
 message CreateVoteRequest {
@@ -52,6 +53,15 @@ message GetVotesByUserEligibilityRequest {
 
 message GetVotesByUserEligibilityResponse {
     repeated Votes votes = 1;
+}
+
+message HasUserVotedRequest {
+    string oidcId = 1;
+    string slug = 2;
+}
+
+message HasUserVotedResponse {
+    bool hasVoted = 1;
 }
 
 enum Owner {

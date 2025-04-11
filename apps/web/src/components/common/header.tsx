@@ -1,14 +1,15 @@
 import { cn } from "@intania-vote/shadcn";
 
 interface HeaderProps {
+  children?: React.ReactNode;
   className?: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ className }) => {
+const Header: React.FC<HeaderProps> = ({ children, className }) => {
   return (
     <header
       className={cn(
-        "fixed left-0 right-0 top-0 z-50 flex items-center justify-between border-b border-neutral-200 bg-neutral-50 px-4 py-6",
+        "fixed left-0 right-0 top-0 z-40 flex items-center justify-between border-b border-neutral-200 bg-neutral-50 px-4 py-6",
         className,
       )}
     >
@@ -18,6 +19,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
           Vote
         </span>
       </span>
+      {children}
     </header>
   );
 };

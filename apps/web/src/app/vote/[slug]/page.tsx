@@ -1,11 +1,9 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { X } from "lucide-react";
-import VoteContainer from "~/components/vote/vote-container";
-import { getVoteBySlug } from "~/server/vote";
-
-import { Button } from "@intania-vote/shadcn";
+import XBackButton from "~/components/common/x-back-button";
+import VoteBallotContainer from "~/components/vote/vote-ballot-container";
+import VoteResultContainer from "~/components/vote/vote-result-container";
+import { getVoteBySlug, hasUserVoted } from "~/server/vote";
 
 interface PageProps {
   params: {
@@ -16,41 +14,58 @@ interface PageProps {
 const Page: React.FC<PageProps> = async ({ params }) => {
   const slug = params.slug;
 
-  const res = await getVoteBySlug({ slug });
+  const resGetVoteBySlug = await getVoteBySlug({ slug });
 
-  if (res?.data?.failure || !res?.data?.vote) {
+  if (resGetVoteBySlug?.data?.failure || !resGetVoteBySlug?.data?.vote) {
     return notFound();
   }
 
-  const voteData = res.data.vote;
+  const voteData = resGetVoteBySlug.data.vote;
 
   if (!voteData.vote || !voteData.choices) {
     return notFound();
   }
 
+  const resHasUserVoted = await hasUserVoted({ slug });
+
+  if (resHasUserVoted?.data?.failure || !resHasUserVoted?.data?.hasVoted) {
+    return notFound();
+  }
+
+  const hasUserVotedData = resHasUserVoted.data.hasVoted;
+
   return (
     <>
-      <Link href="/">
-        <Button
-          variant="outline"
-          size="icon"
-          className="fixed right-6 top-5 h-14 w-14 rounded-full"
-        >
-          <X />
-        </Button>
-      </Link>
-      <VoteContainer
-        name={voteData.vote.name}
-        description={voteData.vote.description}
-        slug={voteData.vote.slug}
-        choices={voteData.choices.map((choice) => ({
-          number: choice.number,
-          name: choice.name,
-          description: choice.description,
-          information: choice.information,
-          image: choice.image,
-        }))}
-      />
+      <XBackButton />
+      {hasUserVotedData.hasVoted ? (
+        <VoteResultContainer
+          name={voteData.vote.name}
+          description={voteData.vote.description}
+          slug={voteData.vote.slug}
+          startAt={new Date(voteData.vote.startAt)}
+          endAt={new Date(voteData.vote.endAt)}
+          choices={voteData.choices.map((choice) => ({
+            number: choice.number,
+            name: choice.name,
+            description: choice.description,
+            information: choice.information,
+            image: choice.image,
+          }))}
+        />
+      ) : (
+        <VoteBallotContainer
+          name={voteData.vote.name}
+          description={voteData.vote.description}
+          slug={voteData.vote.slug}
+          choices={voteData.choices.map((choice) => ({
+            number: choice.number,
+            name: choice.name,
+            description: choice.description,
+            information: choice.information,
+            image: choice.image,
+          }))}
+        />
+      )}
     </>
   );
 };

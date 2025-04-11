@@ -11,7 +11,7 @@ type BallotRepository interface {
 	Create(ctx context.Context, ballot *model.Ballot) (*model.Ballot, error)
 	GetBallotsByUserId(ctx context.Context, userId uint) ([]*model.Ballot, error)
 	GetBallotsByVoteId(ctx context.Context, voteId uint) ([]*model.Ballot, error)
-	IsUserCreated(ctx context.Context, userId uint, voteId uint) (bool, error)
+	HasUserVoted(ctx context.Context, userId uint, voteId uint) (bool, error)
 }
 
 type ballotRepositoryImpl struct {
@@ -51,7 +51,7 @@ func (ballotRepo *ballotRepositoryImpl) GetBallotsByVoteId(ctx context.Context, 
 	return ballots, nil
 }
 
-func (ballotRepo *ballotRepositoryImpl) IsUserCreated(ctx context.Context, userId uint, voteId uint) (bool, error) {
+func (ballotRepo *ballotRepositoryImpl) HasUserVoted(ctx context.Context, userId uint, voteId uint) (bool, error) {
 	var count int64
 	if err := ballotRepo.db.WithContext(ctx).Model(&model.Ballot{}).
 		Where("user_id = ? AND vote_id = ?", userId, voteId).

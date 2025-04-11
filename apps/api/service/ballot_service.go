@@ -23,6 +23,8 @@ type BallotService interface {
 	CreateBallot(ctx context.Context, oidcId string, voteSlug string, proof zk.Proof) (*model.Ballot, *string, error)
 	VerifyBallot(ctx context.Context, oidcId string, ballotKey string) (*int, *time.Time, error)
 	// TallyByVoteSlug(ctx context.Context, voteSlug string) ([]*model.Tally, error)
+	GetBallotsByOidcId(ctx context.Context, oidcId string) ([]*model.Ballot, error)
+	HasUserVoted(ctx context.Context, oidcId string, voteSlug string) (bool, error)
 }
 
 type ballotServiceImpl struct {
@@ -97,11 +99,11 @@ func (s *ballotServiceImpl) CreateBallot(ctx context.Context, oidcId string, vot
 		return nil, nil, errors.New("vote not found")
 	}
 
-	isUserCreated, err := s.ballotRepo.IsUserCreated(ctx, user.Id, vote.Id)
+	hasVoted, err := s.ballotRepo.HasUserVoted(ctx, user.Id, vote.Id)
 	if err != nil {
 		return nil, nil, err
 	}
-	if isUserCreated {
+	if hasVoted {
 		return nil, nil, errors.New("user already created ballot for this vote")
 	}
 
@@ -255,4 +257,42 @@ func (s *ballotServiceImpl) VerifyBallot(ctx context.Context, oidcId string, bal
 	}
 
 	return nil, nil, errors.New("ballot not found")
+}
+
+func (s *ballotServiceImpl) GetBallotsByOidcId(ctx context.Context, oidcId string) ([]*model.Ballot, error) {
+	user, err := s.userRepo.GetByOidcId(ctx, oidcId)
+	if err != nil {
+		return nil, err
+	}
+
+	ballots, err := s.ballotRepo.GetBallotsByUserId(ctx, user.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return ballots, nil
+}
+
+func (s *ballotServiceImpl) HasUserVoted(ctx context.Context, oidcId string, voteSlug string) (bool, error) {
+	user, err := s.userRepo.GetByOidcId(ctx, oidcId)
+	if err != nil {
+		return false, err
+	}
+	if user == nil {
+		return false, errors.New("user not found")
+	}
+
+	vote, err := s.voteRepo.GetBySlug(ctx, voteSlug)
+	if err != nil {
+		return false, err
+	}
+	if vote == nil {
+		return false, errors.New("vote not found")
+	}
+
+	hasVoted, err := s.ballotRepo.HasUserVoted(ctx, user.Id, vote.Id)
+	if err != nil {
+		return false, err
+	}
+	return hasVoted, nil
 }

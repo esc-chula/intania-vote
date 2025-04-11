@@ -24,6 +24,7 @@ const (
 	VoteService_GetVoteBySlug_FullMethodName             = "/vote.VoteService/GetVoteBySlug"
 	VoteService_GetVotes_FullMethodName                  = "/vote.VoteService/GetVotes"
 	VoteService_GetVotesByUserEligibility_FullMethodName = "/vote.VoteService/GetVotesByUserEligibility"
+	VoteService_HasUserVoted_FullMethodName              = "/vote.VoteService/HasUserVoted"
 )
 
 // VoteServiceClient is the client API for VoteService service.
@@ -35,6 +36,7 @@ type VoteServiceClient interface {
 	GetVoteBySlug(ctx context.Context, in *GetVoteBySlugRequest, opts ...grpc.CallOption) (*GetVoteBySlugResponse, error)
 	GetVotes(ctx context.Context, in *GetVotesRequest, opts ...grpc.CallOption) (*GetVotesResponse, error)
 	GetVotesByUserEligibility(ctx context.Context, in *GetVotesByUserEligibilityRequest, opts ...grpc.CallOption) (*GetVotesByUserEligibilityResponse, error)
+	HasUserVoted(ctx context.Context, in *HasUserVotedRequest, opts ...grpc.CallOption) (*HasUserVotedResponse, error)
 }
 
 type voteServiceClient struct {
@@ -95,6 +97,16 @@ func (c *voteServiceClient) GetVotesByUserEligibility(ctx context.Context, in *G
 	return out, nil
 }
 
+func (c *voteServiceClient) HasUserVoted(ctx context.Context, in *HasUserVotedRequest, opts ...grpc.CallOption) (*HasUserVotedResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(HasUserVotedResponse)
+	err := c.cc.Invoke(ctx, VoteService_HasUserVoted_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // VoteServiceServer is the server API for VoteService service.
 // All implementations must embed UnimplementedVoteServiceServer
 // for forward compatibility.
@@ -104,6 +116,7 @@ type VoteServiceServer interface {
 	GetVoteBySlug(context.Context, *GetVoteBySlugRequest) (*GetVoteBySlugResponse, error)
 	GetVotes(context.Context, *GetVotesRequest) (*GetVotesResponse, error)
 	GetVotesByUserEligibility(context.Context, *GetVotesByUserEligibilityRequest) (*GetVotesByUserEligibilityResponse, error)
+	HasUserVoted(context.Context, *HasUserVotedRequest) (*HasUserVotedResponse, error)
 	mustEmbedUnimplementedVoteServiceServer()
 }
 
@@ -128,6 +141,9 @@ func (UnimplementedVoteServiceServer) GetVotes(context.Context, *GetVotesRequest
 }
 func (UnimplementedVoteServiceServer) GetVotesByUserEligibility(context.Context, *GetVotesByUserEligibilityRequest) (*GetVotesByUserEligibilityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetVotesByUserEligibility not implemented")
+}
+func (UnimplementedVoteServiceServer) HasUserVoted(context.Context, *HasUserVotedRequest) (*HasUserVotedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HasUserVoted not implemented")
 }
 func (UnimplementedVoteServiceServer) mustEmbedUnimplementedVoteServiceServer() {}
 func (UnimplementedVoteServiceServer) testEmbeddedByValue()                     {}
@@ -240,6 +256,24 @@ func _VoteService_GetVotesByUserEligibility_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _VoteService_HasUserVoted_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HasUserVotedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VoteServiceServer).HasUserVoted(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: VoteService_HasUserVoted_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VoteServiceServer).HasUserVoted(ctx, req.(*HasUserVotedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // VoteService_ServiceDesc is the grpc.ServiceDesc for VoteService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -266,6 +300,10 @@ var VoteService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetVotesByUserEligibility",
 			Handler:    _VoteService_GetVotesByUserEligibility_Handler,
+		},
+		{
+			MethodName: "HasUserVoted",
+			Handler:    _VoteService_HasUserVoted_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
