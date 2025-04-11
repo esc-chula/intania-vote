@@ -18,7 +18,7 @@ const Navigation: React.FC = () => {
         <Link
           href="/home"
           className={cn(
-            "rounded-full p-3",
+            "rounded-full p-3.5",
             pathname === "/home"
               ? "bg-primary text-white"
               : "texxt-neutral-400",
@@ -29,7 +29,7 @@ const Navigation: React.FC = () => {
         <Link
           href="/new"
           className={cn(
-            "rounded-full p-3",
+            "rounded-full p-3.5",
             pathname === "/new" ? "bg-primary text-white" : "texxt-neutral-400",
           )}
         >
@@ -38,7 +38,7 @@ const Navigation: React.FC = () => {
         <Link
           href="/account"
           className={cn(
-            "rounded-full p-3",
+            "rounded-full p-3.5",
             pathname === "/account"
               ? "bg-primary text-white"
               : "texxt-neutral-400",

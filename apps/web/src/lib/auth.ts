@@ -60,6 +60,9 @@ const authOptions: AuthOptions = {
       return token;
     },
   },
+  pages: {
+    signIn: "/login",
+  },
 };
 
 const getSession = () => getServerSession(authOptions);
