@@ -93,11 +93,22 @@
     },
     "container": {
       "executor": "@nx-tools/nx-container:build",
+      "dependsOn": ["build"],
+      "defaultConfiguration": "local",
       "options": {
-        "file": "apps/web/Dockerfile",
-        "platforms": ["linux/amd64", "linux/arm64"],
-        "tags": ["ghcr.io/esc-chula/intania-vote-web:latest"],
-        "context": "apps/web"
+        "engine": "docker",
+        "context": "dist/apps/web",
+        "file": "apps/web/Dockerfile"
+      },
+      "configurations": {
+        "local": {
+          "tags": ["web:latest"],
+          "push": false
+        },
+        "production": {
+          "tags": ["ghcr.io/esc-chula/intania-vote/web:latest"],
+          "push": true
+        }
       }
     }
   }

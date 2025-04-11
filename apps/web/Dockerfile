@@ -1,26 +1,35 @@
-FROM node:20-alpine AS base
+# Install dependencies only when needed
+FROM docker.io/node:lts-alpine as deps
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
+WORKDIR /usr/src/app
+COPY .npmrc package.json ./
+RUN npm install --only=production
 
-##### DEPENDENCIES
+# Production image, copy all the files and run next
+FROM docker.io/node:lts-alpine as runner
+RUN apk add --no-cache dumb-init
 
-FROM base AS deps
-RUN apk add --no-cache libc6-compat openssl
+ENV NODE_ENV production
+ENV PORT 3000
+ENV HOST 0.0.0.0
+ENV NEXT_TELEMETRY_DISABLED 1
 
-WORKDIR /app
+WORKDIR /usr/src/app
 
-COPY package.json pnpm-lock.yaml\* ./
+# Copy installed dependencies from deps stage
+COPY --from=deps /usr/src/app/node_modules ./node_modules
 
-RUN npm install -g pnpm && pnpm i
+# Copy built application files
+COPY ./ ./
 
-##### BUILDER
+# Run the application under "node" user by default
+RUN chown -R node:node .
+USER node
+EXPOSE 3000
 
-FROM base AS builder
-RUN apk add --no-cache libc6-compat openssl
+# If you are using the custom server implementation:
+CMD ["dumb-init", "node", "server/main.js"]
 
-WORKDIR /app
-
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-
-ENV NEXT_TELEMETRY_DISABLED=1
-
-RUN npm install -g pnpm && SKIP_ENV_VALIDATION=1 pnpm run build
+# If you are using the NextJS built-int server:
+# CMD ["dumb-init", "npm", "start"]
