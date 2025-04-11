@@ -15,6 +15,7 @@ interface VoteCardProps {
   slug: string;
   image?: string;
   owner: string;
+  isEligible: boolean;
   startAt: Date;
   endAt: Date;
   choices: {
@@ -26,6 +27,7 @@ const VoteCard: React.FC<VoteCardProps> = ({
   name,
   slug,
   owner,
+  isEligible,
   startAt,
   endAt,
   choices,
@@ -86,7 +88,10 @@ const VoteCard: React.FC<VoteCardProps> = ({
           isDislaying ? "h-auto" : "h-0",
         )}
         onClick={() => {
-          if (now < startAt) return;
+          if (now < startAt || !isEligible) {
+            return;
+          }
+          // check regex with
           router.push(`/vote/${slug}`);
         }}
       >

@@ -2,11 +2,18 @@ import { Bell } from "lucide-react";
 import Header from "~/components/common/header";
 import Navigation from "~/components/common/navigation";
 import VoteCard from "~/components/vote/vote-card";
+import { getSession } from "~/lib/auth";
 import { getVotes } from "~/server/vote";
 
 import { Button } from "@intania-vote/shadcn";
 
 const Page: React.FC = async () => {
+  const session = await getSession();
+  const studentId = session?.user?.studentId;
+  if (!studentId) {
+    return null;
+  }
+
   const res = await getVotes();
 
   if (res?.data?.failure || !res?.data?.votes?.votes) {
@@ -56,6 +63,16 @@ const Page: React.FC = async () => {
                 break;
             }
 
+            let isEligible = false;
+
+            // test regex with data.vote.eligibleStudentId with session.user.studentId, eligibleStudentId is a regex string and can be * to match any string
+            const regex = new RegExp(data.vote.eligibleStudentId);
+            if (data.vote.eligibleStudentId === "*") {
+              isEligible = true;
+            } else {
+              isEligible = regex.test(studentId);
+            }
+
             return (
               <VoteCard
                 key={data.vote.slug}
@@ -63,6 +80,7 @@ const Page: React.FC = async () => {
                 slug={data.vote.slug}
                 image={data.vote.image}
                 owner={owner}
+                isEligible={isEligible}
                 startAt={new Date(data.vote.startAt)}
                 endAt={new Date(data.vote.endAt)}
                 choices={data.choices.map((choice) => ({

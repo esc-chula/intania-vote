@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import XBackButton from "~/components/common/x-back-button";
 import VoteBallotContainer from "~/components/vote/vote-ballot-container";
 import VoteResultContainer from "~/components/vote/vote-result-container";
+import { getSession } from "~/lib/auth";
 import { getVoteBySlug, hasUserVoted } from "~/server/vote";
 
 export const dynamic = "force-dynamic";
@@ -14,6 +15,12 @@ interface PageProps {
 }
 
 const Page: React.FC<PageProps> = async ({ params }) => {
+  const session = await getSession();
+  const studentId = session?.user?.studentId;
+  if (!studentId) {
+    return notFound();
+  }
+
   const slug = params.slug;
 
   const resGetVoteBySlug = await getVoteBySlug({ slug });
@@ -26,6 +33,13 @@ const Page: React.FC<PageProps> = async ({ params }) => {
 
   if (!voteData.vote || !voteData.choices) {
     return notFound();
+  }
+
+  const regex = new RegExp(voteData.vote.eligibleStudentId);
+  if (voteData.vote.eligibleStudentId !== "*") {
+    if (!regex.test(studentId)) {
+      return notFound();
+    }
   }
 
   const resHasUserVoted = await hasUserVoted({ slug });
