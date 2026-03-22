@@ -36,7 +36,8 @@ const VoteResultContainer: React.FC<VoteResultContainerProps> = ({
   isEligible = true,
   tally,
 }) => {
-  const [tab, setTab] = useState<"result" | "info">("result");
+  const isBeforeStart = new Date() < new Date(startAt);
+  const [tab, setTab] = useState<"result" | "info">(isBeforeStart ? "info" : "result");
 
   return (
     <>
@@ -51,6 +52,7 @@ const VoteResultContainer: React.FC<VoteResultContainerProps> = ({
               variant={tab === "result" ? "default" : "outline"}
               onClick={() => setTab("result")}
               size="sm"
+              disabled={isBeforeStart}
             >
               ผลการโหวต
             </Button>
