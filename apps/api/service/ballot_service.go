@@ -108,7 +108,7 @@ func (s *ballotServiceImpl) CreateBallot(ctx context.Context, oidcId string, vot
 		return nil, nil, errors.New("user already created ballot for this vote")
 	}
 
-	secret := zk.DeriveSecretFromSub(user.OidcId.String(), s.cfg)
+	secret := zk.DeriveSecretFromSub(user.OidcId, s.cfg)
 
 	proofMap := map[string]string{
 		"commitment":     proof.Commitment,
@@ -148,7 +148,7 @@ func (s *ballotServiceImpl) CreateBallot(ctx context.Context, oidcId string, vot
 
 	encryptedBallot := zk.EncryptWithServerKey(choiceId, s.cfg)
 
-	encryptionKey := zk.GenerateVoteEncryptionKey(user.OidcId.String(), proof.Nullifier)
+	encryptionKey := zk.GenerateVoteEncryptionKey(user.OidcId, proof.Nullifier)
 
 	encryptedChoiceId := zk.EncryptChoiceId(choiceId, encryptionKey)
 
@@ -224,7 +224,7 @@ func (s *ballotServiceImpl) VerifyBallot(ctx context.Context, oidcId string, bal
 	}
 
 	for _, ballot := range ballots {
-		encryptionKey := zk.GenerateVoteEncryptionKey(user.OidcId.String(), ballot.Nullifier)
+		encryptionKey := zk.GenerateVoteEncryptionKey(user.OidcId, ballot.Nullifier)
 
 		choiceId, err := zk.DecryptChoiceId(encryptedChoiceId, encryptionKey)
 		if err != nil {

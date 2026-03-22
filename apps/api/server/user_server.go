@@ -45,7 +45,7 @@ func (s userServerImpl) CreateUser(ctx context.Context, req *grpcUser.CreateUser
 	}
 
 	if user != nil {
-		if user.OidcId.String() != oidcId {
+		if user.OidcId != oidcId {
 			if err := s.svc.UpdateUserById(ctx, user.Id, oidcId, studentId); err != nil {
 				return nil, status.Error(codes.Internal, "failed to update user")
 			}
@@ -77,6 +77,6 @@ func (s userServerImpl) GetUserByOidcId(ctx context.Context, req *grpcUser.GetUs
 	return &grpcUser.GetUserByOidcIdResponse{
 		Id:        fmt.Sprintf("%d", user.Id),
 		StudentId: user.StudentId,
-		OidcId:    user.OidcId.String(),
+		OidcId:    user.OidcId,
 	}, nil
 }
