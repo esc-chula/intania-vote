@@ -35,53 +35,7 @@
           "generateLockfile": true
         }
       },
-      "dependsOn": ["^build", "build-custom-server"]
-    },
-    "build-custom-server": {
-      "executor": "@nx/esbuild:esbuild",
-      "defaultConfiguration": "production",
-      "options": {
-        "outputPath": "dist/apps/web",
-        "main": "apps/web/server/main.ts",
-        "tsConfig": "apps/web/tsconfig.server.json",
-        "clean": false,
-        "assets": [],
-        "platform": "node",
-        "outputFileName": "server/main.js",
-        "format": ["cjs"],
-        "bundle": true,
-        "thirdParty": false,
-        "esbuildOptions": {
-          "sourcemap": true,
-          "outExtension": {
-            ".js": ".js"
-          }
-        }
-      },
-      "configurations": {
-        "development": {
-          "sourcemap": true
-        },
-        "production": {
-          "sourcemap": false,
-          "assets": [".npmrc"]
-        }
-      }
-    },
-    "serve-custom-server": {
-      "executor": "@nx/js:node",
-      "defaultConfiguration": "development",
-      "options": {
-        "buildTarget": "web:build-custom-server"
-      },
-      "configurations": {
-        "development": {
-          "buildTarget": "web:build-custom-server:development"
-        },
-        "production": {
-          "buildTarget": "web:build-custom-server:production"
-        }
-      }
+      "dependsOn": ["^build"]
     },
     "typecheck": {
       "executor": "nx:run-commands",
