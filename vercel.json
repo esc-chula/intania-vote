@@ -1,0 +1,4 @@
+{
+  "buildCommand": "pnpm nx build web",
+  "outputDirectory": "dist/apps/web/.next"
+}
