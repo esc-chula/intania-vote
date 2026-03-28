@@ -16,6 +16,7 @@ interface VoteResultCardProps {
     information?: string;
     image?: string;
   }[];
+  isEligible?: boolean;
   tally?: Tally;
 }
 
@@ -23,6 +24,7 @@ const VoteResultCard: React.FC<VoteResultCardProps> = ({
   startAt,
   endAt,
   choices,
+  isEligible = true,
   tally,
 }) => {
   const [time, setTime] = useState<string | null>(null);
@@ -104,9 +106,13 @@ const VoteResultCard: React.FC<VoteResultCardProps> = ({
             </div>
           ) : null}
           <p className="text-xs text-neutral-600">
-            การโหวตของคุณได้ถูกบันทึกแล้ว
+            {isEligible
+              ? "การโหวตของคุณได้ถูกบันทึกแล้ว"
+              : "การโหวตนี้อยู่ระหว่างการดำเนินการ"}
             <br />
-            ในอีกไม่นาน หน้านี้ก็จะแสดงผลลัพธ์ของการโหวต
+            {isEligible
+              ? "ในอีกไม่นาน หน้านี้ก็จะแสดงผลลัพธ์ของการโหวต"
+              : "คุณไม่มีสิทธิ์ลงคะแนนในหัวข้อนี้"}
           </p>
         </div>
       )}

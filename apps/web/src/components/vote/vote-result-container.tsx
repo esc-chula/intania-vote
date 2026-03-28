@@ -71,6 +71,7 @@ const VoteResultContainer: React.FC<VoteResultContainerProps> = ({
                 endAt={endAt}
                 choices={choices}
                 tally={tally}
+                isEligible={isEligible}
               />
               {isEligible ? <VoteVerifyCard /> : null}
             </>
