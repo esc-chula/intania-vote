@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import XBackButton from "~/components/common/x-back-button";
 import VoteBallotContainer from "~/components/vote/vote-ballot-container";
@@ -72,8 +72,9 @@ const Page: React.FC<PageProps> = async ({ params }) => {
     <>
       <XBackButton />
       {hasUserVotedData.hasVoted ||
-      !isEligible ||
-      new Date() > new Date(voteData.vote.endAt) ? (
+        !isEligible ||
+        new Date() > new Date(voteData.vote.endAt) ||
+        new Date() < new Date(voteData.vote.startAt) ? (
         <VoteResultContainer
           name={voteData.vote.name}
           description={voteData.vote.description}

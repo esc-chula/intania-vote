@@ -47,7 +47,7 @@ const Page: React.FC<PageProps> = async ({ searchParams }) => {
           <h1 className="text-lg font-bold text-neutral-800">เข้าสู่ระบบ</h1>
           <SignInButton />
           <p className="text-sm text-neutral-600">
-            ใช้รหัสนิสิตและรหัสผ่าน CUNET
+            เข้าสู่ระบบด้วยอีเมลนิสิตจุฬาฯ
           </p>
         </div>
       </div>
