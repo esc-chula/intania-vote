@@ -2,6 +2,8 @@ import dns from "node:dns";
 import { type ServiceError, credentials } from "@grpc/grpc-js";
 
 dns.setDefaultResultOrder("ipv4first");
+process.env.GRPC_DNS_RESOLVER = "native";
+
 import {
   BallotServiceClient,
   type CreateUserRequest,
@@ -51,9 +53,16 @@ export function r<T>(
   };
 }
 
+const getCredentials = () => {
+  if (GRPC_ADDRESS.includes("localhost") || GRPC_ADDRESS.includes("127.0.0.1")) {
+    return credentials.createInsecure();
+  }
+  return credentials.createSsl();
+};
+
 const userClient = new UserServiceClient(
   GRPC_ADDRESS,
-  credentials.createInsecure(),
+  getCredentials(),
 );
 
 function CreateUser(req: CreateUserRequest): Promise<CreateUserResponse> {
@@ -72,7 +81,7 @@ function GetUserByOidcId(
 
 const voteClient = new VoteServiceClient(
   GRPC_ADDRESS,
-  credentials.createInsecure(),
+  getCredentials(),
 );
 
 function CreateVote(req: CreateVoteRequest): Promise<CreateVoteResponse> {
@@ -125,7 +134,7 @@ function TallyVoteBySlug(
 
 const ballotClient = new BallotServiceClient(
   GRPC_ADDRESS,
-  credentials.createInsecure(),
+  getCredentials(),
 );
 
 function CreateBallotProof(
