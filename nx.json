@@ -48,12 +48,10 @@
         "targetName": "test"
       }
     },
-    "@nx-go/nx-go",
     {
-      "plugin": "@nx-tools/nx-container",
+      "plugin": "@nx/jest/plugin",
       "options": {
-        "defaultEngine": "docker",
-        "defaultRegistry": "docker.io"
+        "targetName": "test"
       }
     }
   ],
