@@ -1,4 +1,7 @@
+import dns from "node:dns";
 import { type ServiceError, credentials } from "@grpc/grpc-js";
+
+dns.setDefaultResultOrder("ipv4first");
 import {
   BallotServiceClient,
   type CreateUserRequest,
