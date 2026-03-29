@@ -29,7 +29,11 @@ import {
   type TallyVoteBySlugResponse,
 } from "@intania-vote/grpc-ts";
 
-const GRPC_ADDRESS = process.env.GRPC_ADDRESS || "localhost:4000";
+const rawAddress = (process.env.API_URL || process.env.GRPC_ADDRESS || "localhost:4000")
+  .replace("https://", "")
+  .replace("/", "");
+
+const GRPC_ADDRESS = rawAddress.includes(":") ? rawAddress : `${rawAddress}:443`;
 
 export function r<T>(
   resolve: (response: T) => void,
