@@ -24,22 +24,21 @@ export const calculateTime = (startAt: Date, endAt: Date): string | null => {
     }
   } else if (now < startAt) {
     const timeDiff = startAt.getTime() - now.getTime();
-    const hours = Math.floor(
-      (timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
-    );
-    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+    const mNow = moment(now).startOf("day");
+    const mStart = moment(startAt).startOf("day");
+    const diffDays = mStart.diff(mNow, "days");
 
     if (timeDiff > 0) {
-      if (timeDiff < 24 * 60 * 60 * 1000) {
+      if (diffDays === 0) {
+        const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
         return `เริ่มในอีก ${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+      } else if (diffDays === 1) {
+        return "เริ่มพรุ่งนี้";
       } else {
-        const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-        if (days === 1) {
-          return "เริ่มพรุ่งนี้";
-        } else if (days > 1) {
-          return `เริ่มในอีก ${days} วัน`;
-        }
+        return `เริ่มในอีก ${diffDays} วัน`;
       }
     }
   } else if (now > endAt) {
